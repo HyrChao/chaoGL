@@ -75,9 +75,12 @@
     <SourcePath>.\Src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>.\Includes;$(IncludePath)</IncludePath>
+    <IncludePath>.\Src\OpenGL;.\Src;$(IncludePath)</IncludePath>
     <LibraryPath>.\Libs;$(LibraryPath)</LibraryPath>
     <SourcePath>.\Src;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>.\Src\OpenGL;.\Src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
