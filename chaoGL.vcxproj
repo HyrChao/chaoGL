@@ -70,17 +70,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>.\Includes;$(IncludePath)</IncludePath>
+    <IncludePath>.\Src;.\Include;$(IncludePath)</IncludePath>
     <LibraryPath>.\Libs;$(LibraryPath)</LibraryPath>
     <SourcePath>.\Src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>.\Src\OpenGL;.\Src;$(IncludePath)</IncludePath>
+    <IncludePath>.\Include;.\Src;$(IncludePath)</IncludePath>
     <LibraryPath>.\Libs;$(LibraryPath)</LibraryPath>
     <SourcePath>.\Src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>.\Src\OpenGL;.\Src;$(IncludePath)</IncludePath>
+    <IncludePath>.\Include;.\Src;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>.\Src;.\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,8 +136,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\main.cpp" />
+    <ClCompile Include="Src\Section\Hello.cpp" />
+    <ClCompile Include="Src\Section\Sections.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Application\Application.h" />
+    <ClInclude Include="Src\chaoGL.h" />
+    <ClInclude Include="Src\Render\Shader.h" />
+    <ClInclude Include="Src\Section\Hello.h" />
+    <ClInclude Include="Src\Section\Sections.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

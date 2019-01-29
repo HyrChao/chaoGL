@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\Section">
+      <UniqueIdentifier>{fe21306c-2256-4960-9a30-edc858ec72a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Render">
+      <UniqueIdentifier>{04549b16-f6bf-4f7b-8ac8-54b4afdce569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Application">
+      <UniqueIdentifier>{e71f6dd7-5fc2-48ba-955a-b4bd78dc5440}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\glad.c">
@@ -21,5 +30,31 @@
     <ClCompile Include="Src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>源文件\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Section\Sections.cpp">
+      <Filter>源文件\Section</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Section\Hello.cpp">
+      <Filter>源文件\Section</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Render\Shader.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Application.h">
+      <Filter>源文件\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Section\Sections.h">
+      <Filter>源文件\Section</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Section\Hello.h">
+      <Filter>源文件\Section</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\chaoGL.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
