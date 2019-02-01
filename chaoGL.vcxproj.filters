@@ -39,6 +39,9 @@
     <ClCompile Include="Src\Section\Hello.cpp">
       <Filter>源文件\Section</Filter>
     </ClCompile>
+    <ClCompile Include="chaoGL.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Render\Shader.h">

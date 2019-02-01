@@ -21,21 +21,25 @@ GLFWwindow* window;
 Application* app;
 Sections* sections;
 
+int windowWidth;
+int windowHeight;
+
 int main()
 {
 	// init GLFW
 	glfwInit();
+
+	//Window
+	windowWidth = 800;
+	windowHeight = 600;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);   //This is for mac OS
-
-	//Window
 	// Create a new window object
-	window = glfwCreateWindow(800, 600, "chaoGL", NULL, NULL);
+	window = glfwCreateWindow(windowWidth, windowHeight, "chaoGL", NULL, NULL);
 	glfwMakeContextCurrent(window);
 
-	app = new Application(window);
 	// Init GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -43,14 +47,13 @@ int main()
 		return -1;
 	}
 
-	// Define viewport
-	glViewport(0, 0, 800, 600);
-
 	// Rigist window adjust call back function 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	// Sections
+	// App & Sections
+	app = new Application(window,windowWidth,windowHeight);
 	sections = new Sections();
+
 	//Shader
 	Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
 	
@@ -124,5 +127,6 @@ void processInput(GLFWwindow *window)
 // Function called while change window size
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+	// Define viewport
 	glViewport(0, 0, width, height);
 }

@@ -10,7 +10,7 @@ class Application
 {
 public:
 
-	Application(GLFWwindow* currentWin);
+	Application(GLFWwindow* currentWin, int width, int height);
 	~Application();
 
 	static void InitApplication();
@@ -37,6 +37,9 @@ public:
 private:
 
 	static GLFWwindow* window;
+
+	int viewWidth;
+	int viewHeight;
 
 };
 
