@@ -1,7 +1,16 @@
-#pragma once
 #include <Section\Sections.h>
+
+Sections::Sections()
+{
+	hello = new Hello();
+}
+
+Sections::~Sections()
+{
+	delete hello;
+}
 
 void Sections::HelloTriangle()
 {
-	Hello::HelloTriangle();
+	hello->HelloTriangle();
 }

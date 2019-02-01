@@ -5,12 +5,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Render/Shader.h>
-
 #include <chaoGL.h>
 #include <Section/Sections.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+int Close();
 
 // Shader content
 bool wireframeMode = false;
@@ -19,6 +19,8 @@ bool wKeyPressing = false;
 //GLFWwindow* window;
 GLFWwindow* window;
 Application* app;
+Sections* sections;
+
 int main()
 {
 	// init GLFW
@@ -47,7 +49,8 @@ int main()
 	// Rigist window adjust call back function 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-
+	// Sections
+	sections = new Sections();
 	//Shader
 	Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
 	
@@ -79,19 +82,27 @@ int main()
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-		Sections::HelloTriangle();
+		sections->HelloTriangle();
 
 		// Event
 		glfwSwapBuffers(Application::GetWindow());
 		glfwPollEvents();
 	}
 
+	return Close();
+
+}
+
+
+int Close()
+{
 	//Release resource while terminate
 	glfwTerminate();
+	delete app;
+	delete sections;
 
 	return 0;
 }
-
 
 void processInput(GLFWwindow *window)
 {

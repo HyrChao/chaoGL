@@ -1,49 +1,18 @@
 #include<Section/Hello.h>
 
-bool isInitialized = false;
+Hello::Hello()
+{
 
-bool enterKeyPressing = false;
-bool drawTriangleMode = true;
+}
 
-unsigned int triVAO;
-unsigned int triVBO;
-unsigned int recVAO;
-unsigned int recVBO;
-unsigned int recEBO;
+Hello::~Hello()
+{
 
-// Vertex init
-// triangel verts
-float triVertices[] = {
-	0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-	0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f
-};
-
-// recangle verts
-float recVertices[] = {
-	//// first triangle
-	//0.5f, 0.5f, 0.0f,   
-	//0.5f, -0.5f, 0.0f,  
-	//-0.5f, 0.5f, 0.0f,  
-	//// second triangle			
-	//0.5f, -0.5f, 0.0f,  
-	//-0.5f, -0.5f, 0.0f, 
-	//-0.5f, 0.5f, 0.0f
-	0.5f, 0.5f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	-0.5f, -0.5f, 0.0f,
-	-0.5f, 0.5f, 0.0f
-};
-
-// indices for recangle
-unsigned int indices[] = {
-	0, 1, 3, // first triangle
-	1, 2, 3  // second triangle
-};
+}
 
 void Hello::HelloTriangle()
 {
-	if (!isInitialized)
+	if (!isInitializedTri)
 	{
 		InitTriangle();
 	}
@@ -105,8 +74,10 @@ void Hello::InitTriangle()
 	//Element Buffer Object
 	glGenBuffers(1, &recEBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, recEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(recIndices), recIndices, GL_STATIC_DRAW);
 	// Link vertex property
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	isInitializedTri = true;
 }
