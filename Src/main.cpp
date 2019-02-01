@@ -9,6 +9,7 @@
 #include <chaoGL.h>
 #include <Section/Sections.h>
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 // Shader content
@@ -16,20 +17,47 @@ bool wireframeMode = false;
 bool wKeyPressing = false;
 
 //GLFWwindow* window;
-
+GLFWwindow* window;
+Application* app;
 int main()
 {
-	InitApplication();
+	// init GLFW
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);   //This is for mac OS
+
+	//Window
+	// Create a new window object
+	window = glfwCreateWindow(800, 600, "chaoGL", NULL, NULL);
+	glfwMakeContextCurrent(window);
+
+	app = new Application(window);
+	// Init GLAD
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+
+	// Define viewport
+	glViewport(0, 0, 800, 600);
+
+	// Rigist window adjust call back function 
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+
 	//Shader
 	Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
 	
 	//-------------------------------------------------------------
 	// Loop
-	while (!glfwWindowShouldClose(Application::window))
+	while (!glfwWindowShouldClose(Application::GetWindow()))
 	{
 		// Input
 		// Check if hit esc key
-		processInput(Application::window);
+		processInput(Application::GetWindow());
 
 		// Render
 		// Use shader program
@@ -54,7 +82,7 @@ int main()
 		Sections::HelloTriangle();
 
 		// Event
-		glfwSwapBuffers(Application::window);
+		glfwSwapBuffers(Application::GetWindow());
 		glfwPollEvents();
 	}
 
@@ -80,4 +108,10 @@ void processInput(GLFWwindow *window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
 		wKeyPressing = false;
+}
+
+// Function called while change window size
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
 }

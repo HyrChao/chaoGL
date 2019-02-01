@@ -48,7 +48,7 @@ void Hello::HelloTriangle()
 		InitTriangle();
 	}
 
-	if (glfwGetKey(Application::window, GLFW_KEY_ENTER) == GLFW_PRESS && !enterKeyPressing)
+	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_PRESS && !enterKeyPressing)
 	{
 		enterKeyPressing = true;
 		if (drawTriangleMode)
@@ -56,7 +56,7 @@ void Hello::HelloTriangle()
 		else
 			drawTriangleMode = true;
 	}
-	if (glfwGetKey(Application::window, GLFW_KEY_ENTER) == GLFW_RELEASE)
+	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_RELEASE)
 		enterKeyPressing = false;
 
 	if (drawTriangleMode)
