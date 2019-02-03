@@ -9,11 +9,14 @@ class Sections
 public:
 	Sections();
 	~Sections();
-	void HelloTriangle();
+	void SwitchSections();
 
 private:
 
 	Hello* hello;
+
+	bool enterKeyPressing = false;
+	bool drawTriangleMode = false;
 
 };
 

@@ -127,17 +127,6 @@ void Hello::LoadTexture()
 
 void Hello::HelloTriangle()
 {
-	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_PRESS && !enterKeyPressing)
-	{
-		enterKeyPressing = true;
-		if (drawTriangleMode)
-			drawTriangleMode = false;
-		else
-			drawTriangleMode = true;
-	}
-	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_RELEASE)
-		enterKeyPressing = false;
-
 	// Use shader program
 	// Update color with time
 	float timeValue = glfwGetTime();
@@ -145,34 +134,63 @@ void Hello::HelloTriangle()
 	float greenVal = (cos(timeValue + 3.14 / 3) / 2.0f) + 0.5f;
 	float blueVal = (cos(timeValue - 3.14 / 3) / 2.0f) + 0.5f;
 
-	if (drawTriangleMode)
-	{
-		helloTriShader->use();
-		helloTriShader->setVec4f("ourColor", redVal, greenVal, blueVal, 1.0f);
-		helloTriShader->use();
-		//Triangle draw test
-		glBindVertexArray(triVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
-	}
-	else
-	{
-		helloTexShader->use();
+	helloTriShader->use();
+	helloTriShader->setVec4f("ourColor", redVal, greenVal, blueVal, 1.0f);
+	helloTriShader->use();
+	//Triangle draw test
+	glBindVertexArray(triVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(0);
+}
 
-		//glBindTexture(GL_TEXTURE_2D, texture);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+void Hello::HelloTransform()
+{
+	helloTexShader->use();
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture2);
 
-		glBindVertexArray(recVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+	glBindVertexArray(recVAO);
+	Transform(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Transform(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Transform(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Transform(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	}
+	glBindVertexArray(0);
+
+}
+
+void Hello::Transform(glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
+{
+	glm::mat4 trans;
+	trans = glm::translate(trans, translate);
+	trans = glm::rotate(trans, (float)glfwGetTime(), rotate);
+	trans = glm::scale(trans, scale);
+	// pass matrix to shader
+	unsigned int transformLoc = glGetUniformLocation(helloTexShader->ID, "transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 }
 
 void Hello::InitData()
 {
+
+}
+
+void Hello::glmTest()
+{
+	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+	// if you are using 0.9.9 above
+	// you might need to change below line to:
+	// glm::mat4 trans = glm::mat4(1.0f)
+	glm::mat4 trans;
+	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+	vec = trans * vec;
+	std::cout << vec.x << vec.y << vec.z << std::endl;
 
 }

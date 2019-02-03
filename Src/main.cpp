@@ -31,7 +31,7 @@ int main()
 
 	//Window
 	windowWidth = 800;
-	windowHeight = 600;
+	windowHeight = 800;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -76,7 +76,7 @@ int main()
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-		sections->HelloTriangle();
+		sections->SwitchSections();
 
 		// Event
 		glfwSwapBuffers(Application::GetWindow());

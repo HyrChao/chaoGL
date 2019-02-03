@@ -16,8 +16,7 @@ public:
 private:
 
 	bool isDataInitialized = false;
-	bool enterKeyPressing = false;
-	bool drawTriangleMode = false;
+
 
 	unsigned int triVAO;
 	unsigned int triVBO;
@@ -65,10 +64,13 @@ public:
 	~Hello();
 	void HelloTriangle();
 	void LoadTexture();
+	void HelloTransform();
 
 private:
 
+	void Transform(glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale);
 	void InitData();
+	void glmTest();
 
 };
 
