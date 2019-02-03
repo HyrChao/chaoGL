@@ -15,15 +15,21 @@ public:
 
 private:
 
-	bool isInitializedTri = false;
+	bool isDataInitialized = false;
 	bool enterKeyPressing = false;
-	bool drawTriangleMode = true;
+	bool drawTriangleMode = false;
 
 	unsigned int triVAO;
 	unsigned int triVBO;
 	unsigned int recVAO;
 	unsigned int recVBO;
 	unsigned int recEBO;
+
+	unsigned int texture1, texture2;
+
+
+	Shader* helloTriShader;
+	Shader* helloTexShader;
 
 	// Vertex init
 	// triangel verts
@@ -41,19 +47,11 @@ private:
 	};
 
 	// recangle verts
-	float recVertices[12] = {
-		//// first triangle
-		//0.5f, 0.5f, 0.0f,   
-		//0.5f, -0.5f, 0.0f,  
-		//-0.5f, 0.5f, 0.0f,  
-		//// second triangle			
-		//0.5f, -0.5f, 0.0f,  
-		//-0.5f, -0.5f, 0.0f, 
-		//-0.5f, 0.5f, 0.0f
-		0.5f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		-0.5f, 0.5f, 0.0f
+	float recVertices[32] = {
+		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   
+		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f   
 	};
 
 	// indices for recangle
@@ -66,12 +64,11 @@ public:
 	Hello();
 	~Hello();
 	void HelloTriangle();
+	void LoadTexture();
 
 private:
 
-	void InitTriangle();
-
-
+	void InitData();
 
 };
 

@@ -39,7 +39,7 @@
     <ClCompile Include="Src\Section\Hello.cpp">
       <Filter>源文件\Section</Filter>
     </ClCompile>
-    <ClCompile Include="chaoGL.cpp">
+    <ClCompile Include="Src\chaoGL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

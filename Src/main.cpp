@@ -54,8 +54,6 @@ int main()
 	app = new Application(window,windowWidth,windowHeight);
 	sections = new Sections();
 
-	//Shader
-	Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
 	
 	//-------------------------------------------------------------
 	// Loop
@@ -66,16 +64,9 @@ int main()
 		processInput(Application::GetWindow());
 
 		// Render
-		// Use shader program
-		shader.use();
-		// Update color with time
-		float timeValue = glfwGetTime();
-		float redVal = (cos(timeValue) / 2.0f) + 0.5f;
-		float greenVal = (cos(timeValue + 3.14/3) / 2.0f) + 0.5f;
-		float blueVal = (cos(timeValue - 3.14/3) / 2.0f) + 0.5f;
-		shader.setVec4f("ourColor",redVal,greenVal,blueVal,1.0f);
-		shader.use();
+
 		//// Clear test
+		float timeValue = glfwGetTime();
 		glClearColor(0.8f+0.2*sin(timeValue), 0.8f+0.2*sin(timeValue+3.14/3), 0.8f+0.2*sin(timeValue - 3.14 / 3), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		// Fill mode
