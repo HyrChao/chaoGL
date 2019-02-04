@@ -42,8 +42,15 @@ Hello::Hello()
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
+		//Shader
+		//Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
+		helloTriShader = new Shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
+		helloTexShader = new Shader("./Shader/Vertex/HelloTexture.vs", "./Shader/Fragment/HelloTexture.fs");
+		helloProjShader = new Shader("./Shader/Vertex/HelloProjection.vs", "./Shader/Fragment/HelloProjection.fs");
+
 		// load tecture
-		LoadTexture();
+		LoadTexture(helloTexShader);
+		LoadTexture(helloProjShader);
 
 	}
 
@@ -54,9 +61,108 @@ Hello::~Hello()
 {
 	delete helloTriShader;
 	delete helloTexShader;
+	delete helloProjShader;
 }
 
-void Hello::LoadTexture()
+void Hello::HelloTriangle()
+{
+	// Use shader program
+	// Update color with time
+	float timeValue = glfwGetTime();
+	float redVal = (cos(timeValue) / 2.0f) + 0.5f;
+	float greenVal = (cos(timeValue + 3.14 / 3) / 2.0f) + 0.5f;
+	float blueVal = (cos(timeValue - 3.14 / 3) / 2.0f) + 0.5f;
+
+	helloTriShader->use();
+	helloTriShader->setVec4f("ourColor", redVal, greenVal, blueVal, 1.0f);
+	helloTriShader->use();
+	//Triangle draw test
+	glBindVertexArray(triVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindVertexArray(0);
+}
+
+void Hello::HelloTransform()
+{
+	helloTexShader->use();
+	//glBindTexture(GL_TEXTURE_2D, texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+
+	glBindVertexArray(recVAO);
+	Transform(helloTexShader,glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Transform(helloTexShader,glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Transform(helloTexShader,glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	Transform(helloTexShader,glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glBindVertexArray(0);
+
+}
+
+void Hello::HelloProjection()
+{
+	helloProjShader->use();
+	// ortho matrix
+	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
+	glm::mat4 model;
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	glm::mat4 view;
+	// move model forward equals to move view backward
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	glm::mat4 projection;
+	projection = Camera::main->projMat;
+
+	helloProjShader->setMat4f("model", model);
+	helloProjShader->setMat4f("view", view);
+	helloProjShader->setMat4f("projection", projection);
+	Transform(helloProjShader,glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.5, 1.5, 1.5));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindVertexArray(recVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+}
+
+void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
+{
+	glm::mat4 trans;
+	trans = glm::translate(trans, translate);
+	trans = glm::rotate(trans, (float)glfwGetTime(), rotate);
+	trans = glm::scale(trans, scale);
+	// pass matrix to shader
+	unsigned int transformLoc = glGetUniformLocation(shader->ID, "transform");
+	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+}
+
+void Hello::InitData()
+{
+
+}
+
+void Hello::glmTest()
+{
+	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+	// if you are using 0.9.9 above
+	// you might need to change below line to:
+	// glm::mat4 trans = glm::mat4(1.0f)
+	glm::mat4 trans;
+	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+	vec = trans * vec;
+	std::cout << vec.x << vec.y << vec.z << std::endl;
+}
+
+void Hello::LoadTexture(Shader* shader)
 {
 	// texture1
 	// create a texture object 
@@ -113,84 +219,10 @@ void Hello::LoadTexture()
 	}
 	stbi_image_free(data);
 
-	//Shader
-	//Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
-	helloTriShader = new Shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
-	helloTexShader = new Shader("./Shader/Vertex/HelloTexture.vs", "./Shader/Fragment/HelloTexture.fs");
 
 	// texture unit setup
-	helloTexShader -> use();
-	glUniform1i(glGetUniformLocation(helloTexShader->ID, "texture1"), 0); // setup manully
+	shader-> use();
+	glUniform1i(glGetUniformLocation(shader->ID, "texture1"), 0); // setup manully
 	//glUniform1i(glGetUniformLocation(helloTexShader->ID, "texture2"), 1); // setup manully
-	helloTexShader->setInt("texture2", 1); // or use function in shader class
-}
-
-void Hello::HelloTriangle()
-{
-	// Use shader program
-	// Update color with time
-	float timeValue = glfwGetTime();
-	float redVal = (cos(timeValue) / 2.0f) + 0.5f;
-	float greenVal = (cos(timeValue + 3.14 / 3) / 2.0f) + 0.5f;
-	float blueVal = (cos(timeValue - 3.14 / 3) / 2.0f) + 0.5f;
-
-	helloTriShader->use();
-	helloTriShader->setVec4f("ourColor", redVal, greenVal, blueVal, 1.0f);
-	helloTriShader->use();
-	//Triangle draw test
-	glBindVertexArray(triVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindVertexArray(0);
-}
-
-void Hello::HelloTransform()
-{
-	helloTexShader->use();
-	//glBindTexture(GL_TEXTURE_2D, texture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-
-	glBindVertexArray(recVAO);
-	Transform(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.5, 0.5, 0.5));
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	Transform(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	Transform(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	Transform(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	glBindVertexArray(0);
-
-}
-
-void Hello::Transform(glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
-{
-	glm::mat4 trans;
-	trans = glm::translate(trans, translate);
-	trans = glm::rotate(trans, (float)glfwGetTime(), rotate);
-	trans = glm::scale(trans, scale);
-	// pass matrix to shader
-	unsigned int transformLoc = glGetUniformLocation(helloTexShader->ID, "transform");
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-}
-
-void Hello::InitData()
-{
-
-}
-
-void Hello::glmTest()
-{
-	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-	// if you are using 0.9.9 above
-	// you might need to change below line to:
-	// glm::mat4 trans = glm::mat4(1.0f)
-	glm::mat4 trans;
-	trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-	vec = trans * vec;
-	std::cout << vec.x << vec.y << vec.z << std::endl;
-
+	shader->setInt("texture2", 1); // or use function in shader class
 }

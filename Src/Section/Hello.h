@@ -29,6 +29,7 @@ private:
 
 	Shader* helloTriShader;
 	Shader* helloTexShader;
+	Shader* helloProjShader;
 
 	// Vertex init
 	// triangel verts
@@ -63,12 +64,13 @@ public:
 	Hello();
 	~Hello();
 	void HelloTriangle();
-	void LoadTexture();
+	void LoadTexture(Shader* shader);
 	void HelloTransform();
+	void HelloProjection();
 
 private:
 
-	void Transform(glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale);
+	void Transform(Shader* shader, glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale);
 	void InitData();
 	void glmTest();
 

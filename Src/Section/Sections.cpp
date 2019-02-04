@@ -15,17 +15,17 @@ void Sections::SwitchSections()
 	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_PRESS && !enterKeyPressing)
 	{
 		enterKeyPressing = true;
-		if (drawTriangleMode)
-			drawTriangleMode = false;
+		if (defaultSection)
+			defaultSection = false;
 		else
-			drawTriangleMode = true;
+			defaultSection = true;
 	}
 	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_RELEASE)
 		enterKeyPressing = false;
 
-	if (drawTriangleMode)
+	if (defaultSection)
 	{
-		hello->HelloTriangle();
+		hello->HelloProjection();
 	}
 	else
 	{

@@ -137,7 +137,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Src\Application\Application.cpp" />
+    <ClCompile Include="Src\Application\Camera.cpp" />
+    <ClCompile Include="Src\Application\Render.cpp" />
     <ClCompile Include="Src\chaoGL.cpp" />
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\main.cpp" />
@@ -146,6 +148,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Application.h" />
+    <ClInclude Include="Src\Application\Camera.h" />
+    <ClInclude Include="Src\Application\Render.h" />
     <ClInclude Include="Src\chaoGL.h" />
     <ClInclude Include="Src\Render\Shader.h" />
     <ClInclude Include="Src\Section\Hello.h" />

@@ -30,9 +30,6 @@
     <ClCompile Include="Src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>源文件\Application</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Section\Sections.cpp">
       <Filter>源文件\Section</Filter>
     </ClCompile>
@@ -41,6 +38,15 @@
     </ClCompile>
     <ClCompile Include="Src\chaoGL.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Camera.cpp">
+      <Filter>源文件\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Render.cpp">
+      <Filter>源文件\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Application.cpp">
+      <Filter>源文件\Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="Src\chaoGL.h">
       <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Camera.h">
+      <Filter>源文件\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Render.h">
+      <Filter>源文件\Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

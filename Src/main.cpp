@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Render/Shader.h>
+#include <Application/Render.h>
 #include <chaoGL.h>
 #include <Section/Sections.h>
 
@@ -19,6 +20,7 @@ bool wKeyPressing = false;
 //GLFWwindow* window;
 GLFWwindow* window;
 Application* app;
+Render* render;
 Sections* sections;
 
 int windowWidth;
@@ -52,6 +54,7 @@ int main()
 
 	// App & Sections
 	app = new Application(window,windowWidth,windowHeight);
+	render = new Render();
 	sections = new Sections();
 
 	

@@ -16,7 +16,7 @@ private:
 	Hello* hello;
 
 	bool enterKeyPressing = false;
-	bool drawTriangleMode = false;
+	bool defaultSection = true;
 
 };
 

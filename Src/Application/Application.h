@@ -2,9 +2,9 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <iostream>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <Application/Render.h>
+#include <iostream>
 
 class Application
 {
@@ -34,16 +34,16 @@ public:
 		}
 	}
 
+public:
+
+	static int screenWidth;
+	static int screenHeight;
+
+
 private:
 
 	static GLFWwindow* window;
-
-	int viewWidth;
-	int viewHeight;
+	static Application* app;
 
 };
-
-//namespace Application
-//{
-//}
 #endif // !APPLICATION_H
