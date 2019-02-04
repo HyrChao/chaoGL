@@ -25,11 +25,11 @@ void Sections::SwitchSections()
 
 	if (defaultSection)
 	{
-		hello->HelloProjection();
+		hello->HelloBox();
 	}
 	else
 	{
-		hello->HelloTransform();
+		hello->HelloProjection();
 	}
 }
 

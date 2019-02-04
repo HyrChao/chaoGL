@@ -8,6 +8,8 @@ class Render
 public:
 	Render();
 	~Render();
+	static void SetupRenderProperty();
+	static void OnFrameEnd();
 
 public:
 	static Render* render;

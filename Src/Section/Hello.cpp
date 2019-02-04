@@ -42,6 +42,23 @@ Hello::Hello()
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
+		// bind box
+		//Vertex array object
+		glGenVertexArrays(1, &cubeVAO);
+		glBindVertexArray(cubeVAO);	//After bind, VBO information can transfer to VAO, unbind to define other vertex
+		// Vertex buffer object
+		glGenBuffers(1, &cubeVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+		// vertex pos property
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		//glEnableVertexAttribArray(1);
+		// vetex ovcoord property
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+
 		//Shader
 		//Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
 		helloTriShader = new Shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
@@ -111,7 +128,7 @@ void Hello::HelloProjection()
 	// ortho matrix
 	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
 	glm::mat4 model;
-	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	glm::mat4 view;
 	// move model forward equals to move view backward
@@ -123,15 +140,51 @@ void Hello::HelloProjection()
 	helloProjShader->setMat4f("model", model);
 	helloProjShader->setMat4f("view", view);
 	helloProjShader->setMat4f("projection", projection);
-	Transform(helloProjShader,glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.5, 1.5, 1.5));
+	Transform(helloProjShader,glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.5, 1.5, 1.5));
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture2);
-	glBindVertexArray(recVAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 
+}
+
+void Hello::HelloBox()
+{
+	helloProjShader->use();
+	// ortho matrix
+	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
+	glm::mat4 model;
+	model = glm::rotate(model, glm::radians(55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	glm::mat4 view;
+	// move model forward equals to move view backward
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	glm::mat4 projection;
+	projection = Camera::main->projMat;
+
+	helloProjShader->setMat4f("model", model);
+	helloProjShader->setMat4f("view", view);
+	helloProjShader->setMat4f("projection", projection);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindVertexArray(cubeVAO);
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		glm::mat4 model;
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle)+(float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
+		helloProjShader->setMat4f("model", model);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+	glBindVertexArray(0);
 }
 
 void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
@@ -141,7 +194,7 @@ void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm:
 	trans = glm::rotate(trans, (float)glfwGetTime(), rotate);
 	trans = glm::scale(trans, scale);
 	// pass matrix to shader
-	unsigned int transformLoc = glGetUniformLocation(shader->ID, "transform");
+	unsigned int transformLoc = glGetUniformLocation(shader->ID, "model");
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 }
 

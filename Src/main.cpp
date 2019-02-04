@@ -84,6 +84,9 @@ int main()
 		// Event
 		glfwSwapBuffers(Application::GetWindow());
 		glfwPollEvents();
+
+		// on ftame end
+		Render::OnFrameEnd();
 	}
 
 	return Close();
