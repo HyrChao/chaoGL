@@ -10,13 +10,14 @@ public:
 	Sections();
 	~Sections();
 	void SwitchSections();
+	void SetDefaultSection(bool firstDefault);
+	bool GetDefaultSection();
 
 private:
 
 	Hello* hello;
-
-	bool enterKeyPressing = false;
 	bool defaultSection = true;
+
 
 };
 

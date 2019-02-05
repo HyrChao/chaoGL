@@ -9,19 +9,17 @@ Sections::~Sections()
 {
 	delete hello;
 }
+void Sections::SetDefaultSection(bool firstDefault)
+{
+	defaultSection = firstDefault;
+}
+bool Sections::GetDefaultSection()
+{
+	return defaultSection;
+}
 
 void Sections::SwitchSections()
 {
-	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_PRESS && !enterKeyPressing)
-	{
-		enterKeyPressing = true;
-		if (defaultSection)
-			defaultSection = false;
-		else
-			defaultSection = true;
-	}
-	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_RELEASE)
-		enterKeyPressing = false;
 
 	if (defaultSection)
 	{
@@ -29,7 +27,7 @@ void Sections::SwitchSections()
 	}
 	else
 	{
-		hello->HelloProjection();
+		hello->HelloCamera();
 	}
 }
 

@@ -3,10 +3,7 @@
 #ifndef Hello_H
 #define Hello_H
 
-#include<Render/Shader.h>
-#include <GLFW/glfw3.h>
-
-#include <chaoGL.h>
+#include<chaoGL.h>
 
 class Hello
 {
@@ -128,6 +125,8 @@ public:
 	void HelloTransform();
 	void HelloProjection();
 	void HelloBox();
+	void HelloCamera();
+
 
 private:
 

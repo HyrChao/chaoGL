@@ -161,7 +161,7 @@ void Hello::HelloBox()
 
 	glm::mat4 view;
 	// move model forward equals to move view backward
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	view = Camera::main->viewMat;
 
 	glm::mat4 projection;
 	projection = Camera::main->projMat;
@@ -185,6 +185,13 @@ void Hello::HelloBox()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 	glBindVertexArray(0);
+}
+
+void Hello::HelloCamera()
+{
+	Camera::main->CameraAutoSpan();
+
+	HelloBox();
 }
 
 void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)

@@ -1,27 +1,16 @@
 //  Chao 19/101/27
 // https://learnopengl-cn.github.io/01%20Getting%20started/03%20Hello%20Window/
 
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <Render/Shader.h>
-#include <Application/Render.h>
-#include <chaoGL.h>
-#include <Section/Sections.h>
+#include <Application/Application.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow *window);
 int Close();
 
-// Shader content
-bool wireframeMode = false;
-bool wKeyPressing = false;
+
 
 //GLFWwindow* window;
 GLFWwindow* window;
 Application* app;
-Render* render;
-Sections* sections;
 
 int windowWidth;
 int windowHeight;
@@ -54,8 +43,7 @@ int main()
 
 	// App & Sections
 	app = new Application(window,windowWidth,windowHeight);
-	render = new Render();
-	sections = new Sections();
+
 
 	
 	//-------------------------------------------------------------
@@ -64,29 +52,16 @@ int main()
 	{
 		// Input
 		// Check if hit esc key
-		processInput(Application::GetWindow());
 
 		// Render
+		Application::OnFrameBegin();
 
-		//// Clear test
-		float timeValue = glfwGetTime();
-		glClearColor(0.8f+0.2*sin(timeValue), 0.8f+0.2*sin(timeValue+3.14/3), 0.8f+0.2*sin(timeValue - 3.14 / 3), 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		// Fill mode
-		if (wireframeMode)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		else
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
-		sections->SwitchSections();
-
+		Application::Update();
 		// Event
-		glfwSwapBuffers(Application::GetWindow());
 		glfwPollEvents();
 
 		// on ftame end
-		Render::OnFrameEnd();
+		Application::OnFrameEnd();
 	}
 
 	return Close();
@@ -99,26 +74,8 @@ int Close()
 	//Release resource while terminate
 	glfwTerminate();
 	delete app;
-	delete sections;
 
 	return 0;
-}
-
-void processInput(GLFWwindow *window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-	// wireframe mode
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && !wKeyPressing)
-	{
-		wKeyPressing = true;
-		if (wireframeMode)
-			wireframeMode = false;
-		else
-			wireframeMode = true;
-	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-		wKeyPressing = false;
 }
 
 // Function called while change window size

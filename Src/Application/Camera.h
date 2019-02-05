@@ -1,17 +1,19 @@
 #pragma once
 #ifndef CAMERA_H
 #define CAMERA_H
-
+#include <Application/Time.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <Application/Application.h>
 
 class Camera
 {
 public:
-	Camera();
+
+	Camera(int in_screenWidth, int in_screenHeight);
 	~Camera();
+
+	void UpdateCamera();
 
 	static glm::mat4 GetPerspectiveMat()
 	{
@@ -28,16 +30,36 @@ public:
 		return main->projMat;
 	}
 
-	void SetView(bool isPerspective,float in_fov, float in_nearPlane, float in_farPlane);
-
+	void SetView(bool isPerspective, float in_fov, float in_nearPlane, float in_farPlane);
+	void SetScreenExtend(int in_screenWidth, int in_screenHeight);
 	void UseViewMode(bool isPerspective);
+	void Move(glm::vec3 pos);
+	void LockAt(glm::vec3 targetPos);
+	void LockAtUnlock();
+	void CameraAutoSpan();
+	void MoveForward(float speed);
+	void MoveRight(float speed);
+
+private:
+
 
 public:
 
 	static Camera * main;
 	glm::mat4 projMat;
+	glm::mat4 viewMat;
 
 private:
+
+	bool lookAt = false;
+
+	glm::vec3 cameraPos;
+	glm::vec3 cameraFront;
+	glm::vec3 cameraTarget;
+	glm::vec3 cameraDirection;
+	glm::vec3 cameraRight;
+	glm::vec3 cameraUp;
+	glm::vec3 cameraLockonTarget;
 
 	glm::mat4 viewProjPers;
 	glm::mat4 viewProjOrth;
