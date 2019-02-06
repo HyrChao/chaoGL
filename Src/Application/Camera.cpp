@@ -68,11 +68,33 @@ void Camera::UpdateCamera()
 	{
 		cameraTarget = cameraPos + cameraFront;
 	}
+
+	// move
 	cameraDirection = glm::normalize(cameraPos - cameraTarget);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
 	cameraUp = glm::cross(cameraDirection, cameraRight);
 	viewMat = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+
+}
+
+void Camera::MoveView(float yawoffset, float pitchoffset)
+{
+
+	yaw += yawoffset;
+	pitch += pitchoffset;
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+	front.y = sin(glm::radians(pitch));
+	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	cameraFront = glm::normalize(front);
+
 }
 
 void Camera::CameraAutoSpan()
@@ -82,7 +104,6 @@ void Camera::CameraAutoSpan()
 	float camX = sin(Time::time) * radius;
 	float camZ = cos(Time::time) * radius;
 	viewMat = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-
 }
 
 void Camera::SetView(bool isPerspective,float in_fov, float in_nearPlane, float in_farPlane)

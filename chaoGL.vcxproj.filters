@@ -57,6 +57,12 @@
     <ClCompile Include="Src\Input\Keyboard.cpp">
       <Filter>源文件\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Input\Input.cpp">
+      <Filter>源文件\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Input\Mouse.cpp">
+      <Filter>源文件\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Render\Shader.h">
@@ -84,6 +90,12 @@
       <Filter>源文件\Application</Filter>
     </ClInclude>
     <ClInclude Include="Src\Input\Keyboard.h">
+      <Filter>源文件\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Input\Input.h">
+      <Filter>源文件\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Input\Mouse.h">
       <Filter>源文件\Input</Filter>
     </ClInclude>
   </ItemGroup>

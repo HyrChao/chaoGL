@@ -9,6 +9,7 @@
 class Render
 {
 public:
+
 	Render();
 	~Render();
 	static void SetupRenderProperty();
@@ -16,6 +17,7 @@ public:
 	static void DrawOnFrameEnd();
 
 public:
+
 	static Render* render;
 
 private:

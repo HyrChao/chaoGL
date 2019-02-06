@@ -6,8 +6,8 @@
 #include <Application/Render.h>
 #include <Application/Time.h>
 #include <Section/Sections.h>
-//#include <Application/Time.h>
-//#include <glad/glad.h>
+#include <Input/Mouse.h>
+
 #include <GLFW/glfw3.h>
 
 #include "stb/stb_image.h"
@@ -51,6 +51,7 @@ public:
 			return window;
 		}
 	}
+	static GLFWwindow* window;
 
 public:
 
@@ -59,10 +60,10 @@ public:
 
 private:
 	static void ProcessInput();
+	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 private:
 
-	static GLFWwindow* window;
 	static Application* app;
 	static Sections* section;
 	static Render* render;

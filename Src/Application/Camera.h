@@ -34,6 +34,7 @@ public:
 	void SetScreenExtend(int in_screenWidth, int in_screenHeight);
 	void UseViewMode(bool isPerspective);
 	void Move(glm::vec3 pos);
+	void MoveView(float yawoffset, float pitchoffset);
 	void LockAt(glm::vec3 targetPos);
 	void LockAtUnlock();
 	void CameraAutoSpan();
@@ -63,10 +64,15 @@ private:
 
 	glm::mat4 viewProjPers;
 	glm::mat4 viewProjOrth;
+
 	float fov;
 	float nearPLane;
 	float farPlane;
 	bool isPerspectiveMode;
+
+	float yaw;
+	float pitch;
+	float roll;
 
 	static int screenWidth;
 	static int screenHeight;

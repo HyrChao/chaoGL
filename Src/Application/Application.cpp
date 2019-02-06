@@ -10,8 +10,6 @@ int Application::screenHeight;
 bool Application::wireframeMode;
 bool Application::keyOnce[GLFW_KEY_LAST + 1];
 
-
-
 Application::Application(GLFWwindow* currentWin, int width, int height)
 {
 	app = this;
@@ -28,6 +26,8 @@ Application::Application(GLFWwindow* currentWin, int width, int height)
 
 	screenWidth = width;
 	screenHeight = height;
+	;
+	Mouse::SetMouseInitLocation(width,height);
 
 	Application::InitApplication();
 }
@@ -40,7 +40,10 @@ Application::~Application()
 
 void Application::InitApplication()
 {
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	// set input callback
+	glfwSetCursorPosCallback(window, Application::mouse_callback);
 }
 
 void Application::Update()
@@ -77,7 +80,7 @@ void Application::ProcessInput()
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	// wireframe mode
-	if (((glfwGetKey(window, GLFW_KEY_W)&glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS)&&!keyOnce[GLFW_KEY_W]&&!keyOnce[GLFW_KEY_LEFT_CONTROL])
+	if (((glfwGetKey(window, GLFW_KEY_W)&glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && !keyOnce[GLFW_KEY_W] && !keyOnce[GLFW_KEY_LEFT_CONTROL])
 	{
 		keyOnce[GLFW_KEY_W] = true;
 		keyOnce[GLFW_KEY_LEFT_CONTROL] = true;
@@ -109,6 +112,12 @@ void Application::ProcessInput()
 		Camera::main->MoveRight(-cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		Camera::main->MoveRight(cameraSpeed);
+}
+
+void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	Mouse::UpdateMouse(xpos, ypos);
+	Camera::main->MoveView(Mouse::xoffset, Mouse::yoffset);
 }
 
 
