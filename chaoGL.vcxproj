@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -148,6 +148,9 @@
     <ClCompile Include="Src\Input\Keyboard.cpp" />
     <ClCompile Include="Src\Input\Mouse.cpp" />
     <ClCompile Include="Src\main.cpp" />
+    <ClCompile Include="Src\Render\Geo.cpp" />
+    <ClCompile Include="Src\Render\Light.cpp" />
+    <ClCompile Include="Src\Render\Shader.cpp" />
     <ClCompile Include="Src\Section\Hello.cpp" />
     <ClCompile Include="Src\Section\Sections.cpp" />
   </ItemGroup>
@@ -160,6 +163,8 @@
     <ClInclude Include="Src\Input\Input.h" />
     <ClInclude Include="Src\Input\Keyboard.h" />
     <ClInclude Include="Src\Input\Mouse.h" />
+    <ClInclude Include="Src\Render\Geo.h" />
+    <ClInclude Include="Src\Render\Light.h" />
     <ClInclude Include="Src\Render\Shader.h" />
     <ClInclude Include="Src\Section\Hello.h" />
     <ClInclude Include="Src\Section\Sections.h" />
