@@ -70,9 +70,9 @@ private:
 	float farPlane;
 	bool isPerspectiveMode;
 
-	float yaw;
-	float pitch;
-	float roll;
+	float yaw = 0.0f;
+	float pitch = 0.0f;
+	float roll = 0.0f;
 
 	static int screenWidth;
 	static int screenHeight;
