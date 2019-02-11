@@ -23,11 +23,11 @@ void Sections::SwitchSections()
 
 	if (defaultSection)
 	{
-		hello->HelloBox();
+		hello->HelloLight();
 	}
 	else
 	{
-		hello->HelloCamera();
+		hello->HelloBox();
 	}
 }
 

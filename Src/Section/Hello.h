@@ -5,6 +5,7 @@
 
 #include<chaoGL.h>
 #include <Render/Geo.h>
+#include <Render/Light.h>
 
 class Hello
 {
@@ -20,6 +21,8 @@ private:
 	Shader* helloTriShader;
 	Shader* helloTexShader;
 	Shader* helloProjShader;
+
+	Light* light1;
 
 	glm::vec3 cubePositions[10] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
@@ -43,6 +46,7 @@ public:
 	void HelloProjection();
 	void HelloBox();
 	void HelloCamera();
+	void HelloLight();
 
 
 private:

@@ -12,7 +12,31 @@ Light::Light(glm::vec3 pos)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	// transform 
+	scale = glm::vec3(0.2f);
+
+	trans = glm::translate(trans, pos);
+	trans = glm::scale(trans, scale);
+
+	avatarShader = new Shader("./Shader/Avatar/Light.vs", "./Shader/Avatar/Light.fs");
 }
+
+void Light::DrawAvatar()
+{
+
+	avatarShader->use();
+
+	avatarShader->setMat4f("model", trans);
+	avatarShader->setMat4f("view", Camera::main->viewMat);
+	avatarShader->setMat4f("projection", Camera::main->projMat);
+
+	avatarShader->setVec3f("lightColor", lightColor);
+
+	glBindVertexArray(Geo::geo->cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
 
 
 

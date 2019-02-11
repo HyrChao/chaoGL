@@ -18,6 +18,9 @@ Hello::Hello()
 
 	}
 
+	light1 = new Light(glm::vec3(0.0f,3.0f,0.0f));
+
+
 	isDataInitialized = true;
 }
 
@@ -137,6 +140,14 @@ void Hello::HelloBox()
 void Hello::HelloCamera()
 {
 	Camera::main->CameraAutoSpan();
+
+	HelloBox();
+}
+
+void Hello::HelloLight()
+{
+	
+	light1->DrawAvatar();
 
 	HelloBox();
 }
