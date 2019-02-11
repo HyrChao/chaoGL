@@ -187,6 +187,7 @@ void Hello::HelloLight()
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
 		helloLightShader->setMat4f("model", model);
+		helloLightShader->setVec3f("viewPos", Camera::main->pos);
 		helloLightShader->setVec3f("lightPos", light1->pos);
 		helloLightShader->setVec3f("lightColor", light1->lightColor);
 		glDrawArrays(GL_TRIANGLES, 0, 36);

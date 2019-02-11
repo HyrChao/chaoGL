@@ -12,9 +12,9 @@ Camera::Camera(int in_screenWidth,int in_screenHeight)
 
 	cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 
-	cameraPos = glm::vec3(0.0f, 0.0f, -3.0f);
+	pos = glm::vec3(0.0f, 0.0f, -3.0f);
 	cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	cameraDirection = glm::normalize(cameraPos - cameraTarget);
+	cameraDirection = glm::normalize(pos - cameraTarget);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
 	cameraUp = glm::cross(cameraDirection, cameraRight);
@@ -34,17 +34,17 @@ Camera::~Camera()
 
 void Camera::Move(glm::vec3 pos)
 {
-	cameraPos = pos;
+	this->pos = pos;
 }
 
 void Camera::MoveForward(float speed)
 {
-	cameraPos += cameraFront * speed;
+	pos += cameraFront * speed;
 }
 
 void Camera::MoveRight(float speed)
 {
-	cameraPos += cameraRight * speed;
+	pos += cameraRight * speed;
 }
 
 void Camera::LockAt(glm::vec3 targetPos)
@@ -66,15 +66,15 @@ void Camera::UpdateCamera()
 	}
 	else
 	{
-		cameraTarget = cameraPos + cameraFront;
+		cameraTarget = pos + cameraFront;
 	}
 
 	// move
-	cameraDirection = glm::normalize(cameraPos - cameraTarget);
+	cameraDirection = glm::normalize(pos - cameraTarget);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameraRight = glm::normalize(glm::cross(up, cameraDirection));
 	cameraUp = glm::cross(cameraDirection, cameraRight);
-	viewMat = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+	viewMat = glm::lookAt(pos, cameraTarget, cameraUp);
 
 }
 

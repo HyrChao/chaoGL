@@ -46,6 +46,7 @@ private:
 
 public:
 
+	glm::vec3 pos;
 	static Camera * main;
 	glm::mat4 projMat;
 	glm::mat4 viewMat;
@@ -54,7 +55,6 @@ private:
 
 	bool lookAt = false;
 
-	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 	glm::vec3 cameraTarget;
 	glm::vec3 cameraDirection;
