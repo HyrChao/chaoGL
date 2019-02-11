@@ -30,8 +30,9 @@ void Render::SetupRenderProperty()
 void Render::DrawOnFrameBegin()
 {
 	//// Clear
-	float timeValue = glfwGetTime();
-	glClearColor(0.8f + 0.2*sin(timeValue), 0.8f + 0.2*sin(timeValue + 3.14 / 3), 0.8f + 0.2*sin(timeValue - 3.14 / 3), 1.0f);
+	//float timeValue = glfwGetTime();
+	//glClearColor(0.8f + 0.2*sin(timeValue), 0.8f + 0.2*sin(timeValue + 3.14 / 3), 0.8f + 0.2*sin(timeValue - 3.14 / 3), 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 

@@ -14,11 +14,11 @@ public:
 
 public:
 
+	glm::vec3 pos = glm::vec3(0, 0, 0);
 	glm::vec3 lightColor = glm::vec3(1.0f);
 
 private:
 
-	glm::vec3 pos = glm::vec3(0, 0, 0);
 
 	glm::vec3 scale = glm::vec3(1, 1, 1);
 

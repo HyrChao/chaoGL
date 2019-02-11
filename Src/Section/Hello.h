@@ -21,6 +21,7 @@ private:
 	Shader* helloTriShader;
 	Shader* helloTexShader;
 	Shader* helloProjShader;
+	Shader* helloLightShader;
 
 	Light* light1;
 
@@ -54,6 +55,7 @@ private:
 	void Transform(Shader* shader, glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale);
 	void InitData();
 	void glmTest();
+	void SetupLight();
 
 };
 

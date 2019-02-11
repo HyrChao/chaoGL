@@ -11,15 +11,16 @@ Hello::Hello()
 		helloTriShader = new Shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
 		helloTexShader = new Shader("./Shader/Vertex/HelloTexture.vs", "./Shader/Fragment/HelloTexture.fs");
 		helloProjShader = new Shader("./Shader/Vertex/HelloProjection.vs", "./Shader/Fragment/HelloProjection.fs");
+		helloLightShader = new Shader("./Shader/Vertex/HelloLight.vs", "./Shader/Fragment/HelloLight.fs");
 
 		// load tecture
 		LoadTexture(helloTexShader);
 		LoadTexture(helloProjShader);
+		LoadTexture(helloLightShader);
 
 	}
 
-	light1 = new Light(glm::vec3(0.0f,3.0f,0.0f));
-
+	SetupLight();
 
 	isDataInitialized = true;
 }
@@ -29,6 +30,15 @@ Hello::~Hello()
 	delete helloTriShader;
 	delete helloTexShader;
 	delete helloProjShader;
+	delete helloLightShader;
+}
+
+void Hello::SetupLight()
+{
+	light1 = new Light(glm::vec3(0.0f,3.0f,0.0f));
+	//light1->lightColor = glm::vec3(0.6f, 0.2f, 0.2f);
+	light1->lightColor = glm::vec3(0.2f, 0.05f, 0.05f);
+
 }
 
 void Hello::HelloTriangle()
@@ -149,7 +159,39 @@ void Hello::HelloLight()
 	
 	light1->DrawAvatar();
 
-	HelloBox();
+	helloLightShader->use();
+	// ortho matrix
+	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
+	glm::mat4 model;
+	model = glm::rotate(model, glm::radians(55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	glm::mat4 view;
+	// move model forward equals to move view backward
+	view = Camera::main->viewMat;
+
+	glm::mat4 projection;
+	projection = Camera::main->projMat;
+
+	helloLightShader->setMat4f("model", model);
+	helloLightShader->setMat4f("view", view);
+	helloLightShader->setMat4f("projection", projection);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindVertexArray(Geo::geo->cubeVAO);
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		glm::mat4 model;
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
+		helloLightShader->setMat4f("model", model);
+		helloLightShader->setVec3f("lightPos", light1->pos);
+		helloLightShader->setVec3f("lightColor", light1->lightColor);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+	glBindVertexArray(0);
 }
 
 void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
