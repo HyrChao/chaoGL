@@ -20,6 +20,7 @@ void main()
     TexCoord = aTexCoord;
 	//replace this : Normal = mat3(transpose(inverse(model))) * aNormal;
 	//can update with scale, but two cost, replace with simple one
-	Normal = vec3(model * vec4(aNormal, 1.0));
+	// see https://learnopengl-cn.github.io/02%20Lighting/02%20Basic%20Lighting/ for detail
+	Normal = vec3(model * vec4(aNormal, 0.0));
 	FragPos = vec3(model * vec4(aPos, 1.0));
 }

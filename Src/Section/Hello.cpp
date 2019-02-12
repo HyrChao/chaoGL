@@ -35,9 +35,9 @@ Hello::~Hello()
 
 void Hello::SetupLight()
 {
-	light1 = new Light(glm::vec3(0.0f,3.0f,0.0f));
-	//light1->lightColor = glm::vec3(0.6f, 0.2f, 0.2f);
-	light1->lightColor = glm::vec3(0.2f, 0.05f, 0.05f);
+	light1 = new Light(glm::vec3(0.0f,3.0f,-3.0f));
+	light1->lightColor = glm::vec3(0.6f, 0.2f, 0.2f);
+	//light1->lightColor = glm::vec3(0.2f, 0.05f, 0.05f);
 
 }
 
@@ -157,6 +157,12 @@ void Hello::HelloCamera()
 void Hello::HelloLight()
 {
 	
+	// change light color among with time 
+	float timeval1 = (glm::sin(Time::time) + 1)/2;
+	float timeval2 = (glm::cos(Time::time) + 1)/2;
+	float timeval3 = (glm::sin(Time::time + 3.14f) + 1)/2;
+	light1->lightColor = glm::vec3(timeval1, timeval2, timeval3);
+
 	light1->DrawAvatar();
 
 	helloLightShader->use();
@@ -175,6 +181,9 @@ void Hello::HelloLight()
 	helloLightShader->setMat4f("model", model);
 	helloLightShader->setMat4f("view", view);
 	helloLightShader->setMat4f("projection", projection);
+	helloLightShader->setVec3f("viewPos", Camera::main->pos);
+	helloLightShader->setVec3f("lightPos", light1->pos);
+	helloLightShader->setVec3f("lightColor", light1->lightColor);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glActiveTexture(GL_TEXTURE1);
@@ -187,9 +196,6 @@ void Hello::HelloLight()
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
 		helloLightShader->setMat4f("model", model);
-		helloLightShader->setVec3f("viewPos", Camera::main->pos);
-		helloLightShader->setVec3f("lightPos", light1->pos);
-		helloLightShader->setVec3f("lightColor", light1->lightColor);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 	glBindVertexArray(0);

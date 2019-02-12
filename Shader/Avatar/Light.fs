@@ -25,6 +25,7 @@ void main()
 {
 	vec3 lightAvatarCol = rgb2hsv(lightColor.rgb);
 	lightAvatarCol.b = 1.0;
+	lightAvatarCol.g *= 0.5;
 	lightAvatarCol = hsv2rgb(lightAvatarCol);
     FragColor = vec4(lightAvatarCol, 1.0);
 }
