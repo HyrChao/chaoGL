@@ -1,38 +1,65 @@
-#为项目配置CMake的总入口，设置一些全局的变量
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project (SUMMARY_DEBUG)
+cmake_minimum_required(VERSION 3.0)
+project(Glitter)
 
-#SUMMARY_DEBUG_SOURCE_DIR这个变量是在指定项目名称为SUMMARY_DEBUG后自动生成的变量，
-#指的是我们在CMake GUI中为项目指定的源目录
+option(GLFW_BUILD_DOCS OFF)
+option(GLFW_BUILD_EXAMPLES OFF)
+option(GLFW_BUILD_TESTS OFF)
+add_subdirectory(Glitter/Vendor/glfw)
 
-#设置GLFW库的头文件目录
-set(GLFW3_INCLUDE_DIR ${SUMMARY_DEBUG_SOURCE_DIR}/opengl_helper/include/GLFW)
-#设置GLFW库的库文件路径
-set(GLFW3_LIBRARY ${SUMMARY_DEBUG_SOURCE_DIR}/opengl_helper/x64/libs/glfw3.lib)
+option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+option(ASSIMP_BUILD_SAMPLES OFF)
+option(ASSIMP_BUILD_TESTS OFF)
+add_subdirectory(Glitter/Vendor/assimp)
 
-#设置GLEW库的头文件目录
-set(GLEW_INCLUDE_DIR ${SUMMARY_DEBUG_SOURCE_DIR}/opengl_helper/include/GLEW)
-#设置GLEW库的库文件目录
-set(GLEW_LIBRARY ${SUMMARY_DEBUG_SOURCE_DIR}/opengl_helper/x64/libs/glew32.lib)
+option(BUILD_BULLET2_DEMOS OFF)
+option(BUILD_CPU_DEMOS OFF)
+option(BUILD_EXTRAS OFF)
+option(BUILD_OPENGL3_DEMOS OFF)
+option(BUILD_UNIT_TESTS OFF)
+add_subdirectory(Glitter/Vendor/bullet)
 
-#设置glm库的头文件目录，改库不需要预先进行编译，可以直接使用
-set(GLM_INCLUDE_DIRS ${SUMMARY_DEBUG_SOURCE_DIR}/opengl_helper/include/glm)
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
+    if(NOT WIN32)
+        set(GLAD_LIBRARIES dl)
+    endif()
+endif()
 
-#将上述的头文件目录添加到一个列表变量之中
-list( APPEND SUMMARY_DEBUG_INCLUDE ${GLM_INCLUDE_DIRS} )
-list( APPEND SUMMARY_DEBUG_INCLUDE ${GLFW3_INCLUDE_DIR} )
-list( APPEND SUMMARY_DEBUG_INCLUDE ${GLEW_INCLUDE_DIR} )
+include_directories(Glitter/Headers/
+                    Glitter/Vendor/assimp/include/
+                    Glitter/Vendor/bullet/src/
+                    Glitter/Vendor/glad/include/
+                    Glitter/Vendor/glfw/include/
+                    Glitter/Vendor/glm/
+                    Glitter/Vendor/stb/)
 
-#将上述的库文件目录添加到一个列表变量之中
-list( APPEND SUMMARY_DEBUG_LIBS ${GLFW3_LIBRARY} )
-list( APPEND SUMMARY_DEBUG_LIBS ${GLEW_LIBRARY} )
+file(GLOB VENDORS_SOURCES Glitter/Vendor/glad/src/glad.c)
+file(GLOB PROJECT_HEADERS Glitter/Headers/*.hpp)
+file(GLOB PROJECT_SOURCES Glitter/Sources/*.cpp)
+file(GLOB PROJECT_SHADERS Glitter/Shaders/*.comp
+                          Glitter/Shaders/*.frag
+                          Glitter/Shaders/*.geom
+                          Glitter/Shaders/*.vert)
+file(GLOB PROJECT_CONFIGS CMakeLists.txt
+                          Readme.md
+                         .gitattributes
+                         .gitignore
+                         .gitmodules)
 
-#利用find_package命令找到OpenGL
-find_package( OpenGL REQUIRED )
-list( APPEND SUMMARY_DEBUG_LIBS ${OPENGL_gl_LIBRARY} )
+source_group("Headers" FILES ${PROJECT_HEADERS})
+source_group("Shaders" FILES ${PROJECT_SHADERS})
+source_group("Sources" FILES ${PROJECT_SOURCES})
+source_group("Vendors" FILES ${VENDORS_SOURCES})
 
-#设置项目的头文件包含目录
-include_directories( ${SUMMARY_DEBUG_INCLUDE} )
-
-#设置子目录
-add_subdirectory(main_project)
+add_definitions(-DGLFW_INCLUDE_NONE
+                -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
+                               ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
+                               ${VENDORS_SOURCES})
+target_link_libraries(${PROJECT_NAME} assimp glfw
+                      ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
+                      BulletDynamics BulletCollision LinearMath)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
