@@ -1,4 +1,4 @@
-#include<Section/Hello.h>
+﻿#include<Section/Hello.h>
 
 Hello::Hello()
 {
@@ -182,8 +182,18 @@ void Hello::HelloLight()
 	helloLightShader->setMat4f("view", view);
 	helloLightShader->setMat4f("projection", projection);
 	helloLightShader->setVec3f("viewPos", Camera::main->pos);
-	helloLightShader->setVec3f("lightPos", light1->pos);
-	helloLightShader->setVec3f("lightColor", light1->lightColor);
+
+	helloLightShader->setVec3f("material.ambient", 1.0f, 0.5f, 0.31f);
+	helloLightShader->setVec3f("material.diffuse", 1.0f, 0.5f, 0.31f);
+	helloLightShader->setVec3f("material.specular", 0.5f, 0.5f, 0.5f);
+	helloLightShader->setFloat("material.shininess", 32.0f);
+
+	//helloLightShader->setVec3f("lightColor", light1->lightColor);
+	helloLightShader->setVec3f("light.position", light1->pos);
+	helloLightShader->setVec3f("light.ambient", 0.2f * light1->lightColor);
+	helloLightShader->setVec3f("light.diffuse", 0.5f * light1->lightColor);
+	helloLightShader->setVec3f("light.specular", 1.0f * light1->lightColor);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glActiveTexture(GL_TEXTURE1);
