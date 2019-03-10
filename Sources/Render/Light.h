@@ -3,6 +3,8 @@
 #define LIGHT_H
 
 #include<Render/Geo.h>
+#include<Render/Shader.h>
+#include<Application/Camera.h>
 
 class Light
 {

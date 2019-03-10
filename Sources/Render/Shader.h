@@ -1,16 +1,9 @@
-﻿// 2019-01-28 14:13:24 chao
+// 2019-01-28 14:13:24 chao
 
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <glad/glad.h>
-
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include<chaoGL.h>
 
 
 class Shader

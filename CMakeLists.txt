@@ -25,6 +25,11 @@ macro(GROUP_SRC SRCS)
         string(COMPARE EQUAL ${sgbd_fpath} ${sgbd_group_name} sgbd_nogroup)
         string(REPLACE "/" "\\" sgbd_group_name ${sgbd_group_name})
         string(REPLACE "." "" sgbd_group_name ${sgbd_group_name})
+        # if ("${FILE}" MATCHES ".*\\.cpp")
+        #     set(GROUP "Source Files${GROUP}")
+        # elseif("${FILE}" MATCHES ".*\\.h")
+        #     set(GROUP "Header Files${GROUP}")
+        # endif()
         if(sgbd_nogroup)
             set(sgbd_group_name "\\")
         endif(sgbd_nogroup)
@@ -51,9 +56,11 @@ include_directories(./Includes/
                     ./3rdparty/glad/include/
                     ./3rdparty/glfw/include/
                     ./3rdparty/glm/
-                    ./3rdparty/stb/)
+                    ./3rdparty/stb/
+                    ./Sources/
+                    )
 
-file(GLOB VENDORS_SOURCES ./3rdparty/glad/src/glad.c)
+file(GLOB_RECURSE VENDORS_SOURCES ./3rdparty/*.h)
 file(GLOB_RECURSE PROJECT_HEADERS ./Includes/*.h)
 file(GLOB_RECURSE PROJECT_SHADERS ./Shaders/*.fs
                                   ./Shaders/*.vs)
@@ -66,12 +73,13 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt
 file(GLOB_RECURSE PROJECT_SOURCES ./Sources/*.cpp
                                   ./Sources/*.h)
 
-set(all_files ${PROJECT_SOURCES})
-GROUP_SRC(all_files)
+set(all_src ${PROJECT_SOURCES})
+GROUP_SRC(all_src)
+set(all_3rdparty ${VENDORS_SOURCES})
+GROUP_SRC(all_3rdparty)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
-source_group("Vendors" FILES ${VENDORS_SOURCES})
 
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
@@ -80,6 +88,6 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${VENDORS_SOURCES})
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
-                        LinearMath)
+                        )
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})

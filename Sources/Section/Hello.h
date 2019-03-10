@@ -3,8 +3,6 @@
 #ifndef Hello_H
 #define Hello_H
 
-#include<chaoGL.h>
-#include <Render/Geo.h>
 #include <Render/Light.h>
 
 class Hello
@@ -16,7 +14,7 @@ private:
 
 	bool isDataInitialized = false;
 
-	unsigned int diffuseTex, specularTex, texture2;
+	unsigned int diffuseTex, specularTex, texture1, texture2;
 
 	Shader* helloTriShader;
 	Shader* helloTexShader;

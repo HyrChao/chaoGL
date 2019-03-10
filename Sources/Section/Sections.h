@@ -1,7 +1,7 @@
 #ifndef SECTIONS_H
 #define SECTIONS_H
 
-#include <Section\Hello.h>
+#include <Section/Hello.h>
 
 
 class Sections
