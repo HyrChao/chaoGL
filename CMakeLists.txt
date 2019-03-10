@@ -2,21 +2,35 @@ cmake_minimum_required(VERSION 3.0)
 
 project(chaoGL C CXX)
 
-macro(source_group_by_dir source_files)
-    if(MSVC)
-        set(sgbd_cur_dir ${CMAKE_CURRENT_SOURCE_DIR})
-        foreach(sgbd_file ${${source_files}})
-            string(REGEX REPLACE ${sgbd_cur_dir}/\(.*\) \\1 sgbd_fpath ${sgbd_file})
-            string(REGEX REPLACE "\(.*\)/.*" \\1 sgbd_group_name ${sgbd_fpath})
-            string(COMPARE EQUAL ${sgbd_fpath} ${sgbd_group_name} sgbd_nogroup)
-            string(REPLACE "/" "\\" sgbd_group_name ${sgbd_group_name})
-            if(sgbd_nogroup)
-                set(sgbd_group_name "\\")
-            endif(sgbd_nogroup)
-            source_group(${sgbd_group_name} FILES ${sgbd_file})
-        endforeach(sgbd_file)
-    endif(MSVC)
-endmacro(source_group_by_dir)
+macro(GROUP_SRC SRCS)
+    # #convert source file to absolute
+    # get_filename_component(ABSOLUTE_PATH "${FILE}" ABSOLUTE)
+    # # Get the directory of the absolute source file
+    # get_filename_component(PARENT_DIR "${ABSOLUTE_PATH}" DIRECTORY)
+    # # Remove common directory prefix to make the group
+    # string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+    # # Make sure we are using windows slashes
+    # string(REPLACE "/" "\\" GROUP "${GROUP}")
+    # # Group into "Source Files" and "Header Files"
+    # if ("${FILE}" MATCHES ".*\\.cpp")
+    #     set(GROUP "Source Files${GROUP}")
+    # elseif("${FILE}" MATCHES ".*\\.h")
+    #     set(GROUP "Header Files${GROUP}")
+    # endif()
+    # source_group("${GROUP}" FILES "${FILE}")
+    set(sgbd_cur_dir ${CMAKE_CURRENT_SOURCE_DIR})
+    foreach(sgbd_file ${${SRCS}})
+        string(REGEX REPLACE ${sgbd_cur_dir}/\(.*\) \\1 sgbd_fpath ${sgbd_file})
+        string(REGEX REPLACE "\(.*\)/.*" \\1 sgbd_group_name ${sgbd_fpath})
+        string(COMPARE EQUAL ${sgbd_fpath} ${sgbd_group_name} sgbd_nogroup)
+        string(REPLACE "/" "\\" sgbd_group_name ${sgbd_group_name})
+        string(REPLACE "." "" sgbd_group_name ${sgbd_group_name})
+        if(sgbd_nogroup)
+            set(sgbd_group_name "\\")
+        endif(sgbd_nogroup)
+        source_group(${sgbd_group_name} FILES ${sgbd_file})
+    endforeach(sgbd_file)
+endmacro(GROUP_SRC)
 
 
 option(GLFW_BUILD_DOCS OFF)
@@ -53,7 +67,7 @@ file(GLOB_RECURSE PROJECT_SOURCES ./Sources/*.cpp
                                   ./Sources/*.h)
 
 set(all_files ${PROJECT_SOURCES})
-source_group_by_dir(all_files)
+GROUP_SRC(all_files)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
