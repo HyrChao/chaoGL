@@ -3,6 +3,7 @@
 #ifndef Hello_H
 #define Hello_H
 
+#include <glad/glad.h>
 #include <Render/Light.h>
 
 class Hello

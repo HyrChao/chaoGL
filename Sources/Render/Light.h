@@ -5,6 +5,8 @@
 #include<Render/Geo.h>
 #include<Render/Shader.h>
 #include<Application/Camera.h>
+#include <glad/glad.h>
+
 
 class Light
 {

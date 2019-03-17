@@ -3,8 +3,9 @@
 #define RENDER_H
 
 //#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include<chaoGL.h>
-
+#include<Render/Shader.h>
 
 class Render
 {

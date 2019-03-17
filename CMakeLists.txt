@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 
+
 project(chaoGL C CXX)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "")
 
 macro(GROUP_SRC SRCS)
     # #convert source file to absolute
@@ -60,34 +64,47 @@ include_directories(./Includes/
                     ./Sources/
                     )
 
-file(GLOB_RECURSE VENDORS_SOURCES ./3rdparty/*.h)
+file(GLOB VENDORS_SOURCES ./3rdparty/glad/src/glad.c)
 file(GLOB_RECURSE PROJECT_HEADERS ./Includes/*.h)
 file(GLOB_RECURSE PROJECT_SHADERS ./Shaders/*.fs
-                                  ./Shaders/*.vs)
+./Shaders/*.vs)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
                          .gitattributes
                          .gitignore
                          .gitmodules)
-
+file(GLOB_RECURSE VENDORS_HEADERS ./3rdparty/*.h
+                                  ./3rdparty/*.hpp)
 file(GLOB_RECURSE PROJECT_SOURCES ./Sources/*.cpp
                                   ./Sources/*.h)
 
-set(all_src ${PROJECT_SOURCES})
-GROUP_SRC(all_src)
-set(all_3rdparty ${VENDORS_SOURCES})
-GROUP_SRC(all_3rdparty)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
+source_group("3rdpartySource" FILES ${VENDORS_SOURCES})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
+set(all_src ${PROJECT_SOURCES})
+GROUP_SRC(all_src)
+set(all_3rdparty ${VENDORS_HEADERS})
+GROUP_SRC(all_3rdparty)
 
 add_definitions(-DGLFW_INCLUDE_NONE
-                -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
+-DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
-                               ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES})
+${PROJECT_SHADERS} ${PROJECT_CONFIGS}
+                               ${VENDORS_SOURCES} ${VENDORS_HEADERS})
 target_link_libraries(${PROJECT_NAME} glfw
-                      ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
-                        )
+${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
+)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+
+#This executes every time you build ${PROJECT_NAME} 
+#and copies the contents of "/config" into the directory where the target exe/lib will end up.
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/Assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets)
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders)
+
+                       

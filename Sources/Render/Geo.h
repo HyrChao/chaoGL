@@ -2,6 +2,7 @@
 #ifndef GEO_H
 #define GEO_H
 
+#include <glad/glad.h>
 #include <chaoGL.h>
 
 

@@ -1,11 +1,17 @@
 //  Chao 19/101/27
 // https://learnopengl-cn.github.io/01%20Getting%20started/03%20Hello%20Window/
 
+// To use stb_image, add this in *one* C++ source file.
+#define STB_IMAGE_IMPLEMENTATION
+//#include <stb_image.h>
+
 #include <Application/Application.h>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 int Close();
-
 
 
 //GLFWwindow* window;
