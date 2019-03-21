@@ -259,7 +259,7 @@ void Hello::LoadTexture(Shader* shader)
 	// Load texture using stb_image 
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load(FileSystem::getPath("Assets/Texture/container.png").c_str(), &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load(FileSystem::getPath("/Assets/Texture/container.png").c_str(), &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		// using the picture data to generate texture
@@ -268,7 +268,7 @@ void Hello::LoadTexture(Shader* shader)
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("Assets/Texture/container.png").c_str() << std::endl;
+		std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("/Assets/Texture/container.png").c_str() << std::endl;
 	}
 	// release data 
 	stbi_image_free(data);
@@ -283,7 +283,7 @@ void Hello::LoadTexture(Shader* shader)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// load image, create texture and generate mipmaps
-	data = stbi_load(FileSystem::getPath("Assets/Texture/kotoridesu_s.tga").c_str(), &width, &height, &nrChannels, 0);
+	data = stbi_load(FileSystem::getPath("/Assets/Texture/kotoridesu_s.tga").c_str(), &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		// note that the huaji.tga has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
@@ -292,7 +292,7 @@ void Hello::LoadTexture(Shader* shader)
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("Assets/Texture/kotoridesu_s.tga").c_str() << std::endl;
+		std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("/Assets/Texture/kotoridesu_s.tga").c_str() << std::endl;
 	}
 	stbi_image_free(data);
 

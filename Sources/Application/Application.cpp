@@ -10,6 +10,7 @@ int Application::screenHeight;
 bool Application::wireframeMode;
 bool Application::keyOnce[GLFW_KEY_LAST + 1];
 
+
 Application::Application(GLFWwindow* currentWin, int width, int height)
 {
 	app = this;

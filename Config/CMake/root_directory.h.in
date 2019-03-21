@@ -1,0 +1,7 @@
+//#pragma once
+//#ifndef CHAOGL_ROOT_DIR_H
+//#define CHAOGL_ROOT_DIR_H
+
+const char * const logl_root = "${CMAKE_SOURCE_DIR}";;
+
+//#endif

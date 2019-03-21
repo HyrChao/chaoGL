@@ -101,10 +101,13 @@ RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 #This executes every time you build ${PROJECT_NAME} 
 #and copies the contents of "/config" into the directory where the target exe/lib will end up.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/Assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders)
+COMMAND ${CMAKE_COMMAND} -E copy_directory
+${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders)
 
-                       
+# No need to copy assets after defined root by cmake
+# add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#                        ${CMAKE_SOURCE_DIR}/Assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets)
+# Include config files from cmake
+configure_file(Config/CMake/root_directory.h.in Config/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/Config)                       
