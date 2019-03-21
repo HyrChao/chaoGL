@@ -41,11 +41,11 @@ void main()
 	vec3 lightDir = normalize(light.position - FragPos);
 
 	// ambient color
-    vec3 ambient =  light.ambient * diffuseTex;
+    vec3 ambient =  light.ambient * diffuseTex.rgb;
 	
 	// diffuse color
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * (diff * diffuseTex);
+	vec3 diffuse = light.diffuse * (diff * diffuseTex.rgb);
 	
 	// specular color
 	vec3 viewDir = normalize(viewPos - FragPos);
@@ -53,8 +53,8 @@ void main()
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.specular * (material.specular * spec);
 
-	vec3 baseColor = mix(tex1color, tex2color, tex2color.a).rgb;
-	vec3 result = (diffuse + ambient + specular) * baseColor;
+	//vec3 baseColor = mix(tex1color, tex2color, tex2color.a).rgb;
+	vec3 result = (diffuse + ambient + specular) * tex2color;
 	
 	FragColor = vec4(result,1);
 }
