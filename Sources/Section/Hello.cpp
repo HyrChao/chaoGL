@@ -8,10 +8,10 @@ Hello::Hello()
 		//----------------------------------
 		//Shader
 		//Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
-		helloTriShader = new Shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
-		helloTexShader = new Shader("./Shader/Vertex/HelloTexture.vs", "./Shader/Fragment/HelloTexture.fs");
-		helloProjShader = new Shader("./Shader/Vertex/HelloProjection.vs", "./Shader/Fragment/HelloProjection.fs");
-		helloLightShader = new Shader("./Shader/Vertex/HelloLight.vs", "./Shader/Fragment/HelloLight.fs");
+		helloTriShader = new Shader("./Shaders/Vertex/HelloTriangle.vs", "./Shaders/Fragment/HelloTriangle.fs");
+		helloTexShader = new Shader("./Shaders/Vertex/HelloTexture.vs", "./Shaders/Fragment/HelloTexture.fs");
+		helloProjShader = new Shader("./Shaders/Vertex/HelloProjection.vs", "./Shaders/Fragment/HelloProjection.fs");
+		helloLightShader = new Shader("./Shaders/Vertex/HelloLight.vs", "./Shaders/Fragment/HelloLight.fs");
 
 		// load tecture
 		LoadTexture(helloTexShader);

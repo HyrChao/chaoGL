@@ -17,6 +17,7 @@ public:
 	static std::string getPath(const std::string& path)
 	{
 		static std::string(*pathBuilder)(std::string const &) = getPathBuilder();
+		//static std::string root = (givenRoot != nullptr ? givenRoot : "");
 		return (*pathBuilder)(path); 
 	}
 

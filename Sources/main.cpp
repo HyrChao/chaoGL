@@ -23,7 +23,7 @@ int windowHeight;
 
 int main()
 {
-	// init GLFW
+    // init GLFW
 	glfwInit();
 
 	//Window
@@ -32,7 +32,13 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    #ifdef __APPLE__
+        // Mac 10.9 later using OpenGL4.1
+        // need campative if using version 3.3
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);   //This is for mac OS
+
 	// Create a new window object
 	window = glfwCreateWindow(windowWidth, windowHeight, "chaoGL", NULL, NULL);
 	glfwMakeContextCurrent(window);

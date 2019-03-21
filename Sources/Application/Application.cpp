@@ -45,6 +45,8 @@ void Application::InitApplication()
 
 	// set input callback
 	glfwSetCursorPosCallback(window, Application::mouse_callback);
+    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+    glViewport(0, 0, screenWidth, screenHeight);
 }
 
 void Application::Update()

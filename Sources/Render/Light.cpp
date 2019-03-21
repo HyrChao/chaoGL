@@ -21,7 +21,7 @@ Light::Light(glm::vec3 pos)
 	//lightColor = glm::vec3(0.3f, 0.1f, 0.1f);
 	//lightColor = glm::vec3(0.1f, 0.0f, 0.0f);
 
-	avatarShader = new Shader("./Shader/Avatar/Light.vs", "./Shader/Avatar/Light.fs");
+	avatarShader = new Shader("./Shaders/Avatar/Light.vs", "./Shaders/Avatar/Light.fs");
 }
 
 void Light::DrawAvatar()
