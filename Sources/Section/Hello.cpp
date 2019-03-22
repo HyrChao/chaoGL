@@ -1,4 +1,4 @@
-﻿#include<Section/Hello.h>
+#include<Section/Hello.h>
 
 Hello::Hello()
 {
@@ -14,9 +14,12 @@ Hello::Hello()
 		helloLightShader = new Shader("./Shaders/Vertex/HelloLight.vs", "./Shaders/Fragment/HelloLight.fs");
 
 		// load tecture
-		LoadTexture(helloTexShader);
-		LoadTexture(helloProjShader);
-		LoadTexture(helloLightShader);
+		LoadTexture();
+        
+        helloLightShader->use(); // set uniform！for texture
+        helloLightShader->setInt("material.diffuse_1", 0);
+        helloLightShader->setInt("material.diffuse_2", 1);
+        helloLightShader->setInt("material.specular", 2);
 
 	}
 
@@ -64,9 +67,9 @@ void Hello::HelloTransform()
 	helloTexShader->use();
 	//glBindTexture(GL_TEXTURE_2D, texture);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_2);
 
 	glBindVertexArray(Geo::geo->recVAO);
 	Transform(helloTexShader,glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.5, 0.5, 0.5));
@@ -102,9 +105,9 @@ void Hello::HelloProjection()
 	helloProjShader->setMat4f("projection", projection);
 	Transform(helloProjShader,glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.5, 1.5, 1.5));
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_2);
 	glBindVertexArray(Geo::geo->cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
@@ -130,9 +133,9 @@ void Hello::HelloBox()
 	helloProjShader->setMat4f("view", view);
 	helloProjShader->setMat4f("projection", projection);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_2);
 	glBindVertexArray(Geo::geo->cubeVAO);
 	for (unsigned int i = 0; i < 10; i++)
 	{
@@ -195,9 +198,11 @@ void Hello::HelloLight()
 	helloLightShader->setVec3f("light.specular", 1.0f * light1->lightColor);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_2);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, specularTex);
 	glBindVertexArray(Geo::geo->cubeVAO);
 	for (unsigned int i = 0; i < 10; i++)
 	{
@@ -239,13 +244,13 @@ void Hello::glmTest()
 	std::cout << vec.x << vec.y << vec.z << std::endl;
 }
 
-void Hello::LoadTexture(Shader* shader)
+void Hello::LoadTexture()
 {
-	// texture1
+	// diffuse texture 1
 	// create a texture object 
-	glGenTextures(1, &texture1);
+	glGenTextures(1, &diffuseTex_1);
 	// bind a texture
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);
 	// set repeat and filtering for current binding texture
 	// set uv repeat mode, S and T direction
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -273,9 +278,9 @@ void Hello::LoadTexture(Shader* shader)
 	// release data 
 	stbi_image_free(data);
 
-	// texture2
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	// diffuse texture 2
+	glGenTextures(1, &diffuseTex_2);
+	glBindTexture(GL_TEXTURE_2D, diffuseTex_2);
 	// set the texture wrapping parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -295,11 +300,27 @@ void Hello::LoadTexture(Shader* shader)
 		std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("/Assets/Texture/kotoridesu_s.tga").c_str() << std::endl;
 	}
 	stbi_image_free(data);
-
-
-	// texture unit setup
-	shader-> use();
-	glUniform1i(glGetUniformLocation(shader->ID, "texture1"), 0); // setup manully
-	//glUniform1i(glGetUniformLocation(helloTexShader->ID, "texture2"), 1); // setup manully
-	shader->setInt("texture2", 1); // or use function in shader class
+    
+    // specular texture
+    glGenTextures(1, &specularTex);
+    glBindTexture(GL_TEXTURE_2D, specularTex);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);    // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    data = stbi_load(FileSystem::getPath("/Assets/Texture/container2_specular.png").c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        // note that the huaji.tga has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("/Assets/Texture/container2_specular.png").c_str() << std::endl;
+    }
+    stbi_image_free(data);
 }

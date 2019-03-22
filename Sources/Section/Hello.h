@@ -15,7 +15,7 @@ private:
 
 	bool isDataInitialized = false;
 
-	unsigned int diffuseTex, specularTex, texture1, texture2;
+	unsigned int diffuseTex_1, diffuseTex_2, specularTex;
 
 	Shader* helloTriShader;
 	Shader* helloTexShader;
@@ -42,7 +42,7 @@ public:
 	~Hello();
 	void HelloTriangle();
 	void LoadTexture(const std::string& path ,int& texId);
-	void LoadTexture(Shader* shader);
+	void LoadTexture();
 	void HelloTransform();
 	void HelloProjection();
 	void HelloBox();
