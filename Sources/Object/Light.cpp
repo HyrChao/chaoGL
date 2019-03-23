@@ -1,7 +1,9 @@
-#include<Render/Light.h>
+#include<Object/Light.h>
 
 Light::Light(glm::vec3 pos)
 {
+    
+
 	this->pos = pos;
 
 	glGenVertexArrays(1, &lightVAO);
@@ -15,7 +17,7 @@ Light::Light(glm::vec3 pos)
 	// transform 
 	scale = glm::vec3(0.2f);
 
-	trans = glm::translate(trans, pos);
+	trans = glm::translate(trans, this->pos);
 	trans = glm::scale(trans, scale);
 
 	//lightColor = glm::vec3(0.3f, 0.1f, 0.1f);
@@ -24,16 +26,20 @@ Light::Light(glm::vec3 pos)
 	avatarShader = new Shader("./Shaders/Avatar/Light.vs", "./Shaders/Avatar/Light.fs");
 }
 
-void Light::DrawAvatar()
+Light::~Light()
 {
+    
+}
 
+void Light::DrawAvatar() const
+{
 	avatarShader->use();
 
 	avatarShader->setMat4f("model", trans);
 	avatarShader->setMat4f("view", Camera::main->viewMat);
 	avatarShader->setMat4f("projection", Camera::main->projMat);
 
-	avatarShader->setVec3f("lightColor", lightColor);
+	avatarShader->setVec3f("lightColor", color);
 
 	glBindVertexArray(Geo::geo->cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);

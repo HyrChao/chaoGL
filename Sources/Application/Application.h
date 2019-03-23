@@ -3,11 +3,11 @@
 #define APPLICATION_H
 
 //#include <GLFW/glfw3.h>
-#include <Application/Render.h>
+#include <Render/Render.h>
 #include <Application/Time.h>
 #include <Section/Sections.h>
 #include <Input/Mouse.h>
-#include<Application/Camera.h>
+#include<Render/Camera.h>
 
 #include <GLFW/glfw3.h>
 #include <chaoGL.h>

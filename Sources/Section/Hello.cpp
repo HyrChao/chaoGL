@@ -39,7 +39,7 @@ Hello::~Hello()
 void Hello::SetupLight()
 {
 	light1 = new Light(glm::vec3(0.0f,3.0f,-3.0f));
-	light1->lightColor = glm::vec3(0.6f, 0.2f, 0.2f);
+	light1->color = glm::vec3(0.6f, 0.2f, 0.2f);
 	//light1->lightColor = glm::vec3(0.2f, 0.05f, 0.05f);
 
 }
@@ -52,9 +52,10 @@ void Hello::HelloTriangle()
 	float redVal = (cos(timeValue) / 2.0f) + 0.5f;
 	float greenVal = (cos(timeValue + 3.14 / 3) / 2.0f) + 0.5f;
 	float blueVal = (cos(timeValue - 3.14 / 3) / 2.0f) + 0.5f;
-
+    glm::vec3 lightCol = glm::vec3(redVal, greenVal, blueVal);
+    lightCol = Color::GetHue(lightCol, 0.5, 1);
 	helloTriShader->use();
-	helloTriShader->setVec4f("ourColor", redVal, greenVal, blueVal, 1.0f);
+	helloTriShader->setVec4f("ourColor", lightCol.r, lightCol.g, lightCol.b, 1.0f);
 	helloTriShader->use();
 	//Triangle draw test
 	glBindVertexArray(Geo::geo->triVAO);
@@ -161,11 +162,13 @@ void Hello::HelloLight()
 {
 	
 	// change light color among with time 
-	float timeval1 = (glm::sin(Time::time) + 1)/2;
-	float timeval2 = (glm::cos(Time::time) + 1)/2;
-	float timeval3 = (glm::sin(Time::time + 3.14f) + 1)/2;
-	light1->lightColor = glm::vec3(timeval1, timeval2, timeval3);
-
+	float timeval1 = (glm::sin(Time::time) + 3)/4;
+	float timeval2 = (glm::cos(Time::time) + 3)/4;
+	float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
+    glm::vec3 lightCol = glm::vec3(timeval1, timeval2, timeval3);
+    //lightCol = Color::GetHue(lightCol, 1, 1);
+    light1->color = lightCol;
+    light1->dir = glm::vec4(1,1,-1,0);
 	light1->DrawAvatar();
 
 	helloLightShader->use();
@@ -192,10 +195,10 @@ void Hello::HelloLight()
 	helloLightShader->setFloat("material.shininess", 32.0f);
 
 	//helloLightShader->setVec3f("lightColor", light1->lightColor);
-	helloLightShader->setVec3f("light.position", light1->pos);
-	helloLightShader->setVec3f("light.ambient", 0.2f * light1->lightColor);
-	helloLightShader->setVec3f("light.diffuse", 0.5f * light1->lightColor);
-	helloLightShader->setVec3f("light.specular", 1.0f * light1->lightColor);
+	helloLightShader->setVec4f("light.direction", light1->dir);
+	helloLightShader->setVec3f("light.ambient", 0.2f * light1->color);
+	helloLightShader->setVec3f("light.diffuse", 0.5f * light1->color);
+	helloLightShader->setVec3f("light.specular", 1.0f * light1->color);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);

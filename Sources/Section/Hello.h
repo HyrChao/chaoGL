@@ -4,7 +4,8 @@
 #define Hello_H
 
 #include <glad/glad.h>
-#include <Render/Light.h>
+#include <Object/Light.h>
+#include <Render/Color.h>
 
 class Hello
 {
