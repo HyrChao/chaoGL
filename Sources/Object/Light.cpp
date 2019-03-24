@@ -14,11 +14,11 @@ Light::Light(glm::vec3 pos)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// transform 
-	scale = glm::vec3(0.2f);
-
-	trans = glm::translate(trans, this->pos);
-	trans = glm::scale(trans, scale);
+	// transform , for light avatar
+	scale = glm::vec3(0.1f);
+    //trans = glm::mat4
+    trans = glm::translate(trans, this->pos);
+    trans = glm::scale(trans, scale);
 
 	//lightColor = glm::vec3(0.3f, 0.1f, 0.1f);
 	//lightColor = glm::vec3(0.1f, 0.0f, 0.0f);

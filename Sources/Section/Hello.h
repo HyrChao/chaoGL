@@ -23,7 +23,10 @@ private:
 	Shader* helloProjShader;
 	Shader* helloLightShader;
 
-	Light* light1;
+	Light* pointLight1;
+    Light* pointLight2;
+    Light* spotLight;
+    Light* dirLight;
 
 	glm::vec3 cubePositions[10] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
@@ -48,7 +51,9 @@ public:
 	void HelloProjection();
 	void HelloBox();
 	void HelloCamera();
-	void HelloLight();
+    void extracted();
+    
+    void HelloLight();
 
 
 private:
