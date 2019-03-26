@@ -6,6 +6,7 @@
 
 #include <string>
 #include <cstdlib>
+#include <direct.h>
 
 
 class FileSystem
@@ -26,7 +27,8 @@ private:
 	{
 		static char const * envRoot = getenv("LOGL_ROOT_PATH");
 		static char const * givenRoot = (envRoot != nullptr ? envRoot : logl_root);
-		static std::string root = (givenRoot != nullptr ? givenRoot : "");
+		static char const* currentDir = getcwd(NULL, 0);
+		static std::string root = (currentDir != nullptr ? currentDir : givenRoot);
 		return root;
 	}
 

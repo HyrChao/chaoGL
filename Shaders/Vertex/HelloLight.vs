@@ -15,7 +15,6 @@ uniform mat4 projection;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0f);
     vColor = aColor;
     TexCoord = aTexCoord;
 	//replace this : Normal = mat3(transpose(inverse(model))) * aNormal;
@@ -23,4 +22,5 @@ void main()
 	// see https://learnopengl-cn.github.io/02%20Lighting/02%20Basic%20Lighting/ for detail
 	Normal = vec3(model * vec4(aNormal, 0.0));
 	FragPos = vec3(model * vec4(aPos, 1.0));
+	gl_Position = projection * view * model * vec4(aPos, 1.0f);
 }
