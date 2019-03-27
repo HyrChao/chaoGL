@@ -7,20 +7,7 @@
 
 #include "Render/Mesh.h"
 
-
-Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
-{
-    this->vertices = vertices;
-    this->indices = indices;
-    this->textures = textures;
-    
-    SetupMesh();
-}
-
-Mesh::~Mesh()
-{
-    
-}
+using namespace std;
 
 void Mesh::SetupMesh()
 {
@@ -62,6 +49,8 @@ void Mesh::Draw(Shader* shader)
         std::string number;
         TextureType type = textures[i].type;
         std::string name =TextureTypeToString(type);
+        // transform string to lower
+        transform(name.begin(), name.end(), name.begin(), ::tolower);
         if(type == TextureType::Diffuse)
             number = std::to_string(diffuseNr++);
         else if(type == TextureType::Specular)

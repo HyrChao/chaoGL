@@ -6,11 +6,13 @@
 
 #include <string>
 #include <cstdlib>
-#include <direct.h>
 
 
 class FileSystem
 {
+    
+public:
+    static char const * app_root;
 private:
 	typedef std::string(*Builder) (const std::string& path);
 
@@ -21,14 +23,18 @@ public:
 		//static std::string root = (givenRoot != nullptr ? givenRoot : "");
 		return (*pathBuilder)(path); 
 	}
+//    static std::string GetDirectory (const std::string& path)
+//    {
+//        size_t found = path.find_last_of("/\\");
+//        return(path.substr(0, found));
+//    }
 
 private:
 	static std::string const & getRoot()
 	{
-		static char const * envRoot = getenv("LOGL_ROOT_PATH");
-		static char const * givenRoot = (envRoot != nullptr ? envRoot : logl_root);
-		static char const* currentDir = getcwd(NULL, 0);
-		static std::string root = (currentDir != nullptr ? currentDir : givenRoot);
+        static char const * envRoot = getenv("LOGL_ROOT_PATH");
+        static char const * givenRoot = (app_root != nullptr ? app_root : logl_root);
+        static std::string root = (givenRoot != nullptr ? givenRoot : envRoot);
 		return root;
 	}
 

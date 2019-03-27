@@ -9,24 +9,21 @@
 #define Mesh_h
 
 #include <chaoGL.h>
-#include <Render/Shader.h
+#include <Render/Shader.h>
 #include <string.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+//#include <assimp/Importer.hpp>
+//#include <assimp/postprocess.h>
+//#include <assimp/scene.h>
+
+#include <vector>
+using namespace std;
 
 struct Vertex
 {
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec2 TexCoords;
-}
-
-struct Texture
-{
-    unsigned int id;
-    TextureType type;
-}
+};
 
 enum TextureType
 {
@@ -36,7 +33,14 @@ enum TextureType
     MRO,
     Cube,
     LUT,
-}
+};
+
+struct Texture
+{
+    unsigned int id;
+    TextureType type;
+    string path;
+};
 
 class Mesh
 {
@@ -46,8 +50,18 @@ public:
     vector<unsigned int> indices;
     vector<Texture> textures;
     // func
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
-    ~Mesh();
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    {
+        this->vertices = vertices;
+        this->indices = indices;
+        this->textures = textures;
+        
+        SetupMesh();
+    }
+    ~Mesh()
+    {
+        
+    }
     void Draw(Shader* shader);
 private:
     // render buffer
@@ -68,5 +82,5 @@ private:
             default:      return "Diffuse";
         }
     }
-}
+};
 #endif /* Mesh_h */

@@ -5,6 +5,7 @@
 
 #include<chaoGL.h>
 
+using namespace std;
 
 class Shader
 {
@@ -13,8 +14,14 @@ public:
 	unsigned int ID;
 
 	// constraction
-	Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
+	Shader(const string& vsPath, const string& fsPath)
 	{
+        string vertexPath = FileSystem::getPath(vsPath);
+        string fragmentPath = FileSystem::getPath(fsPath);
+
+//        GLchar* vertexPath = vertPath;
+//        GLchar* fragmentPath = fragPath;
+
 		// 1. get shader source file from a gaven path
 		std::string vertexCode;
 		std::string fragmentCode;

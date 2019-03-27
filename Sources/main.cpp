@@ -10,6 +10,16 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#ifdef __APPLE__
+    #include <mach-o/dyld.h>
+    #include <stdlib.h>
+// getcwd() both include in <direct.h> and <unistd.h>
+#elif WIN32
+    #include <direct.h>
+#else
+    #include <unistd.h>
+#endif
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 int Close();
 
@@ -18,11 +28,34 @@ int Close();
 GLFWwindow* window;
 Application* app;
 
+char const * FileSystem::app_root;
+
 int windowWidth;
 int windowHeight;
 
 int main()
 {
+    #ifdef WIN32
+        char buffer[512];
+        FileSystem::app_root = getcwd(buffer, sizeof(buffer));
+    
+    #elif __APPLE__
+    // macos
+        char path[1024];
+        uint32_t size = sizeof(path);
+        if (_NSGetExecutablePath(path, &size) == 0)
+        {
+            FileSystem::app_root = realpath("chaoGL",path); // symboollink in case
+            //FileSystem::app_root = FileSystem::GetDirectory(path).c_str();
+            printf("The path is: %s\n", FileSystem::app_root);
+        }
+
+    
+        else
+            printf("buffer too small; need size %u\n", size);
+
+    #endif
+    
     // init GLFW
 	glfwInit();
 

@@ -8,10 +8,10 @@ Hello::Hello()
 		//----------------------------------
 		//Shader
 		//Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
-		helloTriShader = new Shader("./Shaders/Vertex/HelloTriangle.vs", "./Shaders/Fragment/HelloTriangle.fs");
-		helloTexShader = new Shader("./Shaders/Vertex/HelloTexture.vs", "./Shaders/Fragment/HelloTexture.fs");
-		helloProjShader = new Shader("./Shaders/Vertex/HelloProjection.vs", "./Shaders/Fragment/HelloProjection.fs");
-		helloLightShader = new Shader("./Shaders/Vertex/HelloLight.vs", "./Shaders/Fragment/HelloLight.fs");
+		helloTriShader = new Shader("/Shaders/Vertex/HelloTriangle.vs", "/Shaders/Fragment/HelloTriangle.fs");
+		helloTexShader = new Shader("/Shaders/Vertex/HelloTexture.vs", "/Shaders/Fragment/HelloTexture.fs");
+		helloProjShader = new Shader("/Shaders/Vertex/HelloProjection.vs", "/Shaders/Fragment/HelloProjection.fs");
+		helloLightShader = new Shader("/Shaders/Vertex/HelloLight.vs", "/Shaders/Fragment/HelloLight.fs");
 
 		// load tecture
 		LoadTexture();
@@ -366,7 +366,7 @@ void Hello::LoadTexture()
     if (data)
     {
         // note that the huaji.tga has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
