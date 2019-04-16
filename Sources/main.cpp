@@ -45,9 +45,17 @@ int main()
         uint32_t size = sizeof(path);
         if (_NSGetExecutablePath(path, &size) == 0)
         {
-            FileSystem::app_root = realpath("chaoGL",path); // symboollink in case
+            string directory;
+            directory = realpath("chaoGL",path); // symboollink in case
+            
+            const size_t last_slash_idx = directory.rfind('/');
+            if (std::string::npos != last_slash_idx)
+            {
+                directory = directory.substr(0, last_slash_idx);
+            }
+            FileSystem::app_root = directory.c_str();
+            printf("[MacOS] current path is: %s\n", FileSystem::app_root);
             //FileSystem::app_root = FileSystem::GetDirectory(path).c_str();
-            printf("The path is: %s\n", FileSystem::app_root);
         }
 
     
