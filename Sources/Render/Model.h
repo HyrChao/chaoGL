@@ -14,22 +14,24 @@
 class Model
 {
 public:
-    /*  函数   */
+    
     Model(char *path)
     {
-        loadModel(path);
+        LoadModel(path);
     }
-    void Draw(Shader shader);
+    void Draw(Shader* shader);
+    
 private:
-    /*  模型数据  */
+    // model data
     vector<Mesh> meshes;
     string directory;
-    /*  函数   */
-    void loadModel(string path);
-    void processNode(aiNode *node, const aiScene *scene);
-    Mesh processMesh(aiMesh *mesh, const aiScene *scene);
-    vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type,
-                                         string typeName);
+    
+    // functions
+    void LoadModel(string path);
+    void ProcessNode(aiNode *node, const aiScene *scene);
+    Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
+    vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
+                                         TextureType typeName);
 };
 
 #endif /* Model_hpp */
