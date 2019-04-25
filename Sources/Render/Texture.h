@@ -28,6 +28,8 @@ struct Texture
 };
 namespace  coRender
 {
+    
+    extern vector<Texture> textures_loaded;
     inline unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false)
     {
         string filename = string(path);

@@ -11,11 +11,10 @@
 #include <chaoGL.h>
 #include <Render/Shader.h>
 #include <Render/Texture.h>
-#include <string.h>
 //#include <assimp/Importer.hpp>
 //#include <assimp/postprocess.h>
 //#include <assimp/scene.h>
-#include <vector>
+
 using namespace std;
 
 struct Vertex

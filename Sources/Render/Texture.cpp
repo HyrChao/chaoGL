@@ -6,3 +6,5 @@
 //
 
 #include "Texture.h"
+
+vector<Texture> coRender::textures_loaded;

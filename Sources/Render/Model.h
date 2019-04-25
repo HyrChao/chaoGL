@@ -8,7 +8,6 @@
 #ifndef Model_h
 #define Model_h
 
-#include <chaoGL.h>
 #include <Render/Mesh.h>
 
 class Model

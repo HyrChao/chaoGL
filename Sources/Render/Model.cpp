@@ -105,11 +105,26 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
     {
         aiString str;
         mat->GetTexture(type, i, &str);
-        Texture texture;
-        texture.id = coRender::TextureFromFile(str.C_Str(), directory);
-        texture.type = typeName;
-        texture.path = str.C_Str();
-        textures.push_back(texture);
+        bool skip = false;
+        for(unsigned int j = 0; j < coRender::textures_loaded.size(); j++)
+        {
+            if(std::strcmp(coRender::textures_loaded[j].path.data(), str.C_Str()) == 0)
+            {
+                textures.push_back(coRender::textures_loaded[j]);
+                skip = true;
+                break;
+            }
+        }
+        if(!skip)
+        {
+            Texture texture;
+            texture.id = coRender::TextureFromFile(str.C_Str(), directory);
+            texture.type = typeName;
+            texture.path = str.C_Str();
+            textures.push_back(texture);
+            coRender::textures_loaded.push_back(texture);
+        }
+        
     }
     return textures;
 }
