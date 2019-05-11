@@ -94,7 +94,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
     
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, textures, modelMat);
 }
 
 vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
@@ -131,7 +131,14 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
 
 void Model::Draw(Shader* shader)
 {
+    // Use Shader
+    shader->use();
+    
+    // Transform & View & Projection
+    Render::SetShaderParams(shader, this->modelMat);
+    
     for (unsigned int i = 9; i < meshes.size(); i++) {
+        
         meshes[i].Draw(shader);
     }
 }

@@ -27,7 +27,7 @@ void Sections::SwitchSections()
 	}
 	else
 	{
-		hello->HelloBox();
+		hello->HelloModel();
 	}
 }
 

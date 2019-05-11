@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <Object/Light.h>
 #include <Render/Color.h>
-
+#include <Render/Model.h>
 class Hello
 {
 
@@ -15,7 +15,10 @@ public:
 private:
 
 	bool isDataInitialized = false;
-
+    
+    bool helloModelInitialized = false;
+    Model *helloModel;
+    Shader *helloModelShader;
 	unsigned int diffuseTex_1, diffuseTex_2, specularTex;
 
 	Shader* helloTriShader;
@@ -27,6 +30,8 @@ private:
     Light* pointLight2;
     Light* spotLight;
     Light* dirLight;
+    
+    glm::vec3 lightCol;
 
 	glm::vec3 cubePositions[10] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
@@ -54,6 +59,7 @@ public:
     void extracted();
     
     void HelloLight();
+    void HelloModel();
 
 
 private:
@@ -62,6 +68,7 @@ private:
 	void InitData();
 	void glmTest();
 	void SetupLight();
+    void UpdateLight();
 
 };
 

@@ -9,8 +9,7 @@
 #define Mesh_h
 
 #include <chaoGL.h>
-#include <Render/Shader.h>
-#include <Render/Texture.h>
+
 //#include <assimp/Importer.hpp>
 //#include <assimp/postprocess.h>
 //#include <assimp/scene.h>
@@ -33,12 +32,11 @@ public:
     vector<unsigned int> indices;
     vector<Texture> textures;
     // func
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, glm::mat4 in_Modelmat)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
-        
         SetupMesh();
     }
     ~Mesh()

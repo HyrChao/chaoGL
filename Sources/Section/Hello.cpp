@@ -181,37 +181,19 @@ void Hello::HelloCamera()
 
 void Hello::HelloLight()
 {
-	
-	// change light color among with time 
-	float timeval1 = (glm::sin(Time::time) + 3)/4;
-	float timeval2 = (glm::cos(Time::time) + 3)/4;
-	float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
-    glm::vec3 lightCol = glm::vec3(timeval1, timeval2, timeval3);
-    //lightCol = Color::GetHue(lightCol, 1, 1);
-    pointLight1->color = lightCol;
-    pointLight1->dir = glm::vec4(1,1,-1,0);
-    pointLight1->DrawAvatar();
-    pointLight2->DrawAvatar();
-    spotLight->DrawAvatar();
-	dirLight->DrawAvatar();
-
+    glm::vec4 clearColor = glm::vec4(0.0f);
+    Render::SetClearColor(clearColor);
+    UpdateLight();
 	helloLightShader->use();
 	// ortho matrix
 	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
 	//glm::mat4 model;
 	//model = glm::rotate(model, glm::radians(55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-	glm::mat4 view;
-	// move model forward equals to move view backward
-	view = Camera::main->viewMat;
-
-	glm::mat4 projection;
-	projection = Camera::main->projMat;
-
 	//helloLightShader->setMat4f("model", model);
-	helloLightShader->setMat4f("view", view);
-	helloLightShader->setMat4f("projection", projection);
-	helloLightShader->setVec3f("viewPos", Camera::main->pos);
+    helloLightShader->setMat4f("view", Render::viewMat);
+    helloLightShader->setMat4f("projection", Render::projectMat);
+    helloLightShader->setVec3f("viewPos", Render::viewPos);
 
 	helloLightShader->setVec3f("material.ambient", 1.0f, 0.5f, 0.31f);
 	helloLightShader->setVec3f("material.diffuse", 1.0f, 0.5f, 0.31f);
@@ -257,14 +239,32 @@ void Hello::HelloLight()
 	glBindVertexArray(Geo::geo->cubeVAO);
 	for (unsigned int i = 0; i < 10; i++)
 	{
+        
 		glm::mat4 model;
-		model = glm::translate(model, cubePositions[i]);
-		float angle = 20.0f * i;
-		model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
-		helloLightShader->setMat4f("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
+        float angle = 20.0f * i;
+        model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
+        model = glm::translate(model, cubePositions[i]);
+        helloLightShader->setMat4f("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 	glBindVertexArray(0);
+}
+
+void Hello::HelloModel()
+{
+    glm::vec4 clearColor = glm::vec4(0.3f);
+    clearColor.a = 1.0f;
+    Render::SetClearColor(clearColor);
+    if(!helloModelInitialized){
+        helloModel = new Model(FileSystem::getPath("/Assets/Model/nanosuit/nanosuit.obj"), false,glm::vec3(0.0));
+        helloModelShader = new Shader("/Shaders/Vertex/HelloModel.vs", "/Shaders/Fragment/HelloModel.fs");
+        helloModelInitialized = true;
+    }
+    
+    UpdateLight();
+    
+    helloModel->Draw(helloModelShader);
+    
 }
 
 void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
@@ -375,3 +375,19 @@ void Hello::LoadTexture()
     }
     stbi_image_free(data);
 }
+
+void Hello::UpdateLight() {
+    // change light color among with time
+    float timeval1 = (glm::sin(Time::time) + 3)/4;
+    float timeval2 = (glm::cos(Time::time) + 3)/4;
+    float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
+    lightCol = glm::vec3(timeval1, timeval2, timeval3);
+    //lightCol = Color::GetHue(lightCol, 1, 1);
+    pointLight1->color = lightCol;
+    pointLight1->dir = glm::vec4(1,1,-1,0);
+    pointLight1->DrawAvatar();
+    pointLight2->DrawAvatar();
+    spotLight->DrawAvatar();
+    dirLight->DrawAvatar();
+}
+

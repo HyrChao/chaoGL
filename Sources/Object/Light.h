@@ -6,10 +6,10 @@
 #include<Render/Shader.h>
 #include<Render/Camera.h>
 #include <glad/glad.h>
-#include <Object/BaseObject.h>
+#include <Object/Transform.h>
 
 
-class Light : public BaseObject
+class Light : public Transform
 {
 public:
     Light(glm::vec3 pos);
