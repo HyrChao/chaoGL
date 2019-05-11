@@ -53,21 +53,26 @@ void Application::Update()
 {
 	ProcessInput();
 
-	render->DrawOnFrameBegin();
+    Render::DrawOnFrameBegin();
 
 	// Fill mode
 	if (wireframeMode)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        Render::WireframeMode(true);
 	else
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Camera::main->UpdateCamera();
+        Render::WireframeMode(false);
+
 	section->SwitchSections();
 
 
 	glfwSwapBuffers(Application::GetWindow());
 
-	render->DrawOnFrameEnd();
+    Render::DrawOnFrameEnd();
+    Time::UpdateTime();
 }
+
+
+
+
 
 void Application::OnFrameBegin()
 {
@@ -75,7 +80,7 @@ void Application::OnFrameBegin()
 
 void Application::OnFrameEnd()
 {
-	Time::UpdateTime();
+
 }
 
 void Application::ProcessInput()

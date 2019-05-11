@@ -27,6 +27,17 @@ public:
     {
         clearColor = color;
     }
+    static void WireframeMode(bool on = false)
+    {
+        if (on)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        else
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+    }
 
 public:
 

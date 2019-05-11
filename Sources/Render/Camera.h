@@ -32,7 +32,7 @@ public:
 
 	void SetView(bool isPerspective, float in_fov, float in_nearPlane, float in_farPlane);
 	void SetScreenExtend(int in_screenWidth, int in_screenHeight);
-	void UseViewMode(bool isPerspective);
+	void PerspectiveMode(bool isPerspective = true);
 	void Move(glm::vec3 pos);
 	void MoveView(float yawoffset, float pitchoffset);
 	void LockAt(glm::vec3 targetPos);

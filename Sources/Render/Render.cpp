@@ -40,6 +40,8 @@ void Render::DrawOnFrameBegin()
 	glClear(GL_COLOR_BUFFER_BIT);
     
     // Update camera
+    Camera::main->UpdateCamera();
+    
     // move model forward equals to move view backward
     viewMat = Camera::main->viewMat;
     projectMat = Camera::main->projMat;

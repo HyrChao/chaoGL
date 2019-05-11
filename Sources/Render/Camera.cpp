@@ -113,7 +113,7 @@ void Camera::SetView(bool isPerspective,float in_fov, float in_nearPlane, float 
 	farPlane = in_farPlane;
 	viewProjPers = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeight, nearPLane, farPlane);
 	viewProjOrth = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.1f, 100.0f);
-	UseViewMode(isPerspective);
+	PerspectiveMode(isPerspective);
 }
 
 void Camera::SetScreenExtend(int in_screenWidth, int in_screenHeight)
@@ -122,7 +122,7 @@ void Camera::SetScreenExtend(int in_screenWidth, int in_screenHeight)
 	screenWidth = in_screenWidth;
 }
 
-void Camera::UseViewMode(bool isPerspective)
+void Camera::PerspectiveMode(bool isPerspective)
 {
 	isPerspectiveMode = isPerspective;
 	if (isPerspective)

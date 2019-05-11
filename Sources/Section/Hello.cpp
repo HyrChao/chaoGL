@@ -240,10 +240,12 @@ void Hello::HelloLight()
 	for (unsigned int i = 0; i < 10; i++)
 	{
         
-		glm::mat4 model;
-        float angle = 20.0f * i;
-        model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime())));
+        glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePositions[i]);
+        float angle = 20.0f * i;
+        glm::vec3 axis = glm::vec3(glm::sin((float)glfwGetTime()), glm::cos((float)glfwGetTime()), -glm::cos((float)glfwGetTime()));
+        axis = glm::normalize(axis);
+        model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), axis);
         helloLightShader->setMat4f("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
