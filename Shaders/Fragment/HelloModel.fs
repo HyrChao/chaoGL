@@ -17,9 +17,9 @@ struct FragOut
 struct Material 
 {
 	sampler2D diffuse_1;
-	sampler2D diffuse_2;
-    sampler2D specular;
-    float shininess;
+	sampler2D normal_1;
+    sampler2D specular_1;
+    float shininess_1;
 }; 
 
 uniform Material material;
@@ -71,7 +71,7 @@ vec3 CalcDirLight(DirLight light, FragOut frag, vec3 viewDir)
     float diff = max(dot(frag.normal, lightDir), 0.0);
     // spec
     vec3 reflectDir = reflect(-lightDir, frag.normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess_1);
     // merge
     vec3 ambient  = light.ambient  * frag.diffuse;
     vec3 diffuse  = light.diffuse  * diff * frag.diffuse;
@@ -86,7 +86,7 @@ vec3 CalcPointLight(PointLight light, FragOut frag, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(frag.normal, lightDir), 0.0);
     // specular
     vec3 reflectDir = reflect(-lightDir, frag.normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess_1);
     // attenuation
     float lightDist    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * lightDist + light.quadratic * (lightDist * lightDist));    
@@ -109,7 +109,7 @@ vec3 CalcSpotLight(SpotLight light, FragOut frag, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(frag.normal, lightDir), 0.0);
     // specular
     vec3 reflectDir = reflect(-lightDir, frag.normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess_1);
     // merge
     vec3 ambient  = light.ambient  * frag.diffuse;
     vec3 diffuse  = light.diffuse  * diff * frag.diffuse;
@@ -128,12 +128,11 @@ void main()
 	// sample diffuse color 
 	FragOut frag;
 	vec4 diffuseCol_1 = texture(material.diffuse_1, TexCoord);
-	vec4 diffuseCol_2 = texture(material.diffuse_2, TexCoord);
 
-	frag.diffuse = mix(diffuseCol_1, diffuseCol_2, diffuseCol_2.a).rgb;
+	frag.diffuse = diffuseCol_1.rgb;
 	frag.normal = normalize(Normal);
-	frag.specular = texture(material.specular, TexCoord).rgb;
-	frag.ambient = vec3(0); // evironment ambient
+	frag.specular = texture(material.specular_1, TexCoord).rgb;
+	frag.ambient = vec3(0.3); // evironment ambient
 
 	// calc lights
 	vec3 viewDir = normalize(viewPos - FragPos);

@@ -11,16 +11,10 @@ Hello::Hello()
 		helloTriShader = new Shader("/Shaders/Vertex/HelloTriangle.vs", "/Shaders/Fragment/HelloTriangle.fs");
 		helloTexShader = new Shader("/Shaders/Vertex/HelloTexture.vs", "/Shaders/Fragment/HelloTexture.fs");
 		helloProjShader = new Shader("/Shaders/Vertex/HelloProjection.vs", "/Shaders/Fragment/HelloProjection.fs");
-		helloLightShader = new Shader("/Shaders/Vertex/HelloLight.vs", "/Shaders/Fragment/HelloLight.fs");
+
 
 		// load tecture
 		LoadTexture();
-        
-        helloLightShader->use(); // set uniform！for texture
-        helloLightShader->setInt("material.diffuse_1", 0);
-        helloLightShader->setInt("material.diffuse_2", 1);
-        helloLightShader->setInt("material.specular", 2);
-
 	}
 
 	SetupLight();
@@ -181,14 +175,22 @@ void Hello::HelloCamera()
 
 void Hello::HelloLight()
 {
+    if (!helloLightInitialized)
+    {
+        HelloLightInit();
+        helloLightInitialized = true;
+        
+    }
     glm::vec4 clearColor = glm::vec4(0.0f);
     Render::SetClearColor(clearColor);
     
-//    // change light color among with time
-//    float timeval1 = (glm::sin(Time::time) + 3)/4;
-//    float timeval2 = (glm::cos(Time::time) + 3)/4;
-//    float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
-//    glm::vec3 lightCol = glm::vec3(timeval1, timeval2, timeval3);
+    // change light color among with time
+    float timeval1 = (glm::sin(Time::time) + 3)/4;
+    float timeval2 = (glm::cos(Time::time) + 3)/4;
+    float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
+    glm::vec3 lightCol = glm::vec3(timeval1, timeval2, timeval3);
+    
+    dirLight->color = lightCol;
     
 	helloLightShader->use();
 	// ortho matrix
@@ -381,5 +383,14 @@ void Hello::LoadTexture()
     stbi_image_free(data);
 }
 
+void Hello::HelloLightInit()
+{
+    helloLightShader = new Shader("/Shaders/Vertex/HelloLight.vs", "/Shaders/Fragment/HelloLight.fs");
+    
+    helloLightShader->use(); // set uniform！for texture
+    helloLightShader->setInt("material.diffuse_1", 0);
+    helloLightShader->setInt("material.diffuse_2", 1);
+    helloLightShader->setInt("material.specular", 2);
+}
 
 

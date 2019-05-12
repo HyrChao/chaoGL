@@ -16,6 +16,8 @@ private:
 
 	bool isDataInitialized = false;
     
+    bool helloLightInitialized = false;
+    
     bool helloModelInitialized = false;
     Model *helloModel;
     Shader *helloModelShader;
@@ -59,6 +61,7 @@ public:
     void extracted();
     
     void HelloLight();
+    void HelloLightInit();
     void HelloModel();
 
 

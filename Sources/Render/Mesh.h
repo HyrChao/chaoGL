@@ -57,13 +57,13 @@ private:
     {
         switch (type)
         {
-            case Diffuse:   return "Diffuse";
-            case Normal:   return "Normal";
-            case Specular: return "Specular";
-            case MRO: return "MRO";
-            case Cube: return "Cube";
-            case LUT: return "LUT";
-            default:      return "Diffuse";
+            case Diffuse:   return "diffuse";
+            case Normal:   return "normal";
+            case Specular: return "specular";
+            case MRO: return "mro";
+            case Cube: return "cube";
+            case LUT: return "lut";
+            default:      return "diffuse";
         }
     }
 };
