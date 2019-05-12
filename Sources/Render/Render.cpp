@@ -96,6 +96,9 @@ void Render::SetShaderLightParams(Shader *shader)
         {
             
         }
+
+		i++;
+
     }
 }
 

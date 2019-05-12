@@ -33,7 +33,7 @@ private:
 	static std::string const & getRoot()
 	{
         static char const * envRoot = getenv("LOGL_ROOT_PATH");
-        static char const * givenRoot = (app_root != nullptr ? app_root : logl_root);
+		static char const * givenRoot = (logl_root != nullptr ? logl_root : app_root);
         static std::string root = (givenRoot != nullptr ? givenRoot : envRoot);
 		return root;
 	}
