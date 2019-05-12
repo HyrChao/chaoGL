@@ -15,20 +15,12 @@ Application::Application(GLFWwindow* currentWin, int width, int height)
 {
 	app = this;
 
-	section = new Sections();
-	render = new Render();
-
-	if (Camera::main == nullptr)
-	{
-		Camera::main = new Camera(width,height);
-	}
-
 	BindCurrentWindow(currentWin);
 
 	screenWidth = width;
 	screenHeight = height;
-	;
-	Mouse::SetMouseInitLocation(width,height);
+    
+
 
 	Application::InitApplication();
 }
@@ -37,16 +29,28 @@ Application::~Application()
 {
 	//delete app;
 	delete section;
+    delete render;
 }
 
 void Application::InitApplication()
 {
+    render = new Render();
+    
+    Mouse::SetMouseInitLocation(screenWidth,screenHeight);
+    
+    if (Camera::main == nullptr)
+    {
+        Camera::main = new Camera(screenWidth,screenHeight);
+    }
+    
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// set input callback
 	glfwSetCursorPosCallback(window, Application::mouse_callback);
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
     glViewport(0, 0, screenWidth, screenHeight);
+    
+    section = new Sections();
 }
 
 void Application::Update()
