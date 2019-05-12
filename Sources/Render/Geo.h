@@ -3,8 +3,6 @@
 #define GEO_H
 
 #include <glad/glad.h>
-#include <chaoGL.h>
-
 
 class Geo
 {

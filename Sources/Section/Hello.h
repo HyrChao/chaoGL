@@ -4,7 +4,7 @@
 #define Hello_H
 
 #include <glad/glad.h>
-#include <Object/Light.h>
+#include <Render/Render.h>
 #include <Render/Color.h>
 #include <Render/Model.h>
 class Hello
@@ -68,7 +68,7 @@ private:
 	void InitData();
 	void glmTest();
 	void SetupLight();
-    void UpdateLight();
+
 
 };
 

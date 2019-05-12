@@ -38,23 +38,23 @@ Hello::~Hello()
 
 void Hello::SetupLight()
 {
-	pointLight1 = new Light(glm::vec3(0.0f,3.0f,0.0f));
+    pointLight1 = new Light(glm::vec3(0.0f,3.0f,0.0f),LightType::Point);
 	pointLight1->color = glm::vec3(0.6f, 0.2f, 0.2f);
     pointLight1->constant = 1.0f;
     pointLight1->linear = 0.09f;
     pointLight1->quadratic = 0.032f;
 
-    pointLight2 = new Light(glm::vec3(-5.0f,-3.0f,-5.0f));
+    pointLight2 = new Light(glm::vec3(-5.0f,-3.0f,-5.0f),LightType::Point);
     pointLight2->color = glm::vec3(0.1f, 0.8f, 0.1f);
     pointLight2->constant = 1.0f;
     pointLight2->linear = 0.7f;
     pointLight2->quadratic = 1.8f;
     
-    dirLight = new Light(glm::vec3(10.0f,10.0f,10.0f));
+    dirLight = new Light(glm::vec3(10.0f,10.0f,10.0f),LightType::Directional);
     dirLight->color = glm::vec3(1.0f, 1.0f, 1.0f);
     dirLight->dir = glm::vec3(-1,-1,-1);
     
-    spotLight = new Light(glm::vec3(-3.0f,-1.0f,-8.0f));
+    spotLight = new Light(glm::vec3(-3.0f,-1.0f,-8.0f),LightType::Spot);
 //    spotLight->color = glm::vec3(0.7f, 0.5f, 0.2f);
     spotLight->color = glm::vec3(1.0f, 1.0f, 0.1f);
     spotLight->dir = glm::vec3(3.0f, 1.0f, 8.0f);
@@ -183,7 +183,13 @@ void Hello::HelloLight()
 {
     glm::vec4 clearColor = glm::vec4(0.0f);
     Render::SetClearColor(clearColor);
-    UpdateLight();
+    
+//    // change light color among with time
+//    float timeval1 = (glm::sin(Time::time) + 3)/4;
+//    float timeval2 = (glm::cos(Time::time) + 3)/4;
+//    float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
+//    glm::vec3 lightCol = glm::vec3(timeval1, timeval2, timeval3);
+    
 	helloLightShader->use();
 	// ortho matrix
 	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
@@ -262,9 +268,6 @@ void Hello::HelloModel()
         helloModelShader = new Shader("/Shaders/Vertex/HelloModel.vs", "/Shaders/Fragment/HelloModel.fs");
         helloModelInitialized = true;
     }
-    
-    UpdateLight();
-    
     helloModel->Draw(helloModelShader);
     
 }
@@ -378,18 +381,5 @@ void Hello::LoadTexture()
     stbi_image_free(data);
 }
 
-void Hello::UpdateLight() {
-    // change light color among with time
-    float timeval1 = (glm::sin(Time::time) + 3)/4;
-    float timeval2 = (glm::cos(Time::time) + 3)/4;
-    float timeval3 = (glm::sin(Time::time + 3.14f) + 3)/4;
-    lightCol = glm::vec3(timeval1, timeval2, timeval3);
-    //lightCol = Color::GetHue(lightCol, 1, 1);
-    pointLight1->color = lightCol;
-    pointLight1->dir = glm::vec4(1,1,-1,0);
-    pointLight1->DrawAvatar();
-    pointLight2->DrawAvatar();
-    spotLight->DrawAvatar();
-    dirLight->DrawAvatar();
-}
+
 

@@ -94,7 +94,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
     
-    return Mesh(vertices, indices, textures, modelMat);
+    return Mesh(vertices, indices, textures);
 }
 
 vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
@@ -106,11 +106,11 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
         aiString str;
         mat->GetTexture(type, i, &str);
         bool skip = false;
-        for(unsigned int j = 0; j < coRender::textures_loaded.size(); j++)
+        for(unsigned int j = 0; j < AssertsMng::textures_loaded.size(); j++)
         {
-            if(std::strcmp(coRender::textures_loaded[j].path.data(), str.C_Str()) == 0)
+            if(std::strcmp(AssertsMng::textures_loaded[j].path.data(), str.C_Str()) == 0)
             {
-                textures.push_back(coRender::textures_loaded[j]);
+                textures.push_back(AssertsMng::textures_loaded[j]);
                 skip = true;
                 break;
             }
@@ -118,11 +118,11 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
         if(!skip)
         {
             Texture texture;
-            texture.id = coRender::TextureFromFile(str.C_Str(), directory);
+            texture.id = AssertsMng::TextureFromFile(str.C_Str(), directory);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
-            coRender::textures_loaded.push_back(texture);
+            AssertsMng::textures_loaded.push_back(texture);
         }
         
     }
@@ -133,12 +133,15 @@ void Model::Draw(Shader* shader)
 {
     // Use Shader
     shader->use();
-    
+//    cout << "Draw mesh "<< endl;
     // Transform & View & Projection
     Render::SetShaderParams(shader, this->modelMat);
+    Render::SetShaderLightParams(shader);
     
-    for (unsigned int i = 9; i < meshes.size(); i++) {
+    for (unsigned int i = 0; i < meshes.size(); i++) {
         
         meshes[i].Draw(shader);
+        //cout << "Draw mesh \n"<<std::isprint(i)<< endl;
+//        printf("Draw mesh %u\n", i);
     }
 }

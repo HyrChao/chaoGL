@@ -59,6 +59,7 @@ void Mesh::Draw(Shader* shader)
         // texture naming foramt in shader : Type_num
         shader->setFloat(("material." + name + "_" + number).c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
+//        printf("glActiveTexture %u\n", i);
     }
     glActiveTexture(GL_TEXTURE0);
     

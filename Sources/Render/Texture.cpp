@@ -7,4 +7,4 @@
 
 #include "Texture.h"
 
-vector<Texture> coRender::textures_loaded;
+vector<Texture> AssertsMng::textures_loaded;

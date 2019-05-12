@@ -46,6 +46,9 @@ void Render::DrawOnFrameBegin()
     viewMat = Camera::main->viewMat;
     projectMat = Camera::main->projMat;
     viewPos = Camera::main->pos;
+    
+    // Update light
+    UpdateLight();
 }
 
 void Render::DrawOnFrameEnd()
@@ -53,6 +56,58 @@ void Render::DrawOnFrameEnd()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void Render::SetShaderLightParams(Shader *shader)
+{
+    list<Light*>::iterator i = Light::lights.begin();
+    while (i != Light::lights.end())
+    {
+        Light *light = *i;
+        int pointLightNum = 0;
+        if (light->type == LightType::Directional)
+        {
+            shader->setVec3f("dirLight.direction", light->dir);
+            shader->setVec3f("dirLight.ambient", 0.02f * light->color);
+            shader->setVec3f("dirLight.diffuse", 0.5f * light->color);
+            shader->setVec3f("dirLight.specular", 1.0f * light->color);
+        }
+        else if (light->type == LightType::Point && pointLightNum <= Light::maxPointLight)
+        {
+            std::string num = std::to_string(pointLightNum);
+            shader->setVec3f("pointLights[" + num + "].position", light->pos);
+            shader->setFloat("pointLights[" + num + "].constant", light->constant);
+            shader->setFloat("pointLights[" + num + "].linear", light->linear);
+            shader->setFloat("pointLights[" + num + "].quadratic", light->quadratic);
+            shader->setVec3f("pointLights[" + num + "].ambient", 0.01f * light->color);
+            shader->setVec3f("pointLights[" + num + "].diffuse", 0.5f * light->color);
+            shader->setVec3f("pointLights[" + num + "].specular", 0.8f * light->color);
+            pointLightNum++;
+        }
+        else if (light->type == LightType::Spot)
+        {
+            shader->setVec3f("spotLight.position", light->pos);
+            shader->setVec3f("spotLight.direction", light->dir);
+            shader->setFloat("spotLight.cutOff", glm::cos(light->cutOff));  // cutoff is cosine of angle
+            shader->setFloat("spotLight.outerCutOff", glm::cos(light->outerCutOff));
+            shader->setVec3f("spotLight.ambient", 0.01f * light->color);
+            shader->setVec3f("spotLight.diffuse", 0.8f * light->color);
+            shader->setVec3f("spotLight.specular", 0.5f * light->color);
+        }
+        else
+        {
+            
+        }
+    }
+}
 
+void Render::UpdateLight() {
+
+    //lightCol = Color::GetHue(lightCol, 1, 1);
+    list<Light*>::iterator i = Light::lights.begin();
+    while (i != Light::lights.end())
+    {
+        Light *light = *i;
+        light->DrawAvatar();
+    }
+}
 
 

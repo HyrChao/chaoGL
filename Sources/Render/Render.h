@@ -4,9 +4,11 @@
 
 //#include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include <Render/Shader.h>
+//#include <Render/Shader.h>
 #include <Render/Texture.h>
 #include <Render/Camera.h>
+#include <Render/Light.h>
+
 class Render
 {
 public:
@@ -23,6 +25,7 @@ public:
         shader->setVec3f("viewPos", viewPos);
         shader->setMat4f("model", model);
     }
+    static void SetShaderLightParams(Shader* shader);
     static void SetClearColor(glm::vec4 color)
     {
         clearColor = color;
@@ -38,7 +41,10 @@ public:
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
     }
-
+private:
+    
+    static void UpdateLight();
+    
 public:
 
 	static Render* render;
@@ -48,7 +54,7 @@ public:
     
 private:
 
-   static glm::vec4 clearColor;
+    static glm::vec4 clearColor;
 
 };
 #endif

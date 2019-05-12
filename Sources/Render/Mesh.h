@@ -10,6 +10,9 @@
 
 #include <chaoGL.h>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 //#include <assimp/Importer.hpp>
 //#include <assimp/postprocess.h>
 //#include <assimp/scene.h>
@@ -32,7 +35,7 @@ public:
     vector<unsigned int> indices;
     vector<Texture> textures;
     // func
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, glm::mat4 in_Modelmat)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
     {
         this->vertices = vertices;
         this->indices = indices;

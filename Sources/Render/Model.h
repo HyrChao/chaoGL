@@ -22,8 +22,8 @@ public:
     
     Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0),glm::vec3 rotation = glm::vec3(0),glm::vec3 scale = glm::vec3(1)) : Transform(pos,rotation,scale)
     {
-        glm::mat4 model;
-        modelMat = model;
+//        glm::mat4 model;
+//        modelMat = model;
         modelMat = glm::translate(modelMat, pos);
         modelMat = glm::rotate(modelMat,rotation.x,glm::vec3(1.0,0,0));
         modelMat = glm::rotate(modelMat,rotation.y,glm::vec3(0,1.0,0));

@@ -1,9 +1,11 @@
-#include<Object/Light.h>
+#include<Render/Light.h>
 
-Light::Light(glm::vec3 pos)
+list<Light*> Light::lights;
+int Light::maxPointLight = 5;
+
+Light::Light(glm::vec3 pos, LightType type)
 {
-    
-
+    this->type = type;
 	this->pos = pos;
 
 	glGenVertexArrays(1, &lightVAO);
@@ -24,11 +26,29 @@ Light::Light(glm::vec3 pos)
 	//lightColor = glm::vec3(0.1f, 0.0f, 0.0f);
 
 	avatarShader = new Shader("./Shaders/Avatar/Light.vs", "./Shaders/Avatar/Light.fs");
+    
+    lights.push_back(this);
 }
 
 Light::~Light()
 {
     
+    // Remove from list while delete
+    list<Light*>::iterator i = lights.begin();
+    
+    while (i != lights.end())
+    {
+        Light *pLight = *i;
+        
+        if (pLight == this)
+        {
+            i = lights.erase(i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
 }
 
 void Light::DrawAvatar() const

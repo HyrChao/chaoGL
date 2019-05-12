@@ -21,8 +21,6 @@ void main()
 	//can update with scale, but two cost, replace with simple one
 	// see https://learnopengl-cn.github.io/02%20Lighting/02%20Basic%20Lighting/ for detail
 	//model = mat4(1.0f);
-	//at4 testMod = mat4(100.0);
-	Normal = vec3(model * vec4(aNormal, 0.0));
 	FragPos = vec3(model * vec4(aPos, 1.0));
     gl_Position = projection * view * model * vec4(aPos, 1.0f);
 }

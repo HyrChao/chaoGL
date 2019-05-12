@@ -2,19 +2,27 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
+#include <list>
 #include<Render/Geo.h>
 #include<Render/Shader.h>
 #include<Render/Camera.h>
 #include <glad/glad.h>
 #include <Object/Transform.h>
 
+enum LightType
+{
+    Directional,
+    Point,
+    Spot
+};
 
 class Light : public Transform
 {
 public:
-    Light(glm::vec3 pos);
+    
+    Light(glm::vec3 pos, LightType = LightType::Point);
 	~Light();
-
+    
     void DrawAvatar() const;
     void SetCutOff(float angle)
     {
@@ -36,6 +44,10 @@ public:
 
 public:
     
+    static list<Light*> lights;
+    static int maxPointLight;
+    LightType type;
+    
     float intensity = 1.0f;
     
     glm::vec3 color = glm::vec3(1.0f);
@@ -51,7 +63,6 @@ public:
     float outerCutOff = 0.167f;
     
 private:
-
 
 	glm::vec3 scale = glm::vec3(1, 1, 1);
 

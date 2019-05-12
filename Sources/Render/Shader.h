@@ -3,7 +3,15 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include<chaoGL.h>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <glad/glad.h>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+#include <File/filesystem.h>
 
 using namespace std;
 

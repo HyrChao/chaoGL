@@ -3,7 +3,6 @@
 
 // To use stb_image, add this in *one* C++ source file.
 #define STB_IMAGE_IMPLEMENTATION
-//#include <stb_image.h>
 
 #include <Application/Application.h>
 
