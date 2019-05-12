@@ -107,6 +107,7 @@ void Render::UpdateLight() {
     {
         Light *light = *i;
         light->DrawAvatar();
+		i++;
     }
 }
 
