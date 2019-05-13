@@ -22,7 +22,7 @@ Render::Render()
 
 Render::~Render()
 {
-	delete this;
+	//delete this;
 }
 
 void Render::SetupRenderProperty()
@@ -59,10 +59,10 @@ void Render::DrawOnFrameEnd()
 void Render::SetShaderLightParams(Shader *shader)
 {
     list<Light*>::iterator i = Light::lights.begin();
+	int pointLightNum = 0;
     while (i != Light::lights.end())
     {
         Light *light = *i;
-        int pointLightNum = 0;
         if (light->type == LightType::Directional)
         {
             shader->setVec3f("dirLight.direction", light->dir);
@@ -70,7 +70,7 @@ void Render::SetShaderLightParams(Shader *shader)
             shader->setVec3f("dirLight.diffuse", 0.5f * light->color);
             shader->setVec3f("dirLight.specular", 1.0f * light->color);
         }
-        else if (light->type == LightType::Point && pointLightNum <= Light::maxPointLight)
+        else if (light->type == LightType::Point && pointLightNum < Light::maxPointLight)
         {
             std::string num = std::to_string(pointLightNum);
             shader->setVec3f("pointLights[" + num + "].position", light->pos);

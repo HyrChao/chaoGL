@@ -266,7 +266,7 @@ void Hello::HelloModel()
     clearColor.a = 1.0f;
     Render::SetClearColor(clearColor);
     if(!helloModelInitialized){
-        helloModel = new Model(FileSystem::getPath("/Assets/Model/nanosuit/nanosuit.obj"), false,glm::vec3(0.0));
+        helloModel = new Model(FileSystem::getPath("/Assets/Model/nanosuit/nanosuit.obj"), false,glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.1));
         helloModelShader = new Shader("/Shaders/Vertex/HelloModel.vs", "/Shaders/Fragment/HelloModel.fs");
         helloModelInitialized = true;
     }

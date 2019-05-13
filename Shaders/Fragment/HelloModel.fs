@@ -128,11 +128,12 @@ void main()
 	// sample diffuse color 
 	FragOut frag;
 	vec4 diffuseCol_1 = texture(material.diffuse_1, TexCoord);
+    vec3 specularCol_1 = texture(material.specular_1, TexCoord).rgb;
 
 	frag.diffuse = diffuseCol_1.rgb;
 	frag.normal = normalize(Normal);
-	frag.specular = texture(material.specular_1, TexCoord).rgb;
-	frag.ambient = vec3(0.3); // evironment ambient
+	frag.specular = specularCol_1;
+	frag.ambient = vec3(1); // evironment ambient
 
 	// calc lights
 	vec3 viewDir = normalize(viewPos - FragPos);
@@ -147,5 +148,7 @@ void main()
     // spotlight
     result += CalcSpotLight(spotLight, frag, FragPos, viewDir);   
 	FragColor = vec4(result,1);
-	//FragColor = vec4(1,0,0,1);
+	//FragColor = vec4(specularCol_1.rgb ,1);
+	//FragColor = vec4(diffuseCol_1.rgb ,1);
+    //FragColor = vec4(1);
 }
