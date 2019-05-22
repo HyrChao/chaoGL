@@ -58,6 +58,7 @@ void Render::DrawOnFrameEnd()
 
 void Render::SetShaderLightParams(Shader *shader)
 {
+	shader->setFloat("material.shininess", 32.0f);
     list<Light*>::iterator i = Light::lights.begin();
 	int pointLightNum = 0;
     while (i != Light::lights.end())

@@ -40,8 +40,15 @@ add_subdirectory(3rdparty/assimp)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    # Add debug marco for debug version (For visual studio)
+    #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DCHAOGL_DEBUG")
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DCHAOGL_DEBUG")
+
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
+    # Add debug marco for debug version (No VS)
+    #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DCHAOGL_DEBUG")
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DCHAOGL_DEBUG")
     if(NOT WIN32)
         set(GLAD_LIBRARIES dl)
     endif()
@@ -92,25 +99,19 @@ GROUP_SRC(all_src)
 set(all_3rdparty ${VENDORS_HEADERS})
 GROUP_SRC(all_3rdparty)
 
-# Add debug marco for debug version 
-if (CMAKE_BUILD_TYPE STREQUAL Debug)
-
-    add_definitions(
-        -DCHAOGL_DEBUG
-    )
-
-endif ()
-
 #This executes every time you build ${PROJECT_NAME} 
 #and copies the contents of "/config" into the directory where the target exe/lib will end up.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 COMMAND ${CMAKE_COMMAND} -E copy_directory
 ${CMAKE_SOURCE_DIR}/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders)
 
+# Add debug marco for debug version
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DCHAOGL_DEBUG")
 # No need to copy assets after defined root by cmake
 # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #                    COMMAND ${CMAKE_COMMAND} -E copy_directory
 #                        ${CMAKE_SOURCE_DIR}/Assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets)
 # Include config files from cmake
 configure_file(Config/CMake/root_directory.h.in Config/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/Config)     
 include_directories(${CMAKE_BINARY_DIR}/Config)     
