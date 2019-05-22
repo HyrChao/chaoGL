@@ -1,14 +1,16 @@
 #include<Render/Camera.h>
 
+#include<Application/Application.h>
+
 
 int Camera::screenHeight;
 int Camera::screenWidth;
 
 Camera * Camera::main;
 
-Camera::Camera(int in_screenWidth,int in_screenHeight)
+Camera::Camera()
 {
-	SetScreenExtend(in_screenWidth, in_screenHeight);
+	SetScreenExtend(Application::screenWidth, Application::screenHeight);
 
 	cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 

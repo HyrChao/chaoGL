@@ -23,11 +23,11 @@ void Sections::SwitchSections()
 
 	if (defaultSection)
 	{
-		hello->HelloLight();
+		hello->HelloModel();
 	}
 	else
 	{
-		hello->HelloModel();
+		hello->HelloLight();
 	}
 }
 

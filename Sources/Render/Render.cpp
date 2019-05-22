@@ -17,6 +17,11 @@ Render::Render()
 		delete this;
 	}
 
+	if (Camera::main == nullptr)
+	{
+		Camera::main = new Camera();
+	}
+
 	SetupRenderProperty();
 }
 
@@ -74,7 +79,7 @@ void Render::SetShaderLightParams(Shader *shader)
         else if (light->type == LightType::Point && pointLightNum < Light::maxPointLight)
         {
             std::string num = std::to_string(pointLightNum);
-            shader->setVec3f("pointLights[" + num + "].position", light->pos);
+            shader->setVec3f("pointLights[" + num + "].position", light->GetPos());
             shader->setFloat("pointLights[" + num + "].constant", light->constant);
             shader->setFloat("pointLights[" + num + "].linear", light->linear);
             shader->setFloat("pointLights[" + num + "].quadratic", light->quadratic);
@@ -85,7 +90,7 @@ void Render::SetShaderLightParams(Shader *shader)
         }
         else if (light->type == LightType::Spot)
         {
-            shader->setVec3f("spotLight.position", light->pos);
+            shader->setVec3f("spotLight.position", light->GetPos());
             shader->setVec3f("spotLight.direction", light->dir);
             shader->setFloat("spotLight.cutOff", glm::cos(light->cutOff));  // cutoff is cosine of angle
             shader->setFloat("spotLight.outerCutOff", glm::cos(light->outerCutOff));

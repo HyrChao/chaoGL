@@ -44,7 +44,7 @@ void Hello::SetupLight()
     pointLight2->linear = 0.7f;
     pointLight2->quadratic = 1.8f;
     
-    dirLight = new Light(glm::vec3(10.0f,10.0f,10.0f),LightType::Directional);
+    dirLight = new Light(glm::vec3(0),LightType::Directional);
     dirLight->color = glm::vec3(1.0f, 1.0f, 1.0f);
     dirLight->dir = glm::vec3(-1,-1,-1);
     
@@ -214,7 +214,7 @@ void Hello::HelloLight()
 	helloLightShader->setVec3f("dirLight.diffuse", 0.5f * dirLight->color);
 	helloLightShader->setVec3f("dirLight.specular", 1.0f * dirLight->color);
     
-    helloLightShader->setVec3f("pointLights[0].position", pointLight1->pos);
+    helloLightShader->setVec3f("pointLights[0].position", pointLight1->GetPos());
     helloLightShader->setFloat("pointLights[0].constant", pointLight1->constant);
     helloLightShader->setFloat("pointLights[0].linear", pointLight1->linear);
     helloLightShader->setFloat("pointLights[0].quadratic", pointLight1->quadratic);
@@ -222,7 +222,7 @@ void Hello::HelloLight()
     helloLightShader->setVec3f("pointLights[0].diffuse", 0.5f * pointLight1->color);
     helloLightShader->setVec3f("pointLights[0].specular", 0.8f * pointLight1->color);
     
-    helloLightShader->setVec3f("pointLights[1].position", pointLight2->pos);
+    helloLightShader->setVec3f("pointLights[1].position", pointLight2->GetPos());
     helloLightShader->setFloat("pointLights[1].constant", pointLight2->constant);
     helloLightShader->setFloat("pointLights[1].linear", pointLight2->linear);
     helloLightShader->setFloat("pointLights[1].quadratic", pointLight2->quadratic);
@@ -230,7 +230,7 @@ void Hello::HelloLight()
     helloLightShader->setVec3f("pointLights[1].diffuse", 0.3f * pointLight2->color);
     helloLightShader->setVec3f("pointLights[1].specular", 0.3f * pointLight2->color);
     
-    helloLightShader->setVec3f("spotLight.position", spotLight->pos);
+    helloLightShader->setVec3f("spotLight.position", spotLight->GetPos());
     helloLightShader->setVec3f("spotLight.direction", spotLight->dir);
     helloLightShader->setFloat("spotLight.cutOff", glm::cos(spotLight->cutOff));  // cutoff is cosine of angle
     helloLightShader->setFloat("spotLight.outerCutOff", glm::cos(spotLight->outerCutOff));
@@ -262,7 +262,7 @@ void Hello::HelloLight()
 
 void Hello::HelloModel()
 {
-    glm::vec4 clearColor = glm::vec4(0.3f);
+    glm::vec4 clearColor = glm::vec4(0.0f);
     clearColor.a = 1.0f;
     Render::SetClearColor(clearColor);
     if(!helloModelInitialized){
@@ -270,6 +270,9 @@ void Hello::HelloModel()
         helloModelShader = new Shader("/Shaders/Vertex/HelloModel.vs", "/Shaders/Fragment/HelloModel.fs");
         helloModelInitialized = true;
     }
+	//float timeVal = glm::sin(Time::time) * 0.02f;
+	float timeVal = Time::deltaTime;
+	helloModel->Rotate(glm::vec3(0, timeVal, 0));
     helloModel->Draw(helloModelShader);
     
 }

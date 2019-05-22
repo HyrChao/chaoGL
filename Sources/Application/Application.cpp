@@ -38,11 +38,7 @@ void Application::InitApplication()
     
     Mouse::SetMouseInitLocation(screenWidth,screenHeight);
     
-    if (Camera::main == nullptr)
-    {
-        Camera::main = new Camera(screenWidth,screenHeight);
-    }
-    
+
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// set input callback

@@ -10,7 +10,7 @@ class Camera
 {
 public:
 
-	Camera(int in_screenWidth, int in_screenHeight);
+	Camera();
 	~Camera();
 
 	void UpdateCamera();
