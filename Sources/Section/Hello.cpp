@@ -24,10 +24,7 @@ Hello::Hello()
 
 Hello::~Hello()
 {
-	delete helloTriShader;
-	delete helloTexShader;
-	delete helloProjShader;
-	delete helloLightShader;
+
 }
 
 void Hello::SetupLight()
