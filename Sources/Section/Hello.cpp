@@ -274,6 +274,11 @@ void Hello::HelloModel()
     
 }
 
+void Hello::HelloPBR()
+{
+    
+}
+
 void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
 {
 	glm::mat4 trans;

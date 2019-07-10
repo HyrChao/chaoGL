@@ -43,6 +43,10 @@ public:
 		}
 	}
 	static GLFWwindow* window;
+    static bool GetKeyOnce(int key)
+    {
+        return keyOnce[key];
+    }
 
 public:
 
@@ -51,6 +55,7 @@ public:
 
 private:
 	static void ProcessInput();
+    static void UpdateKeys();
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 private:

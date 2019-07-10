@@ -3,6 +3,13 @@
 
 #include <Section/Hello.h>
 
+enum SectionEnum
+{
+    None,
+    BlinnPhong,
+    LoadModel,
+    PBR
+};
 
 class Sections
 {
@@ -10,15 +17,16 @@ public:
 	Sections();
 	~Sections();
 	void SwitchSections();
-	void SetDefaultSection(bool firstDefault);
-	bool GetDefaultSection();
+	void SetSection(SectionEnum selectedSection);
+	SectionEnum GetCurrentSection();
 
 private:
 
 	Hello* hello;
-	bool defaultSection = true;
+    SectionEnum cureentSection = SectionEnum::BlinnPhong;
 
 
 };
+
 
 #endif // !SECTIONS_H

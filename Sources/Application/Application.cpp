@@ -70,7 +70,17 @@ void Application::Update()
     Time::UpdateTime();
 }
 
-
+void Application::UpdateKeys()
+{
+    for (int key = 0; key < GLFW_KEY_LAST + 1 ; key++ )
+    {
+        keyOnce[key] = false;
+        if (glfwGetKey(window, key) == GLFW_PRESS)
+            keyOnce[key] = true;
+//        if (glfwGetKey(window, key) == GLFW_RELEASE)
+//            keyOnce[key] = false;
+    }
+}
 
 
 
@@ -85,6 +95,8 @@ void Application::OnFrameEnd()
 
 void Application::ProcessInput()
 {
+    UpdateKeys();
+    
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	// wireframe mode
@@ -101,16 +113,6 @@ void Application::ProcessInput()
 		keyOnce[GLFW_KEY_W] = false;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
 		keyOnce[GLFW_KEY_LEFT_CONTROL] = false;
-	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_PRESS && !keyOnce[GLFW_KEY_ENTER])
-	{
-		keyOnce[GLFW_KEY_ENTER] = true;
-		if (section->GetDefaultSection())
-			section->SetDefaultSection(false);
-		else
-			section->SetDefaultSection(true);
-	}
-	if (glfwGetKey(Application::GetWindow(), GLFW_KEY_ENTER) == GLFW_RELEASE)
-		keyOnce[GLFW_KEY_ENTER] = false;
 	float cameraSpeed = 0.05f; // adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		Camera::main->MoveForward(cameraSpeed);
@@ -120,6 +122,13 @@ void Application::ProcessInput()
 		Camera::main->MoveRight(-cameraSpeed);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		Camera::main->MoveRight(cameraSpeed);
+    
+    if (GetKeyOnce(GLFW_KEY_1))
+        section->SetSection(SectionEnum::BlinnPhong);
+    else if (GetKeyOnce(GLFW_KEY_2))
+        section->SetSection(SectionEnum::LoadModel);
+    else if (GetKeyOnce(GLFW_KEY_3))
+        section->SetSection(SectionEnum::PBR);
 }
 
 void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos)

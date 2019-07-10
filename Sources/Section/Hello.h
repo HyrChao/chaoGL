@@ -19,6 +19,9 @@ private:
     bool helloLightInitialized = false;
     
     bool helloModelInitialized = false;
+    
+    bool helloPBRInitialized = false;
+    
     Model *helloModel;
     Shader *helloModelShader;
 	unsigned int diffuseTex_1, diffuseTex_2, specularTex;
@@ -27,6 +30,7 @@ private:
 	Shader* helloTexShader;
 	Shader* helloProjShader;
 	Shader* helloLightShader;
+    Shader* helloPBRShader;
 
 	Light* pointLight1;
     Light* pointLight2;
@@ -63,6 +67,7 @@ public:
     void HelloLight();
     void HelloLightInit();
     void HelloModel();
+    void HelloPBR();
 
 
 private:
