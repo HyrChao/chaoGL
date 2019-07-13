@@ -75,7 +75,7 @@ private:
 	void Transform(Shader* shader, glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale);
 	void InitData();
 	void glmTest();
-	void SetupLight();
+	void SetupLight_Old();
 
 
 };

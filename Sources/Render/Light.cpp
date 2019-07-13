@@ -3,31 +3,21 @@
 list<Light*> Light::lights;
 int Light::maxPointLight = 5;
 
-Light::Light(glm::vec3 pos, LightType type)
+Light::Light(LightParam param)
 {
-    this->type = type;
-	this->pos = pos;
 
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
-	// 只需要绑定VBO不用再次设置VBO的数据，因为箱子的VBO数据中已经包含了正确的立方体顶点数据
-	glBindBuffer(GL_ARRAY_BUFFER, Geo::geo->cubeVBO);
-	// 设置灯立方体的顶点属性（对我们的灯来说仅仅只有位置数据）
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	pos = param.pos;
+	type = param.type;
+	color = param.color;
+	dir = param.dir;
+	constant = param.constant;
+	linear = param.linear;
+	quadratic = param.quadratic;
+	cutOff = param.cutOff;
+	outerCutOff - param.outerCutoff;
 
-	// transform , for light avatar
-	scale = glm::vec3(0.1f);
-    //trans = glm::mat4
-    trans = glm::translate(trans, this->pos);
-    trans = glm::scale(trans, scale);
 
-	//lightColor = glm::vec3(0.3f, 0.1f, 0.1f);
-	//lightColor = glm::vec3(0.1f, 0.0f, 0.0f);
-
-	avatarShader = new Shader("./Shaders/Avatar/Light.vs", "./Shaders/Avatar/Light.fs");
-    
-    lights.push_back(this);
+	AddLight(this);
 }
 
 Light::~Light()
@@ -51,8 +41,33 @@ Light::~Light()
     }
 }
 
-void Light::DrawAvatar() const
+
+void Light::DrawAvatar()
 {
+	if (!lightAvatarInitialized)
+	{
+		glGenVertexArrays(1, &lightVAO);
+		glBindVertexArray(lightVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, Geo::geo->cubeVBO);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		// transform , for light avatar
+		scale = glm::vec3(0.1f);
+		//trans = glm::mat4
+		trans = glm::translate(trans, this->pos);
+		trans = glm::scale(trans, scale);
+
+		//lightColor = glm::vec3(0.3f, 0.1f, 0.1f);
+		//lightColor = glm::vec3(0.1f, 0.0f, 0.0f);
+
+		avatarShader = new Shader("./Shaders/Avatar/Light.vs", "./Shaders/Avatar/Light.fs");
+
+		lightAvatarInitialized = true;
+	}
+
 	avatarShader->use();
 
 	avatarShader->setMat4f("model", trans);

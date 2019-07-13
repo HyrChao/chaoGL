@@ -16,34 +16,24 @@ enum LightType
     Spot
 };
 
+struct LightParam
+{
+	LightType type = LightType::Point;
+	glm::vec3 pos;
+	glm::vec3 color;
+	glm::vec3 dir;
+	float constant;
+	float linear;
+	float quadratic;
+	float cutOff;
+	float outerCutoff;
+};
+
 class Light : public Transform
 {
 public:
     
-    Light(glm::vec3 pos, LightType = LightType::Point);
-	~Light();
-    
-    void DrawAvatar() const;
-    void SetCutOff(float angle)
-    {
-        cutOff = glm::radians(angle);
-    }
-    void SetOuterCutOff(float angle)
-    {
-        outerCutOff = glm::radians(angle);
-    }
-    float GetCutOffAngle() const
-    {
-        return glm::degrees(cutOff);
-    }
-    float GetOuterCutOffAngle() const
-    {
-        return glm::degrees(outerCutOff);
-    }
-    
 
-public:
-    
     static list<Light*> lights;
     static int maxPointLight;
     LightType type;
@@ -61,6 +51,55 @@ public:
     // spotlight property
     float cutOff = 0.125f;
     float outerCutOff = 0.167f;
+public:
+    
+    Light(LightParam param);
+	~Light();
+    
+    void DrawAvatar();
+    void SetCutOff(float angle)
+    {
+        cutOff = glm::radians(angle);
+    }
+    void SetOuterCutOff(float angle)
+    {
+        outerCutOff = glm::radians(angle);
+    }
+    float GetCutOffAngle() const
+    {
+        return glm::degrees(cutOff);
+    }
+    float GetOuterCutOffAngle() const
+    {
+        return glm::degrees(outerCutOff);
+    }
+	static void AddLight(Light* light)
+	{
+		lights.push_back(light);
+	}
+	static void DelLight(Light* light)
+	{
+		list<Light*>::iterator i = lights.begin();
+
+		while (i != lights.end())
+		{
+			Light *pLight = *i;
+
+			if (pLight == light)
+			{
+				i = lights.erase(i);
+			}
+			else
+			{
+				++i;
+			}
+		}
+	}
+	static void ClearAllLight()
+	{
+		lights.clear();
+	}
+
     
 private:
 
@@ -72,6 +111,7 @@ private:
 
 	Shader *avatarShader;
 
+	bool lightAvatarInitialized = false;
 
 	// mesh
 	
