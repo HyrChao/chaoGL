@@ -16,10 +16,11 @@ struct FragOut
 
 struct Material 
 {
-	sampler2D diffuse_1;
-	sampler2D diffuse_2;
-    sampler2D specular;
-    float shininess;
+	sampler2D albedo;
+	sampler2D normal;
+    sampler2D roughness;
+    sampler2D metallic;
+    sampler2D ao;
 }; 
 
 uniform Material material;
@@ -91,7 +92,7 @@ vec3 CalcPointLight(PointLight light, FragOut frag, vec3 fragPos, vec3 viewDir)
     float lightDist    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * lightDist + light.quadratic * (lightDist * lightDist));    
     // merge
-	//attenuation *= -1.0;
+	//attenuation = 1.0;
     vec3 ambient  = light.ambient  * frag.diffuse;
     vec3 diffuse  = light.diffuse  * diff * frag.diffuse;
     vec3 specular = light.specular * spec * frag.specular;
@@ -123,29 +124,35 @@ vec3 CalcSpotLight(SpotLight light, FragOut frag, vec3 fragPos, vec3 viewDir)
 	return (ambient + diffuse + specular);
 }
 
+vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
+{
+    vec3 Q1  = dFdx(WorldPos);
+    vec3 Q2  = dFdy(WorldPos);
+    vec2 st1 = dFdx(TexCoords);
+    vec2 st2 = dFdy(TexCoords);
+
+    vec3 N   = normalize(Normal);
+    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    vec3 B  = -normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
+
 void main()
 {
-	// sample diffuse color 
-	FragOut frag;
-	vec4 diffuseCol_1 = texture(material.diffuse_1, TexCoord);
-	vec4 diffuseCol_2 = texture(material.diffuse_2, TexCoord);
+    FragOut FragColor;
 
-	frag.diffuse = mix(diffuseCol_1, diffuseCol_2, diffuseCol_2.a).rgb;
-	frag.normal = normalize(Normal);
-	frag.specular = texture(material.specular, TexCoord).rgb;
-	frag.ambient = vec3(0); // evironment ambient
+    // Textures sampling
+    vec3 albedo = pow(texture(materila.albedo,TexCoord).rgb,2.2); // convert from SRGB to linear space
+    vec3 normal = texture(material.normal, TexCoords).xyz * 2.0 - 1.0;
+    normal = ConvertNormalToWorldspace(normal); //PBR calc need wordspace normal
+    float metallic = texture(material.metallic, TexCoord).r;
+    float roughness = texture(material.roughness, TexCoord).r;
+    float ao = pow(texture(material.ao, TexCoord).r,2.2);
 
-	// calc lights
-	vec3 viewDir = normalize(viewPos - FragPos);
-	vec3 result = vec3(0);
-    // dirlight
-    result = CalcDirLight(dirLight, frag, viewDir);
-    // pointlight
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-	{
-		result += CalcPointLight(pointLights[i], frag, FragPos, viewDir);    
-	}
-    // spotlight
-    result += CalcSpotLight(spotLight, frag, FragPos, viewDir);   
+    vec3 N = normalize(Normal);
+    vec3 V = normalize(viewPos - fragPos);
+
 	FragColor = vec4(result,1);
 }
