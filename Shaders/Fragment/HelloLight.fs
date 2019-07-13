@@ -150,5 +150,10 @@ void main()
 	}
     // spotlight
     result += CalcSpotLight(spotLight, frag, FragPos, viewDir);    
+    // result = vec3(pointLights[0].constant + pointLights[0].linear + pointLights[0].quadratic);    
+    // float lightDist    = length(pointLights[0].position - FragPos);
+    // result = vec3(1.0/(pointLights[0].constant + pointLights[0].linear + pointLights[0].quadratic));    
+    // result = vec3(pointLights[0].linear + pointLights[0].quadratic);    
+    // result = vec3(1.0/lightDist);    
 	FragColor = vec4(result,1);
 }

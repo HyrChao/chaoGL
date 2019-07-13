@@ -4,7 +4,7 @@ out vec4 FragColor;
 in vec3 Normal;
 in vec3 vColor;
 in vec2 TexCoord;
-in vec3 FragPos;
+in vec3 fragPos;
 
 struct FragOut
 {
@@ -28,24 +28,14 @@ uniform Material material;
 struct DirLight 
 {
     vec3 direction;
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 Irradiance;
 };  
 uniform DirLight dirLight;
 
 struct PointLight 
 {
     vec3 position;
-
-    float constant;
-    float linear;
-    float quadratic;
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 Irradiance;
 };  
 #define NR_POINT_LIGHTS 4
 uniform PointLight pointLights[NR_POINT_LIGHTS];
@@ -56,72 +46,123 @@ struct SpotLight
     vec3 direction;
     float cutOff;
     float outerCutOff;	
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 Irradiance;
 };  
 uniform SpotLight spotLight;
 
 uniform vec3 viewPos;
 
-vec3 CalcDirLight(DirLight light, FragOut frag, vec3 viewDir)
+const float PI = 3.14159265359;
+
+//Schlick Fresnel
+vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
-    vec3 lightDir = normalize(-light.direction.xyx);
-    // diff
-    float diff = max(dot(frag.normal, lightDir), 0.0);
-    // spec
-    vec3 reflectDir = reflect(-lightDir, frag.normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    // merge
-    vec3 ambient  = light.ambient  * frag.diffuse;
-    vec3 diffuse  = light.diffuse  * diff * frag.diffuse;
-    vec3 specular = light.specular * spec * frag.specular;
-    return (ambient + diffuse + specular);
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
-vec3 CalcPointLight(PointLight light, FragOut frag, vec3 fragPos, vec3 viewDir)
+//Trowbridge-Reitz GGX, NDF(Normal Distribute Function), a = roughness * roughness
+float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
-    // diffuse
-    float diff = max(dot(frag.normal, lightDir), 0.0);
-    // specular
-    vec3 reflectDir = reflect(-lightDir, frag.normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    // attenuation
-    float lightDist    = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * lightDist + light.quadratic * (lightDist * lightDist));    
-    // merge
-	//attenuation = 1.0;
-    vec3 ambient  = light.ambient  * frag.diffuse;
-    vec3 diffuse  = light.diffuse  * diff * frag.diffuse;
-    vec3 specular = light.specular * spec * frag.specular;
-    ambient  *= attenuation;
-    diffuse  *= attenuation;
-    specular *= attenuation;
-    return (ambient + diffuse + specular);
+    float a = roughness * roughness;
+    float a2 = a*a;
+    float NdotH = max(dot(N,H),0.0);
+    float NdotH2 = NdotH * NdotH;
+
+    float nom = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+
+    return nom / denom; 
 }
 
-vec3 CalcSpotLight(SpotLight light, FragOut frag, vec3 fragPos, vec3 viewDir)
+//Schlick-GGX, Geometry Obstruction
+float GeometrySchlickGGX(float NdotV, float roughness)
 {
-	vec3 lightDir = normalize(light.position - fragPos);
+    float r = roughness + 1.0;
+    float k = (r*r) / 8.0;
 
-    // diffuse
-    float diff = max(dot(frag.normal, lightDir), 0.0);
-    // specular
-    vec3 reflectDir = reflect(-lightDir, frag.normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    // merge
-    vec3 ambient  = light.ambient  * frag.diffuse;
-    vec3 diffuse  = light.diffuse  * diff * frag.diffuse;
-    vec3 specular = light.specular * spec * frag.specular;
+    float nom = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+
+//Smith’s method, Calc both obstruction and sub-surface shadowing
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N,V), 0.0));
+    float NdotL = max(dot(N,L), 0.0));
+    float ggx1 = GeometrySchlickGGX(NdotV,roughness);
+    float ggx2 = GeometrySchlickGGX(NdotL,roughness);
+
+    return ggx1 * ggx2;
+}
+
+vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,float roughness, float metallic)
+{
+    // calc F0
+    vec3 F0 = vec3(0.04f);
+    F0 = mix(F0, albedo, metallic);
+
+    // calc Fresnel, using Schlick
+    float cosTheta = max(dot(H, V), 0.0);
+    vec3 F = FresnelSchlick(cosTheta,F0);
+
+    // GGX
+    float NDF = DistributionGGX(N,H,roughness)
+    float G = GeometrySmith(N, V, L, roughness);
+
+    // Cook-Torrance BRDF
+    float NdotL = max(dot(N,L), 0.0);
+    float NdotV = max(dot(N,V), 0.0);
+    vec3 nominator = NDF * G * F;
+    float denominator = 4.0 * NdotV * NdotL + 0.001;
+    vec3 specular = nominator / denominator;
+
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= (1.0 - metallic);
+
+    vec3 dLo = (kD * albedo / PI + specular) * radiance * NdotL;
+
+    return dLo;
+}
+
+vec3 CalcDirLightIrradiance(DirLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
+{
+    vec3 L = normalize(-light.direction.xyx);
+    vec3 H = V + L;
+
+    vec3 radiance = light.irradiance;
+
+    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
+}
+
+vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
+{
+    vec3 L = normalize(light.position - fragPos);
+    vec3 H = V + L;
+
+    float lightDist = length(light.position - fragPos);
+    float attenuation = 1 / (lightDist * lightDist);
+
+    vec3 radiance = light.irradiance * attenuation;
+
+    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
+}
+
+vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
+{
+	vec3 L = normalize(light.position - fragPos);
+    vec3 H = V + L;
 
 	float theta     = dot(lightDir, normalize(-light.direction));
 	float epsilon   = light.cutOff - light.outerCutOff;
 	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-	diffuse  *= intensity;
-	specular *= intensity;
-	return (ambient + diffuse + specular);
+
+    vec3 radiance = light.irradiance * intensity;
+
+    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
 }
 
 vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
@@ -154,5 +195,22 @@ void main()
     vec3 N = normalize(Normal);
     vec3 V = normalize(viewPos - fragPos);
 
-	FragColor = vec4(result,1);
+    vec3 Lo = vec3(0.0);
+
+    // calc irradiance in directional lights
+    Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness,metallic);    
+
+    // calc irradiance in point lights
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+	{
+		Lo += CalcPointLightRadiance(pointLights[i], N, V, albedo, roughness,metallic);    
+	}
+
+    // calc irradiance in spot lights
+    Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic);    
+
+    vec3 ambient = vec3(0.03) * albedo * ao;
+    vec3 color = ambient + Lo;
+
+	FragColor = vec4(color,1);
 }

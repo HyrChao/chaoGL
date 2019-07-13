@@ -7,7 +7,7 @@ layout (location = 3) in vec3 aColor;
 out vec3 vColor;
 out vec2 TexCoord;
 out vec3 Normal;
-out vec3 FragPos;
+out vec3 fragPos;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -21,6 +21,6 @@ void main()
 	//can update with scale, but two cost, replace with simple one
 	// see https://learnopengl-cn.github.io/02%20Lighting/02%20Basic%20Lighting/ for detail
 	Normal = vec3(model * vec4(aNormal, 0.0));
-	FragPos = vec3(model * vec4(aPos, 1.0));
+	fragPos = vec3(model * vec4(aPos, 1.0));
     gl_Position = projection * view * model * vec4(aPos, 1.0f);
 }
