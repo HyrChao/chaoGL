@@ -28,14 +28,14 @@ uniform Material material;
 struct DirLight 
 {
     vec3 direction;
-    vec3 Irradiance;
+    vec3 irradiance;
 };  
 uniform DirLight dirLight;
 
 struct PointLight 
 {
     vec3 position;
-    vec3 Irradiance;
+    vec3 irradiance;
 };  
 #define NR_POINT_LIGHTS 4
 uniform PointLight pointLights[NR_POINT_LIGHTS];
@@ -46,7 +46,7 @@ struct SpotLight
     vec3 direction;
     float cutOff;
     float outerCutOff;	
-    vec3 Irradiance;
+    vec3 irradiance;
 };  
 uniform SpotLight spotLight;
 
@@ -90,8 +90,8 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 //Smith’s method, Calc both obstruction and sub-surface shadowing
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
-    float NdotV = max(dot(N,V), 0.0));
-    float NdotL = max(dot(N,L), 0.0));
+    float NdotV = max(dot(N,V), 0.0);
+    float NdotL = max(dot(N,L), 0.0);
     float ggx1 = GeometrySchlickGGX(NdotV,roughness);
     float ggx2 = GeometrySchlickGGX(NdotL,roughness);
 
@@ -109,7 +109,7 @@ vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,fl
     vec3 F = FresnelSchlick(cosTheta,F0);
 
     // GGX
-    float NDF = DistributionGGX(N,H,roughness)
+    float NDF = DistributionGGX(N,H,roughness);
     float G = GeometrySmith(N, V, L, roughness);
 
     // Cook-Torrance BRDF
@@ -156,7 +156,7 @@ vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float 
 	vec3 L = normalize(light.position - fragPos);
     vec3 H = V + L;
 
-	float theta     = dot(lightDir, normalize(-light.direction));
+	float theta     = dot(L, normalize(-light.direction));
 	float epsilon   = light.cutOff - light.outerCutOff;
 	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
@@ -167,10 +167,10 @@ vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float 
 
 vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
 {
-    vec3 Q1  = dFdx(WorldPos);
-    vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(TexCoords);
-    vec2 st2 = dFdy(TexCoords);
+    vec3 Q1  = dFdx(fragPos);
+    vec3 Q2  = dFdy(fragPos);
+    vec2 st1 = dFdx(TexCoord);
+    vec2 st2 = dFdy(TexCoord);
 
     vec3 N   = normalize(Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
@@ -185,8 +185,9 @@ void main()
     FragOut FragColor;
 
     // Textures sampling
-    vec3 albedo = pow(texture(materila.albedo,TexCoord).rgb,2.2); // convert from SRGB to linear space
-    vec3 normal = texture(material.normal, TexCoords).xyz * 2.0 - 1.0;
+    vec3 albedo = texture(material.albedo,TexCoord).rgb; 
+    albedo = pow(albedo,vec3(2.2f)); // convert from SRGB to linear space
+    vec3 normal = texture(material.normal, TexCoord).xyz * 2.0 - 1.0;
     normal = ConvertNormalToWorldspace(normal); //PBR calc need wordspace normal
     float metallic = texture(material.metallic, TexCoord).r;
     float roughness = texture(material.roughness, TexCoord).r;
@@ -203,7 +204,7 @@ void main()
     // calc irradiance in point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
 	{
-		Lo += CalcPointLightRadiance(pointLights[i], N, V, albedo, roughness,metallic);    
+		Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic);    
 	}
 
     // calc irradiance in spot lights
@@ -217,5 +218,6 @@ void main()
     // Gamma correction
     color = pow(color, vec3(1.0/2.2));
 
-	FragColor = vec4(color,1.0);
+    vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
+	FragColor = finalColor;
 }

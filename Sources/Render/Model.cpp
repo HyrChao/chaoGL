@@ -135,7 +135,7 @@ void Model::Draw(Shader* shader)
     shader->use();
 //    cout << "Draw mesh "<< endl;
     // Transform & View & Projection
-    Render::SetShaderParams(shader, this->modelMat);
+    Render::SetVertexShaderParams(shader, this->modelMat);
     Render::SetShaderLightParams(shader);
     
     for (unsigned int i = 0; i < meshes.size(); i++) {

@@ -74,7 +74,8 @@ void Render::SetShaderLightParams(Shader *shader)
             shader->setVec3f("dirLight.direction", light->dir);
             shader->setVec3f("dirLight.ambient", 0.02f * light->color);
             shader->setVec3f("dirLight.diffuse", 0.5f * light->color);
-            shader->setVec3f("dirLight.specular", 1.0f * light->color);
+			shader->setVec3f("dirLight.specular", 1.0f * light->color);
+			shader->setVec3f("dirLight.irradiance", 5.0f * light->color);
         }
         else if (light->type == LightType::Point && pointLightNum < Light::maxPointLight)
         {
@@ -86,6 +87,8 @@ void Render::SetShaderLightParams(Shader *shader)
             shader->setVec3f("pointLights[" + num + "].ambient", 0.01f * light->color);
             shader->setVec3f("pointLights[" + num + "].diffuse", 0.5f * light->color);
             shader->setVec3f("pointLights[" + num + "].specular", 0.8f * light->color);
+			shader->setVec3f("pointLights[" + num + "],irradiance", 5.0f * light->color);
+
             pointLightNum++;
         }
         else if (light->type == LightType::Spot)
@@ -97,6 +100,8 @@ void Render::SetShaderLightParams(Shader *shader)
             shader->setVec3f("spotLight.ambient", 0.01f * light->color);
             shader->setVec3f("spotLight.diffuse", 0.8f * light->color);
             shader->setVec3f("spotLight.specular", 0.5f * light->color);
+			shader->setVec3f("spotLight.irradiance", 5.0f * light->color);
+
         }
         else
         {

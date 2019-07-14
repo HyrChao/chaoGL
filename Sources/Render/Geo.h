@@ -3,6 +3,12 @@
 #define GEO_H
 
 #include <glad/glad.h>
+//#include <Render/Shader.h>
+//#include <Render/Render.h>
+//#include <Object/Transform.h>
+#include <glm.hpp>
+#include <vector>
+#include <iostream>
 
 class Geo
 {
@@ -18,6 +24,12 @@ public:
 	unsigned int recEBO;
 	unsigned int cubeVAO;
 	unsigned int cubeVBO;
+	unsigned int sphereVAO;
+	unsigned int sphereIndexCount;
+
+public:
+	void DrawPlane();
+
 
 private:
 

@@ -18,7 +18,7 @@ public:
 	static void SetupRenderProperty();
 	static void DrawOnFrameBegin();
 	static void DrawOnFrameEnd();
-    static void SetShaderParams(Shader *shader, glm::mat4 model = glm::mat4(1.0))
+    static void SetVertexShaderParams(Shader *shader, glm::mat4 model = glm::mat4(1.0))
     {
         shader->setMat4f("view", viewMat);
         shader->setMat4f("projection", projectMat);

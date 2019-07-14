@@ -332,8 +332,88 @@ void Hello::HelloPBR()
 {
 	if (!helloPBRInitialized)
 	{
+		Light::lights.clear();
+
+		LightParam pointLightp1;
+		pointLightp1.type = LightType::Point;
+		pointLightp1.pos = glm::vec3(0.0f, 3.0f, 0.0f);
+		pointLightp1.color = glm::vec3(0.6f, 0.2f, 0.2f);
+		pointLightp1.constant = 1.0f;
+		pointLightp1.linear = 0.09f;
+		pointLightp1.quadratic = 0.032f;
+		Light* pointLight1 = new Light(pointLightp1);
+
+		LightParam pointLightp2;
+		pointLightp2.type = LightType::Point;
+		pointLightp2.pos = glm::vec3(-5.0f, -3.0f, -5.0f);
+		pointLightp2.color = glm::vec3(0.1f, 0.8f, 0.1f);
+		pointLightp2.constant = 1.0f;
+		pointLightp2.linear = 0.7f;
+		pointLightp2.quadratic = 1.8f;
+		Light* pointLight2 = new Light(pointLightp2);
+
+		LightParam dirlightp1;
+		dirlightp1.type = LightType::Directional;
+		dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
+		dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
+		dirlightp1.dir = glm::vec3(-1, -1, -1);;
+		Light* dirLight = new Light(dirlightp1);
+
+		LightParam spotlightp1;
+		spotlightp1.type = LightType::Spot;
+		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
+		spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
+		spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);
+		spotlightp1.cutOff = 12.5f;
+		spotlightp1.outerCutoff = 17.5f;
+		Light* spotlight = new Light(spotlightp1);
+
+		albedo = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_basecolor.png").c_str());
+		normal = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_normal.png").c_str());
+		metallic = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_metallic.png").c_str());
+		roughness = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_roughness.png").c_str());
+		ao = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/ao.png").c_str());
+
 		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
 		helloPBRInitialized = true;
+	}
+
+	int nrRows = 7;
+	int nrColumns = 7;
+	float spacing = 2.5;
+
+	glm::mat4 model = glm::mat4(1.0f);
+
+	helloPBRShader->use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, albedo);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, normal);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, metallic);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, roughness);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, ao);
+
+	helloPBRShader->setInt("material.albedo", 0);
+	helloPBRShader->setInt("material.normal", 1);
+	helloPBRShader->setInt("material.metallic", 2);
+	helloPBRShader->setInt("material.roughness", 3);
+	helloPBRShader->setInt("material.ao", 4);
+
+	for (int row = 0; row < nrRows; ++row)
+	{
+		for (int col = 0; col < nrColumns; ++col)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(
+				(float)(col - (nrColumns / 2)) * spacing,
+				(float)(row - (nrRows / 2)) * spacing,
+				0.0f
+			));
+			DrawSphere(helloPBRShader, model);
+		}
 	}
 }
 

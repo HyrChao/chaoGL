@@ -30,13 +30,35 @@ private:
 	Shader* helloTexShader;
 	Shader* helloProjShader;
 	Shader* helloLightShader;
-    Shader* helloPBRShader;
 
+    Shader* helloPBRShader;
+	unsigned int albedo, normal, metallic, roughness, ao;
+	
 	Light* pointLight1;
     Light* pointLight2;
     Light* spotLight;
     Light* dirLight;
     
+	void DrawCube(Shader* shader, glm::mat4 &model)
+	{
+		shader->use();
+		glBindVertexArray(Geo::geo->cubeVAO);
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+	void DrawSphere(Shader* shader, glm::mat4 &model)
+	{
+		shader->use();
+		glBindVertexArray(Geo::geo->sphereVAO);
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glBindVertexArray(0);
+		glDrawElements(GL_TRIANGLE_STRIP, Geo::geo->sphereIndexCount, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+
     glm::vec3 lightCol;
 
 	glm::vec3 cubePositions[10] = {
