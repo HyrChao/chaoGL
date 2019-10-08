@@ -69,6 +69,7 @@ private:
 	//static bool wKeyPressing;
 	//static bool enterKeyPressing;
 	static bool keyOnce[GLFW_KEY_LAST + 1];
+	static bool keyInCold[GLFW_KEY_LAST + 1];
 
 
 };

@@ -6,14 +6,6 @@ in vec3 vColor;
 in vec2 TexCoord;
 in vec3 fragPos;
 
-struct FragOut
-{
-	vec3 diffuse;
-	vec3 normal;
-	vec3 specular;
-	vec3 ambient;
-};
-
 struct Material 
 {
 	sampler2D albedo;
@@ -182,8 +174,6 @@ vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
 
 void main()
 {
-    FragOut FragColor;
-
     // Textures sampling
     vec3 albedo = texture(material.albedo,TexCoord).rgb; 
     albedo = pow(albedo,vec3(2.2f)); // convert from SRGB to linear space
@@ -217,7 +207,7 @@ void main()
     color = color / (color + vec3(1.0));
     // Gamma correction
     color = pow(color, vec3(1.0/2.2));
-
+    color = vColor;
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
 	FragColor = finalColor;
 }

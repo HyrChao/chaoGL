@@ -51,10 +51,9 @@ private:
 	void DrawSphere(Shader* shader, glm::mat4 &model)
 	{
 		shader->use();
-		glBindVertexArray(Geo::geo->sphereVAO);
 		Render::SetVertexShaderParams(shader, model);
 		Render::SetShaderLightParams(shader);
-		glBindVertexArray(0);
+		glBindVertexArray(Geo::geo->sphereVAO);
 		glDrawElements(GL_TRIANGLE_STRIP, Geo::geo->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}

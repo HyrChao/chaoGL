@@ -273,6 +273,7 @@ void Hello::HelloLight()
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 	glBindVertexArray(0);
+
 }
 
 void Hello::HelloModel()
@@ -330,6 +331,9 @@ void Hello::HelloModel()
 
 void Hello::HelloPBR()
 {
+	glm::vec4 clearColor = glm::vec4(0.1f);
+	Render::SetClearColor(clearColor);
+
 	if (!helloPBRInitialized)
 	{
 		Light::lights.clear();
@@ -378,11 +382,6 @@ void Hello::HelloPBR()
 		helloPBRInitialized = true;
 	}
 
-	int nrRows = 7;
-	int nrColumns = 7;
-	float spacing = 2.5;
-
-	glm::mat4 model = glm::mat4(1.0f);
 
 	helloPBRShader->use();
 	glActiveTexture(GL_TEXTURE0);
@@ -401,6 +400,12 @@ void Hello::HelloPBR()
 	helloPBRShader->setInt("material.metallic", 2);
 	helloPBRShader->setInt("material.roughness", 3);
 	helloPBRShader->setInt("material.ao", 4);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	
+	int nrRows = 7;
+	int nrColumns = 7;
+	float spacing = 2.5;
 
 	for (int row = 0; row < nrRows; ++row)
 	{

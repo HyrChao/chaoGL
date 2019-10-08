@@ -23,7 +23,7 @@ public:
 private:
 
 	Hello* hello;
-    SectionEnum cureentSection = SectionEnum::BlinnPhong;
+    SectionEnum cureentSection = SectionEnum::PBR;
 
 
 };

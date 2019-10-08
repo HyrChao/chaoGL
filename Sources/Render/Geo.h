@@ -25,6 +25,8 @@ public:
 	unsigned int cubeVAO;
 	unsigned int cubeVBO;
 	unsigned int sphereVAO;
+	unsigned int sphereVBO;
+	unsigned int sphereEBO;
 	unsigned int sphereIndexCount;
 
 public:

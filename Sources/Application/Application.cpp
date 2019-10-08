@@ -9,6 +9,7 @@ int Application::screenWidth;
 int Application::screenHeight;
 bool Application::wireframeMode;
 bool Application::keyOnce[GLFW_KEY_LAST + 1];
+bool Application::keyInCold[GLFW_KEY_LAST + 1];
 
 
 Application::Application(GLFWwindow* currentWin, int width, int height)
@@ -74,11 +75,16 @@ void Application::UpdateKeys()
 {
     for (int key = 0; key < GLFW_KEY_LAST + 1 ; key++ )
     {
-        keyOnce[key] = false;
-        if (glfwGetKey(window, key) == GLFW_PRESS)
-            keyOnce[key] = true;
-//        if (glfwGetKey(window, key) == GLFW_RELEASE)
-//            keyOnce[key] = false;
+		if (glfwGetKey(window, key) == GLFW_PRESS && !keyInCold[key])
+		{
+			keyOnce[key] = true;
+			keyInCold[key] = true;
+		}
+		else
+			keyOnce[key] = false;
+
+		if (glfwGetKey(window, key) == GLFW_RELEASE)
+			keyInCold[key] = false;
     }
 }
 
@@ -100,19 +106,15 @@ void Application::ProcessInput()
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	// wireframe mode
-	if (((glfwGetKey(window, GLFW_KEY_W)&glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && !keyOnce[GLFW_KEY_W] && !keyOnce[GLFW_KEY_LEFT_CONTROL])
+	//if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && GetKeyOnce(GLFW_KEY_W))
+	if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && GetKeyOnce(GLFW_KEY_W))
 	{
-		keyOnce[GLFW_KEY_W] = true;
-		keyOnce[GLFW_KEY_LEFT_CONTROL] = true;
 		if (wireframeMode)
 			wireframeMode = false;
 		else
 			wireframeMode = true;
 	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
-		keyOnce[GLFW_KEY_W] = false;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-		keyOnce[GLFW_KEY_LEFT_CONTROL] = false;
+
 	float cameraSpeed = 0.05f; // adjust accordingly
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		Camera::main->MoveForward(cameraSpeed);
