@@ -66,7 +66,7 @@ uniform vec3 viewPos;
 
 vec3 CalcDirLight(DirLight light, FragOut frag, vec3 viewDir)
 {
-    vec3 lightDir = normalize(-light.direction.xyx);
+    vec3 lightDir = normalize(-light.direction.xyz);
     // diff
     float diff = max(dot(frag.normal, lightDir), 0.0);
     // spec

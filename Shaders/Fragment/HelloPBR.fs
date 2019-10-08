@@ -110,7 +110,7 @@ vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,fl
     vec3 nominator = NDF * G * F;
     float denominator = 4.0 * NdotV * NdotL + 0.001;
     vec3 specular = nominator / denominator;
-
+    
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
     kD *= (1.0 - metallic);
@@ -122,7 +122,7 @@ vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,fl
 
 vec3 CalcDirLightIrradiance(DirLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
 {
-    vec3 L = normalize(-light.direction.xyx);
+    vec3 L = normalize(-light.direction.xyz);
     vec3 H = V + L;
 
     vec3 radiance = light.irradiance;
@@ -189,16 +189,16 @@ void main()
     vec3 Lo = vec3(0.0);
 
     // calc irradiance in directional lights
-    Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness,metallic);    
+    Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness, metallic);    
 
     // calc irradiance in point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-	{
-		Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic);    
-	}
+    // for(int i = 0; i < NR_POINT_LIGHTS; i++)
+	// {
+	// 	Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic);    
+	// }
 
     // calc irradiance in spot lights
-    Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic);    
+    // Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic);    
 
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;
@@ -206,8 +206,8 @@ void main()
     // HDR to LDR
     color = color / (color + vec3(1.0));
     // Gamma correction
-    color = pow(color, vec3(1.0/2.2));
-    color = vColor;
+    color = clamp(pow(color, vec3(1.0/2.2)), 0.0, 1.0);
+    // color += vColor;
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
 	FragColor = finalColor;
 }
