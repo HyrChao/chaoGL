@@ -49,7 +49,7 @@ const float PI = 3.14159265359;
 //Schlick Fresnel
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return (F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0));
 }
 
 //Trowbridge-Reitz GGX, NDF(Normal Distribute Function), a = roughness * roughness
@@ -123,7 +123,7 @@ vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,fl
 vec3 CalcDirLightIrradiance(DirLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
 {
     vec3 L = normalize(-light.direction.xyz);
-    vec3 H = V + L;
+    vec3 H = normalize(V + L);
 
     vec3 radiance = light.irradiance;
 
@@ -133,7 +133,7 @@ vec3 CalcDirLightIrradiance(DirLight light , vec3 N,vec3 V, vec3 albedo,float ro
 vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
 {
     vec3 L = normalize(light.position - fragPos);
-    vec3 H = V + L;
+    vec3 H = normalize(V + L);
 
     float lightDist = length(light.position - fragPos);
     float attenuation = 1 / (lightDist * lightDist);
@@ -146,7 +146,7 @@ vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,floa
 vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
 {
 	vec3 L = normalize(light.position - fragPos);
-    vec3 H = V + L;
+    vec3 H = normalize(V + L);
 
 	float theta     = dot(L, normalize(-light.direction));
 	float epsilon   = light.cutOff - light.outerCutOff;
@@ -192,13 +192,13 @@ void main()
     Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness, metallic);    
 
     // calc irradiance in point lights
-    // for(int i = 0; i < NR_POINT_LIGHTS; i++)
-	// {
-	// 	Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic);    
-	// }
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+	{
+		Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic);    
+	}
 
     // calc irradiance in spot lights
-    // Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic);    
+    Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic);    
 
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;
