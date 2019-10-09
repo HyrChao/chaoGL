@@ -8,12 +8,11 @@ Render* Application::render;
 int Application::screenWidth;
 int Application::screenHeight;
 bool Application::wireframeMode;
-bool Application::keyOnce[GLFW_KEY_LAST + 1];
-bool Application::keyInCold[GLFW_KEY_LAST + 1];
-
 
 Application::Application(GLFWwindow* currentWin, int width, int height)
 {
+
+
 	app = this;
 
 	BindCurrentWindow(currentWin);
@@ -47,6 +46,8 @@ void Application::InitApplication()
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
     glViewport(0, 0, screenWidth, screenHeight);
     
+	Input::SetCurrentWindow(window);
+
     section = new Sections();
 }
 
@@ -71,22 +72,7 @@ void Application::Update()
     Time::UpdateTime();
 }
 
-void Application::UpdateKeys()
-{
-    for (int key = 0; key < GLFW_KEY_LAST + 1 ; key++ )
-    {
-		if (glfwGetKey(window, key) == GLFW_PRESS && !keyInCold[key])
-		{
-			keyOnce[key] = true;
-			keyInCold[key] = true;
-		}
-		else
-			keyOnce[key] = false;
 
-		if (glfwGetKey(window, key) == GLFW_RELEASE)
-			keyInCold[key] = false;
-    }
-}
 
 
 
@@ -101,13 +87,13 @@ void Application::OnFrameEnd()
 
 void Application::ProcessInput()
 {
-    UpdateKeys();
+    Input::UpdateKeys();
     
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	// wireframe mode
-	//if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && GetKeyOnce(GLFW_KEY_W))
-	if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && GetKeyOnce(GLFW_KEY_W))
+	//if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && Input::GetKeyOnce(GLFW_KEY_W))
+	if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && Input::GetKeyOnce(GLFW_KEY_W))
 	{
 		if (wireframeMode)
 			wireframeMode = false;
@@ -125,11 +111,11 @@ void Application::ProcessInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		Camera::main->MoveRight(cameraSpeed);
     
-    if (GetKeyOnce(GLFW_KEY_1))
+    if (Input::GetKeyOnce(GLFW_KEY_1))
         section->SetSection(SectionEnum::BlinnPhong);
-    else if (GetKeyOnce(GLFW_KEY_2))
+    else if (Input::GetKeyOnce(GLFW_KEY_2))
         section->SetSection(SectionEnum::LoadModel);
-    else if (GetKeyOnce(GLFW_KEY_3))
+    else if (Input::GetKeyOnce(GLFW_KEY_3))
         section->SetSection(SectionEnum::PBR);
 }
 

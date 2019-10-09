@@ -340,8 +340,8 @@ void Hello::HelloPBR()
 
 		LightParam pointLightp1;
 		pointLightp1.type = LightType::Point;
-		pointLightp1.pos = glm::vec3(0.0f, 3.0f, 0.0f);
-		pointLightp1.color = glm::vec3(0.6f, 0.2f, 0.2f);
+		pointLightp1.pos = glm::vec3(1.0f, 3.0f, 1.0f);
+		pointLightp1.color = glm::vec3(1.0f, 0.02f, 0.1f);
 		pointLightp1.constant = 1.0f;
 		pointLightp1.linear = 0.09f;
 		pointLightp1.quadratic = 0.032f;
@@ -376,9 +376,14 @@ void Hello::HelloPBR()
 		normal = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_normal.png").c_str());
 		metallic = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_metallic.png").c_str());
 		roughness = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_roughness.png").c_str());
-		ao = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/ao.png").c_str());
+		//ao = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
+		ao = whiteTex;
 
 		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+		helloPBRShader_Fill = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+
+		currentPBRShader = helloPBRShader;
+
 		helloPBRInitialized = true;
 	}
 
@@ -401,12 +406,72 @@ void Hello::HelloPBR()
 	helloPBRShader->setInt("material.roughness", 3);
 	helloPBRShader->setInt("material.ao", 4);
 
+	helloPBRShader->setVec3f("intensity.tint", glm::vec3(1.0f));
+	helloPBRShader_Fill->setVec3f("intensity.mro", glm::vec3(1.0f));
+
+	
+
+	helloPBRShader_Fill->use();
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, whiteTex);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, whiteTex);
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, whiteTex);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, whiteTex);
+	glActiveTexture(GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, whiteTex);
+
+	helloPBRShader_Fill->setInt("material.albedo", 5);
+	helloPBRShader_Fill->setInt("material.normal", 6);
+	helloPBRShader_Fill->setInt("material.metallic", 7);
+	helloPBRShader_Fill->setInt("material.roughness", 8);
+	helloPBRShader_Fill->setInt("material.ao", 9);
+
+	helloPBRShader_Fill->setVec3f("intensity.tint", glm::vec3(1.0f, 0.0f, 0.0f));
+	helloPBRShader_Fill->setVec3f("intensity.mro", glm::vec3(1.0f));
+
 	glm::mat4 model = glm::mat4(1.0f);
 	
 	int nrRows = 7;
 	int nrColumns = 7;
 	float spacing = 2.5;
 
+	glm::vec3 mroVar = glm::vec3(0.0f);
+
+	if (Input::GetKeyOnce(GLFW_KEY_TAB))
+	{
+		pbrDebugParam = glm::vec4(0);
+		if (currentPBRShader == helloPBRShader)
+			currentPBRShader = helloPBRShader_Fill;
+		else
+			currentPBRShader = helloPBRShader;
+	}
+
+	if (Input::GetKeyOnce(GLFW_KEY_F1))
+	{
+		pbrDebugParam = glm::vec4(0);
+		pbrDebugParam.x = 1;
+	}
+	else if (Input::GetKeyOnce(GLFW_KEY_F2))
+	{
+		pbrDebugParam = glm::vec4(0);
+		pbrDebugParam.y = 1;
+	}
+	else if (Input::GetKeyOnce(GLFW_KEY_F3)) 
+	{
+		pbrDebugParam = glm::vec4(0);
+		pbrDebugParam.z = 1;
+	}
+	else if (Input::GetKeyOnce(GLFW_KEY_F4))
+	{
+		pbrDebugParam = glm::vec4(0);
+		pbrDebugParam.w = 1;
+	}
+
+
+	mroVar.z = 1;
 	for (int row = 0; row < nrRows; ++row)
 	{
 		for (int col = 0; col < nrColumns; ++col)
@@ -417,7 +482,14 @@ void Hello::HelloPBR()
 				(float)(row - (nrRows / 2)) * spacing,
 				0.0f
 			));
-			DrawSphere(helloPBRShader, model);
+
+			mroVar.x = float(nrRows - row) / float(nrRows);
+			mroVar.y = float(col) / float(nrColumns);
+			currentPBRShader->use();
+			currentPBRShader->setVec4f("debug", pbrDebugParam);	
+			currentPBRShader->setVec3f("intensity.mro", mroVar);
+
+			DrawSphere(currentPBRShader, model);
 		}
 	}
 }
@@ -529,6 +601,14 @@ void Hello::LoadTexture()
         std::cout << "Failed to load texture" << "\n" << FileSystem::getPath("/Assets/Texture/container2_specular.png").c_str() << std::endl;
     }
     stbi_image_free(data);
+
+
+	// Load debug textures
+
+	blackTex = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/black.png").c_str());
+	whiteTex = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
+	greyTex = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/grey.png").c_str());
+
 }
 
 void Hello::HelloLightInit()

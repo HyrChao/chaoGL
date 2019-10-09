@@ -7,6 +7,10 @@
 #include <Render/Render.h>
 #include <Render/Color.h>
 #include <Render/Model.h>
+
+#include<Input/Input.h>
+
+
 class Hello
 {
 
@@ -33,6 +37,12 @@ private:
 
     Shader* helloPBRShader;
 	unsigned int albedo, normal, metallic, roughness, ao;
+	Shader* helloPBRShader_Fill;
+	unsigned int blackTex, whiteTex, greyTex;
+
+	Shader* currentPBRShader;
+	glm::vec4 pbrDebugParam = glm::vec4(0);
+
 	
 	Light* pointLight1;
     Light* pointLight2;

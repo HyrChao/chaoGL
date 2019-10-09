@@ -2,7 +2,6 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-//#include <GLFW/glfw3.h>
 #include <Render/Render.h>
 #include <Application/Time.h>
 #include <Section/Sections.h>
@@ -43,10 +42,7 @@ public:
 		}
 	}
 	static GLFWwindow* window;
-    static bool GetKeyOnce(int key)
-    {
-        return keyOnce[key];
-    }
+
 
 public:
 
@@ -66,10 +62,6 @@ private:
 
 	//toggle
 	static bool wireframeMode;
-	//static bool wKeyPressing;
-	//static bool enterKeyPressing;
-	static bool keyOnce[GLFW_KEY_LAST + 1];
-	static bool keyInCold[GLFW_KEY_LAST + 1];
 
 
 };

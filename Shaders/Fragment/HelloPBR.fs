@@ -17,6 +17,14 @@ struct Material
 
 uniform Material material;
 
+struct Intensity
+{
+    vec3 tint;
+    vec3 mro;
+};
+
+uniform Intensity intensity;
+
 struct DirLight 
 {
     vec3 direction;
@@ -43,6 +51,8 @@ struct SpotLight
 uniform SpotLight spotLight;
 
 uniform vec3 viewPos;
+
+uniform vec4 debug;
 
 const float PI = 3.14159265359;
 
@@ -137,6 +147,8 @@ vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,floa
 
     float lightDist = length(light.position - fragPos);
     float attenuation = 1 / (lightDist * lightDist);
+    attenuation = clamp(attenuation,0,1);
+    
 
     vec3 radiance = light.irradiance * attenuation;
 
@@ -177,11 +189,15 @@ void main()
     // Textures sampling
     vec3 albedo = texture(material.albedo,TexCoord).rgb; 
     albedo = pow(albedo,vec3(2.2f)); // convert from SRGB to linear space
+    albedo *= intensity.tint;
     vec3 normal = texture(material.normal, TexCoord).xyz * 2.0 - 1.0;
     normal = ConvertNormalToWorldspace(normal); //PBR calc need wordspace normal
     float metallic = texture(material.metallic, TexCoord).r;
+    metallic *= intensity.mro.x;
     float roughness = texture(material.roughness, TexCoord).r;
+    roughness *= intensity.mro.y;
     float ao = pow(texture(material.ao, TexCoord).r,2.2);
+    ao *= intensity.mro.z;
 
     vec3 N = normalize(Normal);
     vec3 V = normalize(viewPos - fragPos);
@@ -209,5 +225,12 @@ void main()
     color = clamp(pow(color, vec3(1.0/2.2)), 0.0, 1.0);
     // color += vColor;
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
+
+    finalColor = mix(finalColor, vec4(albedo,1), debug.x);
+    vec3 debugNormal = 0.5 * normal + 0.5;
+    finalColor = mix(finalColor, vec4(debugNormal,1), debug.y);
+    finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug.z);
+    finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug.w);
+
 	FragColor = finalColor;
 }
