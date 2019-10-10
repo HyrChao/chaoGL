@@ -13,9 +13,8 @@ Light::Light(LightParam param)
 	constant = param.constant;
 	linear = param.linear;
 	quadratic = param.quadratic;
-	cutOff = param.cutOff;
-	outerCutOff - param.outerCutoff;
-
+	SetCutoffEulerAbgle(param.cutOffAngle);
+	SetOuterCutoffEulerAbgle(param.outerCutoffAngle);
 
 	AddLight(this);
 }

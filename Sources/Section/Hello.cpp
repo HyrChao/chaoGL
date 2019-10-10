@@ -216,8 +216,8 @@ void Hello::HelloLight()
 		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
 		spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
 		spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);
-		spotlightp1.cutOff = 12.5f;
-		spotlightp1.outerCutoff = 17.5f;
+		spotlightp1.cutOffAngle = 30.0f;
+		spotlightp1.outerCutoffAngle = 50.0f;
 		Light* spotlight = new Light(spotlightp1);
 
         helloLightInitialized = true;
@@ -314,8 +314,8 @@ void Hello::HelloModel()
 		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
 		spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
 		spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);
-		spotlightp1.cutOff = 12.5f;
-		spotlightp1.outerCutoff = 17.5f;
+		spotlightp1.cutOffAngle = 30.0f;
+		spotlightp1.outerCutoffAngle = 50.0f;
 		Light* spotlight = new Light(spotlightp1);
 
         helloModel = new Model(FileSystem::getPath("/Assets/Model/nanosuit/nanosuit.obj"), false,glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.1));
@@ -346,6 +346,7 @@ void Hello::HelloPBR()
 		pointLightp1.linear = 0.09f;
 		pointLightp1.quadratic = 0.032f;
 		Light* pointLight1 = new Light(pointLightp1);
+		pbrPointlight1 = pointLight1;
 
 		LightParam pointLightp2;
 		pointLightp2.type = LightType::Point;
@@ -356,21 +357,34 @@ void Hello::HelloPBR()
 		pointLightp2.quadratic = 1.8f;
 		Light* pointLight2 = new Light(pointLightp2);
 
+		LightParam pointLightp3;
+		pointLightp3.type = LightType::Point;
+		pointLightp3.pos = glm::vec3(3.0f, -4.0f, -5.0f);
+		pointLightp3.color = glm::vec3(0.02f, 0.1f, 1.0f);
+		pointLightp3.constant = 1.0f;
+		pointLightp3.linear = 0.7f;
+		pointLightp3.quadratic = 1.8f;
+		Light* pointLight3 = new Light(pointLightp3);
+
 		LightParam dirlightp1;
 		dirlightp1.type = LightType::Directional;
 		dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
 		dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
 		dirlightp1.dir = glm::vec3(-1, -1, -1);;
 		Light* dirLight = new Light(dirlightp1);
+		pbrDirlight = dirLight;
 
 		LightParam spotlightp1;
 		spotlightp1.type = LightType::Spot;
-		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
+		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -5.0f);
 		spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
-		spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);
-		spotlightp1.cutOff = 12.5f;
-		spotlightp1.outerCutoff = 17.5f;
+		spotlightp1.dir = glm::vec3(1.0f, 0.0f, 0.0f);
+		//spotlightp1.cutOffAngle = 12.5f;
+		//spotlightp1.outerCutoffAngle = 17.5f;
+		spotlightp1.cutOffAngle = 32.5f;
+		spotlightp1.outerCutoffAngle = 47.5f;
 		Light* spotlight = new Light(spotlightp1);
+		pbrSpotlight = spotlight;
 
 		albedo = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_basecolor.png").c_str());
 		normal = AssertsMng::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_normal.png").c_str());
@@ -470,6 +484,19 @@ void Hello::HelloPBR()
 		pbrDebugParam.w = 1;
 	}
 
+	// light params change with time
+	float sunDirChangeSpeed = 0.3;
+	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
+	pbrDirlight->dir = currentSunDir;
+
+	float spotDirChangeSpeed = 1;
+	glm::vec3 currentSpotDir = glm::vec3(cos((float)glfwGetTime() * spotDirChangeSpeed), 0.0f, sin((float)glfwGetTime() * spotDirChangeSpeed));
+	pbrSpotlight->dir = currentSpotDir;
+
+	float pointIntensityChangeSpeed = 2;
+	float pointIntensityMutiplier = 1 + sin((float)glfwGetTime() * pointIntensityChangeSpeed);
+	glm::vec3 currentPointColor = glm::vec3(pointIntensityMutiplier, 0.2 * pointIntensityMutiplier, 0.1 * pointIntensityMutiplier);
+	pbrPointlight1->color = currentPointColor;
 
 	mroVar.z = 1;
 	for (int row = 0; row < nrRows; ++row)

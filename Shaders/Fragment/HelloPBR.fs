@@ -151,10 +151,13 @@ vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,floa
     
 
     vec3 radiance = light.irradiance * attenuation;
+    // vec3 radiance = vec3(3.0, 0, 0);
+    // vec3 radiance = vec3(3.0, 0, 0);
 
     return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
 }
 
+// https://learnopengl-cn.github.io/02%20Lighting/05%20Light%20casters/
 vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
 {
 	vec3 L = normalize(light.position - fragPos);
@@ -226,11 +229,13 @@ void main()
     // color += vColor;
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
 
+    // PBR debug
     finalColor = mix(finalColor, vec4(albedo,1), debug.x);
     vec3 debugNormal = 0.5 * normal + 0.5;
     finalColor = mix(finalColor, vec4(debugNormal,1), debug.y);
     finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug.z);
     finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug.w);
 
+    // Output final color
 	FragColor = finalColor;
 }

@@ -43,6 +43,10 @@ private:
 	Shader* currentPBRShader;
 	glm::vec4 pbrDebugParam = glm::vec4(0);
 
+	Light* pbrDirlight;
+	Light* pbrSpotlight;
+	Light* pbrPointlight1;
+
 	
 	Light* pointLight1;
     Light* pointLight2;

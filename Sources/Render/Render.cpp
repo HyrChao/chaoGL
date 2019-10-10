@@ -87,7 +87,7 @@ void Render::SetShaderLightParams(Shader *shader)
             shader->setVec3f("pointLights[" + num + "].ambient", 0.01f * light->color);
             shader->setVec3f("pointLights[" + num + "].diffuse", 0.5f * light->color);
             shader->setVec3f("pointLights[" + num + "].specular", 0.8f * light->color);
-			shader->setVec3f("pointLights[" + num + "],irradiance", 5.0f * light->color);
+			shader->setVec3f("pointLights[" + num + "].irradiance", 5.0f * light->color);
 
             pointLightNum++;
         }
@@ -95,8 +95,8 @@ void Render::SetShaderLightParams(Shader *shader)
         {
             shader->setVec3f("spotLight.position", light->GetPos());
             shader->setVec3f("spotLight.direction", light->dir);
-            shader->setFloat("spotLight.cutOff", glm::cos(light->cutOff));  // cutoff is cosine of angle
-            shader->setFloat("spotLight.outerCutOff", glm::cos(light->outerCutOff));
+            shader->setFloat("spotLight.cutOff", light->cutOff);  // cutoff is cosine of angle
+            shader->setFloat("spotLight.outerCutOff", light->outerCutOff);
             shader->setVec3f("spotLight.ambient", 0.01f * light->color);
             shader->setVec3f("spotLight.diffuse", 0.8f * light->color);
             shader->setVec3f("spotLight.specular", 0.5f * light->color);

@@ -25,8 +25,8 @@ struct LightParam
 	float constant;
 	float linear;
 	float quadratic;
-	float cutOff;
-	float outerCutoff;
+	float cutOffAngle;
+	float outerCutoffAngle;
 };
 
 class Light : public Transform
@@ -41,7 +41,7 @@ public:
     float intensity = 1.0f;
     
     glm::vec3 color = glm::vec3(1.0f);
-    glm::vec3 dir = glm::vec3(1.0f);
+    glm::vec3 dir = glm::vec3(1.0f, 0.0f, 0.0f);
     // pointlight property default 50m, see
     // https://learnopengl-cn.github.io/02%20Lighting/05%20Light%20casters/
     // point light property
@@ -56,6 +56,16 @@ public:
     Light(LightParam param);
 	~Light();
     
+	void SetCutoffEulerAbgle(float eulerAngle)
+	{
+		this->cutOff = cos(glm::radians(eulerAngle));
+	}
+
+	void SetOuterCutoffEulerAbgle(float eulerAngle)
+	{
+		this->outerCutOff = cos(glm::radians(eulerAngle));
+	}
+
     void DrawAvatar();
     void SetCutOff(float angle)
     {
