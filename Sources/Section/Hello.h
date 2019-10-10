@@ -24,7 +24,6 @@ private:
     
     bool helloModelInitialized = false;
     
-    bool helloPBRInitialized = false;
     
     Model *helloModel;
     Shader *helloModelShader;
@@ -35,42 +34,14 @@ private:
 	Shader* helloProjShader;
 	Shader* helloLightShader;
 
-    Shader* helloPBRShader;
-	unsigned int albedo, normal, metallic, roughness, ao;
-	Shader* helloPBRShader_Fill;
-	unsigned int blackTex, whiteTex, greyTex;
 
-	Shader* currentPBRShader;
-	glm::vec4 pbrDebugParam = glm::vec4(0);
-
-	Light* pbrDirlight;
-	Light* pbrSpotlight;
-	Light* pbrPointlight1;
-
-	
 	Light* pointLight1;
     Light* pointLight2;
     Light* spotLight;
     Light* dirLight;
     
-	void DrawCube(Shader* shader, glm::mat4 &model)
-	{
-		shader->use();
-		glBindVertexArray(Geo::geo->cubeVAO);
-		Render::SetVertexShaderParams(shader, model);
-		Render::SetShaderLightParams(shader);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-	}
-	void DrawSphere(Shader* shader, glm::mat4 &model)
-	{
-		shader->use();
-		Render::SetVertexShaderParams(shader, model);
-		Render::SetShaderLightParams(shader);
-		glBindVertexArray(Geo::geo->sphereVAO);
-		glDrawElements(GL_TRIANGLE_STRIP, Geo::geo->sphereIndexCount, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-	}
+
+
 
     glm::vec3 lightCol;
 
@@ -92,7 +63,6 @@ public:
 	~Hello();
 	void HelloTriangle();
 	void LoadTexture(const std::string& path ,int& texId);
-	void LoadTexture();
 	void HelloTransform();
 	void HelloProjection();
 	void HelloBox();
@@ -104,6 +74,12 @@ public:
     void HelloModel();
     void HelloPBR();
 
+	void Reset()
+	{
+		helloLightInitialized = false;
+		helloModelInitialized = false;
+	}
+
 
 private:
 
@@ -112,6 +88,7 @@ private:
 	void glmTest();
 	void SetupLight_Old();
 
+	void LoadTexture();
 
 };
 

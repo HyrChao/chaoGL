@@ -7,4 +7,3 @@
 
 #include "Texture.h"
 
-vector<Texture> AssertsMng::textures_loaded;

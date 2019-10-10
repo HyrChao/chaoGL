@@ -77,8 +77,8 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     return nom / denom; 
 }
 
-//Schlick-GGX, Geometry Obstruction
-float GeometrySchlickGGX(float NdotV, float roughness)
+//Schlick-GGX, CommonAssetsmetry Obstruction
+float CommonAssetsmetrySchlickGGX(float NdotV, float roughness)
 {
     float r = roughness + 1.0;
     float k = (r*r) / 8.0;
@@ -90,12 +90,12 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 }
 
 //Smith’s method, Calc both obstruction and sub-surface shadowing
-float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+float CommonAssetsmetrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N,V), 0.0);
     float NdotL = max(dot(N,L), 0.0);
-    float ggx1 = GeometrySchlickGGX(NdotV,roughness);
-    float ggx2 = GeometrySchlickGGX(NdotL,roughness);
+    float ggx1 = CommonAssetsmetrySchlickGGX(NdotV,roughness);
+    float ggx2 = CommonAssetsmetrySchlickGGX(NdotL,roughness);
 
     return ggx1 * ggx2;
 }
@@ -112,7 +112,7 @@ vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,fl
 
     // GGX
     float NDF = DistributionGGX(N,H,roughness);
-    float G = GeometrySmith(N, V, L, roughness);
+    float G = CommonAssetsmetrySmith(N, V, L, roughness);
 
     // Cook-Torrance BRDF
     float NdotL = max(dot(N,L), 0.0);

@@ -51,6 +51,29 @@ public:
     static glm::mat4 projectMat;
     static glm::mat4 viewMat;
     static glm::vec3 viewPos;
+
+	static void DrawPlane();
+
+	static void DrawCube(Shader* shader, glm::mat4 &model)
+	{
+		shader->use();
+		glBindVertexArray(CommonAssets::instance->cubeVAO);
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+
+	static void DrawSphere(Shader* shader, glm::mat4 &model)
+	{
+		shader->use();
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glBindVertexArray(CommonAssets::instance->sphereVAO);
+		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+
     
 private:
 

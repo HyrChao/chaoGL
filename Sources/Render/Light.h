@@ -3,7 +3,7 @@
 #define LIGHT_H
 
 #include <list>
-#include<Render/Geo.h>
+#include<Assets/CommonAssets.h>
 #include<Render/Shader.h>
 #include<Render/Camera.h>
 #include <glad/glad.h>

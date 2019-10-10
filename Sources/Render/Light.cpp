@@ -48,7 +48,7 @@ void Light::DrawAvatar()
 		glGenVertexArrays(1, &lightVAO);
 		glBindVertexArray(lightVAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, Geo::geo->cubeVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, CommonAssets::instance->cubeVBO);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
@@ -75,7 +75,7 @@ void Light::DrawAvatar()
 
 	avatarShader->setVec3f("lightColor", color);
 
-	glBindVertexArray(Geo::geo->cubeVAO);
+	glBindVertexArray(CommonAssets::instance->cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }

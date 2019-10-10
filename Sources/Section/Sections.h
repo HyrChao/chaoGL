@@ -2,7 +2,7 @@
 #define SECTIONS_H
 
 #include <Section/Hello.h>
-
+#include <Section/PBR_Section.h>
 enum SectionEnum
 {
     None,
@@ -23,6 +23,7 @@ public:
 private:
 
 	Hello* hello;
+	PBR_Section* pbr_section;
     SectionEnum cureentSection = SectionEnum::PBR;
 
 

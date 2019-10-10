@@ -106,11 +106,11 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
         aiString str;
         mat->GetTexture(type, i, &str);
         bool skip = false;
-        for(unsigned int j = 0; j < AssertsMng::textures_loaded.size(); j++)
+        for(unsigned int j = 0; j < AssetsManager::textures_loaded.size(); j++)
         {
-            if(std::strcmp(AssertsMng::textures_loaded[j].path.data(), str.C_Str()) == 0)
+            if(std::strcmp(AssetsManager::textures_loaded[j].path.data(), str.C_Str()) == 0)
             {
-                textures.push_back(AssertsMng::textures_loaded[j]);
+                textures.push_back(AssetsManager::textures_loaded[j]);
                 skip = true;
                 break;
             }
@@ -118,11 +118,11 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
         if(!skip)
         {
             Texture texture;
-            texture.id = AssertsMng::TextureFromFile(str.C_Str(), directory);
+            texture.id = AssetsManager::TextureFromFile(str.C_Str(), directory);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
-            AssertsMng::textures_loaded.push_back(texture);
+            AssetsManager::textures_loaded.push_back(texture);
         }
         
     }

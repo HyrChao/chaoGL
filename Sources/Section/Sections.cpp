@@ -3,15 +3,22 @@
 Sections::Sections()
 {
 	hello = new Hello();
+	pbr_section = new PBR_Section();
+	CommonAssets::instance = new CommonAssets();
 }
 
 Sections::~Sections()
 {
 	delete hello;
+	delete pbr_section;
 }
 void Sections::SetSection(SectionEnum selectedSection)
 {
 	cureentSection = selectedSection;
+
+
+	hello->Reset();
+	pbr_section->Reset();
 }
 SectionEnum Sections::GetCurrentSection()
 {
@@ -30,7 +37,7 @@ void Sections::SwitchSections()
             hello->HelloModel();
             break;
         case SectionEnum::PBR:
-            hello->HelloPBR();
+			pbr_section->Loop();
             break;
         default:
             break;
