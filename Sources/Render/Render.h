@@ -14,7 +14,7 @@ class Render
 {
 public:
 
-	Render();
+	Render(int screenWidth, int screenHeight);
 	~Render();
 	static void SetupRenderProperty();
 	static void DrawOnFrameBegin();
@@ -42,6 +42,15 @@ public:
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
     }
+
+	static void SetViewport(int screenWidth, int screenHeight)
+	{
+		glViewport(0, 0, screenWidth, screenHeight);
+	}
+	static void ResetViewport()
+	{
+		glViewport(0, 0, screenWidth, screenHeight);
+	}
 private:
     
     static void UpdateLight();
@@ -74,12 +83,12 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 	}
-	static void DrawCube(Material* shader, glm::mat4 &model)
+	static void DrawCube(Material* material, glm::mat4 &model)
 	{
-		shader->use();
+		material->use();
 		glBindVertexArray(CommonAssets::instance->cubeVAO);
-		Render::SetVertexShaderParams(shader, model);
-		Render::SetShaderLightParams(shader);
+		Render::SetVertexShaderParams(material, model);
+		Render::SetShaderLightParams(material);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 	}
@@ -106,6 +115,8 @@ public:
 private:
 
     static glm::vec4 clearColor;
+	static int screenWidth;
+	static int screenHeight;
 
 };
 #endif

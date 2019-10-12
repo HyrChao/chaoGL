@@ -6,8 +6,16 @@ glm::mat4 Render::projectMat;
 glm::mat4 Render::viewMat;
 glm::vec3 Render::viewPos;
 
-Render::Render()
+int Render::screenHeight;
+int Render::screenWidth;
+
+Render::Render(int screenWidth, int screenHeight)
 {
+	this->screenHeight = screenHeight;
+	this->screenWidth = screenWidth;
+
+	ResetViewport();
+
 	if (render == nullptr)
 	{
 		render = this;
@@ -34,6 +42,8 @@ void Render::SetupRenderProperty()
 {
 	// enable Z test
 	glEnable(GL_DEPTH_TEST);
+
+	glDepthFunc(GL_LEQUAL);;
 }
 
 void Render::DrawOnFrameBegin()

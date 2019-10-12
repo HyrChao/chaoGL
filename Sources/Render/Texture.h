@@ -40,6 +40,22 @@ struct Texture
     unsigned int id = 0;
     TextureType type = TextureType::Albedo;
     string path = "/Assets/Texture/white.png";
+	bool useMip = true;
+
+	Texture()
+	{
+		id = 0;
+		type = TextureType::Albedo;
+		path = "/Assets/Texture/white.png";
+		useMip = true;
+	}
+
+	Texture(string path, TextureType type, bool useMip)
+	{
+		this->type = type;
+		this->path = path;
+		this->useMip = useMip;
+	}
 };
 
 #endif /* Texture_hpp */

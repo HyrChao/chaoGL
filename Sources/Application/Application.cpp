@@ -34,7 +34,7 @@ Application::~Application()
 
 void Application::InitApplication()
 {
-    render = new Render();
+    render = new Render(screenWidth, screenHeight);
     
     Mouse::SetMouseInitLocation(screenWidth,screenHeight);
     
@@ -44,7 +44,6 @@ void Application::InitApplication()
 	// set input callback
 	glfwSetCursorPosCallback(window, Application::mouse_callback);
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-    glViewport(0, 0, screenWidth, screenHeight);
     
 	Input::SetCurrentWindow(window);
 

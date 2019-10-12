@@ -73,8 +73,8 @@ void PBR_Section::Loop()
 {
 	Level::Loop();
 
-	glm::vec4 clearColor = glm::vec4(0.1f);
-	Render::SetClearColor(clearColor);
+	//glm::vec4 clearColor = glm::vec4(0.1f);
+	//Render::SetClearColor(clearColor);
 
 	if (!initialized)
 	{
@@ -84,14 +84,19 @@ void PBR_Section::Loop()
 	helloPBRShader->use();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, albedo);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normal);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, metallic);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, roughness);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, ao);
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	helloPBRShader->setInt("material.albedo", 0);
 	helloPBRShader->setInt("material.normal", 1);

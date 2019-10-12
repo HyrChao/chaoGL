@@ -14,9 +14,11 @@ public:
 	Material(Shader* shader) : Shader(shader->vsPath, shader->fsPath)
 	{
 		this->shader = shader;
-		//vertexPath = shader->vertexPath;
-		//fragmentPath = shader->fragmentPath;
-		//Shader::Shader(vertexPath, fragmentPath);
+	}
+
+	Material(string vsPath, string fsPath) : Shader(vsPath, fsPath)
+	{
+		this->shader = dynamic_cast<Shader*>(this);
 	}
 	
 	~Material()
@@ -28,7 +30,7 @@ public:
 	// texture
 	void AddTexture(Texture texture)
 	{
-		this->use();
+		Shader::use();
 
 		int textureSlot = -1;
 		for (int i = 0; i < maxTextureCount; i++)
@@ -66,13 +68,15 @@ public:
 			SetParam("material.specular", textureSlot);
 		case TextureType::Diffuse:
 			SetParam("material.diffuse", textureSlot);
+		case TextureType::Cube:
+			SetParam("environmentMap", textureSlot);
 		case TextureType::Equirectangular:
 			SetParam("equirectangularMap", textureSlot);
 
 		}
 	}
 
-	void BindTexture()
+	void BindTextures()
 	{
 		for (int i = 0; i < maxTextureCount; i++)
 		{
@@ -80,15 +84,16 @@ public:
 			{
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(GL_TEXTURE_2D, textures[i].id);
+				if(textures[i].useMip)
+					glGenerateMipmap(GL_TEXTURE_2D);
 			}
 		}
-
 	}
 
 	void use() override
 	{
 		Shader::use();
-		BindTexture();
+		BindTextures();
 	}
 
 	// set uniform values
