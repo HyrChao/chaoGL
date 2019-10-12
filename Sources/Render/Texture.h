@@ -22,19 +22,24 @@ using namespace std;
 
 enum TextureType
 {
-    Diffuse,
+	Albedo,
     Normal,
-    Specular,
+	Metallic,
+	Roughness,
+	AO,
     MRO,
+    Diffuse,
+    Specular,
     Cube,
+	Equirectangular,
     LUT,
 };
 
 struct Texture
 {
-    unsigned int id;
-    TextureType type;
-    string path;
+    unsigned int id = 0;
+    TextureType type = TextureType::Albedo;
+    string path = "/Assets/Texture/white.png";
 };
 
 #endif /* Texture_hpp */

@@ -17,9 +17,9 @@ CommonAssets::CommonAssets()
 void CommonAssets::LoadCommonTextures()
 {
 	// Load debug textures
-	blackTex = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/black.png").c_str());
-	whiteTex = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
-	greyTex = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/grey.png").c_str());
+	blackTex = AssetsManager::TextureFromFile("/Assets/Texture/black.png");
+	whiteTex = AssetsManager::TextureFromFile("/Assets/Texture/white.png");
+	greyTex = AssetsManager::TextureFromFile("/Assets/Texture/grey.png");
 
 }
 

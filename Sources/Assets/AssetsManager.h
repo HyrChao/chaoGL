@@ -1,4 +1,9 @@
 
+#pragma once
+
+#ifndef ASSETSMANAGER_H
+#define ASSETSMANAGER_H
+
 #include<Render/Texture.h>
 
 class  AssetsManager
@@ -12,7 +17,7 @@ public:
 
 	inline static unsigned int TextureFromFile(const char *path, bool gamma = false)
 	{
-		string filename = string(path);
+		string filename = string(FileSystem::getPath(path).c_str());
 
 		unsigned int textureID;
 		glGenTextures(1, &textureID);
@@ -49,6 +54,7 @@ public:
 
 		return textureID;
 	}
+
 	inline static unsigned int TextureFromFile(const char *name, const string &directory, bool gamma = false)
 	{
 		string filename = string(name);
@@ -89,6 +95,40 @@ public:
 
 		return textureID;
 	}
+
+	inline static unsigned int CubeTextureFromFile(const char* path)
+	{
+
+		string filePath = string(FileSystem::getPath(path).c_str());
+
+		unsigned int hdrTextureID;
+
+		stbi_set_flip_vertically_on_load(true);
+
+		int width, height, nrComponents;
+		float *data = stbi_loadf(filePath.c_str(), &width, &height, &nrComponents, 0);
+		unsigned int hdrTexture;
+		if (data)
+		{
+			glGenTextures(1, &hdrTextureID);
+			glBindTexture(GL_TEXTURE_2D, hdrTextureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Failed to load HDR image." << std::endl;
+		}
+
+		return hdrTextureID;
+	}
+
 	inline static const char* TextureTypeToString(TextureType type)
 	{
 		switch (type)
@@ -103,3 +143,5 @@ public:
 		}
 	}
 };
+
+#endif // !ASSETSMANAGER_H

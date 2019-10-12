@@ -3,9 +3,9 @@
 #define LIGHT_H
 
 #include <list>
-#include<Assets/CommonAssets.h>
-#include<Render/Shader.h>
-#include<Render/Camera.h>
+#include <Assets/CommonAssets.h>
+#include <Render/Material.h>
+#include <Render/Camera.h>
 #include <glad/glad.h>
 #include <Object/Transform.h>
 

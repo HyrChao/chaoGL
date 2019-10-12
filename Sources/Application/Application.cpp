@@ -48,6 +48,8 @@ void Application::InitApplication()
     
 	Input::SetCurrentWindow(window);
 
+	CommonAssets::instance = new CommonAssets();
+
     section = new Sections();
 }
 

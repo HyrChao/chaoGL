@@ -4,7 +4,6 @@ Sections::Sections()
 {
 	hello = new Hello();
 	pbr_section = new PBR_Section();
-	CommonAssets::instance = new CommonAssets();
 }
 
 Sections::~Sections()

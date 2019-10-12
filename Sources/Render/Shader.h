@@ -17,6 +17,7 @@ using namespace std;
 
 class Shader
 {
+
 public:
 	// id for shader program
 	unsigned int ID;
@@ -24,11 +25,56 @@ public:
 	// constraction
 	Shader(const string& vsPath, const string& fsPath)
 	{
-        string vertexPath = FileSystem::getPath(vsPath);
-        string fragmentPath = FileSystem::getPath(fsPath);
+		this->vsPath = vsPath;
+		this->fsPath = fsPath;
+		CreateShaderProgram();
+	}
 
-//        GLchar* vertexPath = vertPath;
-//        GLchar* fragmentPath = fragPath;
+	// use shader program
+	virtual void use()
+	{
+		glUseProgram(ID);
+	}
+	// set uniform values
+	void setBool(const std::string &name, bool value) const
+	{
+		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+	}
+	void setInt(const std::string &name, int value) const
+	{
+		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+	}
+	void setFloat(const std::string &name, float value) const
+	{
+		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+	}
+	void setVec3f(const std::string &name, float x, float y, float z) const
+	{
+		glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
+	}
+	void setVec3f(const std::string &name, glm::vec3 vec3) const
+	{
+		glUniform3f(glGetUniformLocation(ID, name.c_str()), vec3.x, vec3.y, vec3.z);
+	}
+	void setVec4f(const std::string &name, float x, float y, float z, float w) const
+	{
+		glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
+	}
+    void setVec4f(const std::string &name, glm::vec4 vec4) const
+    {
+        glUniform4f(glGetUniformLocation(ID, name.c_str()), vec4.x, vec4.y, vec4.z, vec4.w);
+    }
+	void setMat4f(const std::string &name, glm::mat4 mat) const
+	{
+		glUniformMatrix4fv(glGetUniformLocation(ID,name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+	}
+
+protected:
+
+	void CreateShaderProgram()
+	{
+		string vertexPath = FileSystem::getPath(vsPath);
+		string fragmentPath = FileSystem::getPath(fsPath);
 
 		// 1. get shader source file from a gaven path
 		std::string vertexCode;
@@ -111,44 +157,11 @@ public:
 		glDeleteShader(fragment);
 
 	}
-	// use shader program
-	void use()
-	{
-		glUseProgram(ID);
-	}
-	// set uniform values
-	void setBool(const std::string &name, bool value) const
-	{
-		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
-	}
-	void setInt(const std::string &name, int value) const
-	{
-		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
-	}
-	void setFloat(const std::string &name, float value) const
-	{
-		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
-	}
-	void setVec3f(const std::string &name, float x, float y, float z) const
-	{
-		glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
-	}
-	void setVec3f(const std::string &name, glm::vec3 vec3) const
-	{
-		glUniform3f(glGetUniformLocation(ID, name.c_str()), vec3.x, vec3.y, vec3.z);
-	}
-	void setVec4f(const std::string &name, float x, float y, float z, float w) const
-	{
-		glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
-	}
-    void setVec4f(const std::string &name, glm::vec4 vec4) const
-    {
-        glUniform4f(glGetUniformLocation(ID, name.c_str()), vec4.x, vec4.y, vec4.z, vec4.w);
-    }
-	void setMat4f(const std::string &name, glm::mat4 mat) const
-	{
-		glUniformMatrix4fv(glGetUniformLocation(ID,name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
-	}
+
+public:
+
+	string vsPath;
+	string fsPath;
 
 };
 

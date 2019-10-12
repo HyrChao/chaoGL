@@ -1,6 +1,7 @@
 #include <Section/PBR_Section.h>
 
 
+
 void PBR_Section::Initialize()
 {
 	Light::ClearAllLight();
@@ -39,7 +40,7 @@ void PBR_Section::Initialize()
 	dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
 	dirlightp1.dir = glm::vec3(-1, -1, -1);;
 	Light* dirLight = new Light(dirlightp1);
-	pbrDirlight = dirLight;
+	sunlight = dirLight;
 
 	LightParam spotlightp1;
 	spotlightp1.type = LightType::Spot;
@@ -53,10 +54,10 @@ void PBR_Section::Initialize()
 	Light* spotlight = new Light(spotlightp1);
 	pbrSpotlight = spotlight;
 
-	albedo = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_basecolor.png").c_str());
-	normal = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_normal.png").c_str());
-	metallic = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_metallic.png").c_str());
-	roughness = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/HelloPBR/rustediron2_roughness.png").c_str());
+	albedo = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
+	normal = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_normal.png");
+	metallic = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_metallic.png");
+	roughness = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_roughness.png");
 	//ao = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
 	ao = CommonAssets::instance->whiteTex;
 
@@ -70,6 +71,8 @@ void PBR_Section::Initialize()
 
 void PBR_Section::Loop()
 {
+	Level::Loop();
+
 	glm::vec4 clearColor = glm::vec4(0.1f);
 	Render::SetClearColor(clearColor);
 
@@ -163,7 +166,7 @@ void PBR_Section::Loop()
 	// light params change with time
 	float sunDirChangeSpeed = 0.3;
 	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
-	pbrDirlight->dir = currentSunDir;
+	sunlight->dir = currentSunDir;
 
 	float spotDirChangeSpeed = 1;
 	glm::vec3 currentSpotDir = glm::vec3(cos((float)glfwGetTime() * spotDirChangeSpeed), 0.0f, sin((float)glfwGetTime() * spotDirChangeSpeed));

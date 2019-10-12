@@ -5,9 +5,10 @@
 //#include <GLFW/glfw3.h>
 #include <glad/glad.h>
 //#include <Render/Shader.h>
-#include <Render/Texture.h>
+//#include <Render/Texture.h>
 #include <Render/Camera.h>
 #include <Render/Light.h>
+//#include <Render/Material.h>
 
 class Render
 {
@@ -52,9 +53,28 @@ public:
     static glm::mat4 viewMat;
     static glm::vec3 viewPos;
 
+	static void DrawGeo(unsigned int geoVAO, Shader* shader, glm::mat4 &model)
+	{
+		shader->use();
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glBindVertexArray(geoVAO);
+		glDrawElements(GL_TRIANGLE_STRIP, geoVAO, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+
 	static void DrawPlane();
 
 	static void DrawCube(Shader* shader, glm::mat4 &model)
+	{
+		shader->use();
+		glBindVertexArray(CommonAssets::instance->cubeVAO);
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+	static void DrawCube(Material* shader, glm::mat4 &model)
 	{
 		shader->use();
 		glBindVertexArray(CommonAssets::instance->cubeVAO);
@@ -73,7 +93,15 @@ public:
 		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
-
+	static void DrawSphere(Material* shader, glm::mat4 &model)
+	{
+		shader->use();
+		Render::SetVertexShaderParams(shader, model);
+		Render::SetShaderLightParams(shader);
+		glBindVertexArray(CommonAssets::instance->sphereVAO);
+		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
     
 private:
 
