@@ -11,9 +11,8 @@ Level::Level()
 	if (!globalInitialized)
 	{
 		equirectangularToCubemapMaterial = new Material("/Shaders/Common/HDR_EquirectangularMap.vs", "/Shaders/Common/HDR_EquirectangularMap.fs");
+		irradianceConvolveMaterial = new Material("/Shaders/Common/HDR_Cube_Irradiance.vs", "/Shaders/Common/HDR_Cube_Irradiance.fs");
 		SetSkyDome();
-		//equirectangularToCubemapMaterial = new Material(equirectangularToCubemapShader);
-		//skydomMaterial->AddTexture(skydomeTex);
 		globalInitialized = true;
 	}
 

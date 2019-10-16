@@ -86,6 +86,7 @@ public:
 	static void DrawCube(Material* material, glm::mat4 &model)
 	{
 		material->use();
+		material->BindTextures();
 		glBindVertexArray(CommonAssets::instance->cubeVAO);
 		Render::SetVertexShaderParams(material, model);
 		Render::SetShaderLightParams(material);
@@ -102,11 +103,13 @@ public:
 		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
-	static void DrawSphere(Material* shader, glm::mat4 &model)
+	static void DrawSphere(Material* material, glm::mat4 &model)
 	{
-		shader->use();
-		Render::SetVertexShaderParams(shader, model);
-		Render::SetShaderLightParams(shader);
+		material->use();
+		material->BindTextures();
+
+		Render::SetVertexShaderParams(material, model);
+		Render::SetShaderLightParams(material);
 		glBindVertexArray(CommonAssets::instance->sphereVAO);
 		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);

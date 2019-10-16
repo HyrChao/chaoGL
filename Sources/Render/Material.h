@@ -32,17 +32,17 @@ public:
 	{
 		Shader::use();
 
-		int textureSlot = -1;
+		int m_textureSlot = -1;
 		for (int i = 0; i < maxTextureCount; i++)
 		{
 			if (textures[i].id == 0)
 			{
-				textureSlot = i;
-				textures[textureSlot] = texture;
+				m_textureSlot = i;
+				textures[m_textureSlot] = texture;
 				break;
 			}
 		}
-		if (textureSlot < 0)
+		if (m_textureSlot < 0)
 		{
 			cout << "Reached to the max texture count for material " << fsPath.c_str() << endl;
 			return;
@@ -53,25 +53,25 @@ public:
 		default:
 			break;
 		case TextureType::Albedo:
-			SetParam("material.albedo", textureSlot);
+			SetParam("material.albedo", m_textureSlot);
 		case TextureType::Normal:
-			SetParam("material.normal", textureSlot);
+			SetParam("material.normal", m_textureSlot);
 		case TextureType::Metallic:
-			SetParam("material.metallic", textureSlot);
+			SetParam("material.metallic", m_textureSlot);
 		case TextureType::Roughness:
-			SetParam("material.roughness", textureSlot);
+			SetParam("material.roughness", m_textureSlot);
 		case TextureType::MRO:
-			SetParam("material.mro", textureSlot);
+			SetParam("material.mro", m_textureSlot);
 		case TextureType::AO:
-			SetParam("material.ao", textureSlot);
+			SetParam("material.ao", m_textureSlot);
 		case TextureType::Specular:
-			SetParam("material.specular", textureSlot);
+			SetParam("material.specular", m_textureSlot);
 		case TextureType::Diffuse:
-			SetParam("material.diffuse", textureSlot);
+			SetParam("material.diffuse", m_textureSlot);
 		case TextureType::Cube:
-			SetParam("environmentMap", textureSlot);
+			SetParam("environmentMap", m_textureSlot);
 		case TextureType::Equirectangular:
-			SetParam("equirectangularMap", textureSlot);
+			SetParam("equirectangularMap", m_textureSlot);
 
 		}
 	}
@@ -83,7 +83,7 @@ public:
 			if (textures[i].id != 0)
 			{
 				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(GL_TEXTURE_2D, textures[i].id);
+				glBindTexture(textures[i].format, textures[i].id);
 				if(textures[i].useMip)
 					glGenerateMipmap(GL_TEXTURE_2D);
 			}

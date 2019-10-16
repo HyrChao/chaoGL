@@ -14,12 +14,7 @@ public:
 	 Level();
 	~ Level();
 
-	void SetSkyDome() 
-	{
-		CaptureEnvironmentCubemap();
-		skydomMaterial = new Material("/Shaders/Common/HDR_Cube.vs", "/Shaders/Common/HDR_Cube.fs");
-		skydomMaterial->AddTexture(envCubemap);
-	}
+
 
 	void SetSunLight(Light* sunlight)
 	{
@@ -43,6 +38,16 @@ private:
 		}
 	}
 
+	void SetSkyDome()
+	{
+		CaptureEnvironmentCubemap();
+		CaptureIrradianceCubemap();
+		skydomMaterial = new Material("/Shaders/Common/HDR_Cube.vs", "/Shaders/Common/HDR_Cube.fs");
+		//skydomMaterial->AddTexture(envCubemap);
+		skydomMaterial->AddTexture(irradianceCubemap);
+
+	}
+
 	void DrawSkydome()
 	{
 		glm::mat4 modelMat = glm::mat4(1.0f);
@@ -50,6 +55,60 @@ private:
 		//glm::vec3 scale = glm::vec3(80);
 		//modelMat = glm::scale(modelMat, scale);
 		Render::DrawCube(skydomMaterial, modelMat);
+	}
+
+	void CaptureIrradianceCubemap()
+	{
+		int irradianceCubeRes = 32;
+
+		// Generate new frame buffer to capture cubemap
+		glGenFramebuffers(1, &captureFBO);
+		glGenRenderbuffers(1, &captureRBO);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, irradianceCubeRes, irradianceCubeRes);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+
+
+		irradianceCubemap.useMip = false;
+		irradianceCubemap.SetType(TextureType::Cube);
+		glGenTextures(1, &irradianceCubemap.id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
+		
+		for (int i = 0; i < 6; i++)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, irradianceCubeRes, irradianceCubeRes, 0, GL_RGB, GL_FLOAT, 0);
+		}
+
+		// Set texture parameters 
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		Render::SetViewport(irradianceCubeRes, irradianceCubeRes);  // don't forget to set view port to the same demensions before render
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+		irradianceConvolveMaterial->AddTexture(envCubemap);
+		irradianceConvolveMaterial->BindTextures();
+		irradianceConvolveMaterial->SetParam("projection", captureProjection);
+		for (int i = 0; i < 6; i++)
+		{
+			irradianceConvolveMaterial->SetParam("view", captureViewMats[i]);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceCubemap.id, 0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			// Draw cube
+			glBindVertexArray(CommonAssets::instance->cubeVAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glBindVertexArray(0);
+		}
+
+		Render::ResetViewport();
+		glBindFramebuffer(GL_FRAMEBUFFER ,0);
+
 	}
 
 	void CaptureEnvironmentCubemap()
@@ -68,7 +127,7 @@ private:
 
 		glGenTextures(1, &envCubemap.id);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.id);
-		envCubemap.type = TextureType::Cube;
+		envCubemap.SetType(TextureType::Cube);
 		envCubemap.useMip = false;
 
 		for (int i = 0; i < 6; i++)
@@ -121,6 +180,7 @@ protected:
 	bool initialized = false;
 
 	Texture envCubemap;
+	Texture irradianceCubemap;
 
 private:
 
@@ -145,7 +205,9 @@ private:
 
 	// shader for convert equirectangular map tp cubmap 
 	Material* equirectangularToCubemapMaterial;
+	// shader for convolve irradiance
+	Material* irradianceConvolveMaterial;
 };
 
-#endif // ! LEVEL_H
+#endif // !LEVEL_H
 
