@@ -43,8 +43,8 @@ private:
 		CaptureEnvironmentCubemap();
 		CaptureIrradianceCubemap();
 		skydomMaterial = new Material("/Shaders/Common/HDR_Cube.vs", "/Shaders/Common/HDR_Cube.fs");
-		//skydomMaterial->AddTexture(envCubemap);
-		skydomMaterial->AddTexture(irradianceCubemap);
+		skydomMaterial->AddTexture(envCubemap);
+		//skydomMaterial->AddTexture(irradianceCubemap);
 
 	}
 
@@ -73,7 +73,7 @@ private:
 
 
 		irradianceCubemap.useMip = false;
-		irradianceCubemap.SetType(TextureType::Cube);
+		irradianceCubemap.SetType(TextureType::Irridiance);
 		glGenTextures(1, &irradianceCubemap.id);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
 		

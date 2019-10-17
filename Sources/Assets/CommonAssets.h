@@ -32,6 +32,7 @@ public:
 	unsigned int sphereIndexCount;
 
 	unsigned int blackTex, whiteTex, greyTex;
+	unsigned int flatNormal;
 
 
 public:

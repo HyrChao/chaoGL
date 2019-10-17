@@ -3,8 +3,6 @@
 #define chaoGL
 #define GLM_SWIZZLE
 
-
-
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 

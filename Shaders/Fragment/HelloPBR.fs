@@ -50,9 +50,14 @@ struct SpotLight
 };  
 uniform SpotLight spotLight;
 
+uniform samplerCube irradianceMap;
+
 uniform vec3 viewPos;
 
-uniform vec4 debug;
+// r, g, b, a  albedo, normal, matellic, roughness
+uniform vec4 debug_pbr;
+// r, g, b, a  irradiance
+uniform vec4 debug_light;
 
 const float PI = 3.14159265359;
 
@@ -60,6 +65,11 @@ const float PI = 3.14159265359;
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return (F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0));
+}
+
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return (F0 + (max(vec3(1- roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0));
 }
 
 //Trowbridge-Reitz GGX, NDF(Normal Distribute Function), a = roughness * roughness
@@ -100,12 +110,8 @@ float CommonAssetsmetrySmith(vec3 N, vec3 V, vec3 L, float roughness)
     return ggx1 * ggx2;
 }
 
-vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,float roughness, float metallic)
+vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,float roughness, float metallic, vec3 F0)
 {
-    // calc F0
-    vec3 F0 = vec3(0.04f);
-    F0 = mix(F0, albedo, metallic);
-
     // calc Fresnel, using Schlick
     float cosTheta = max(dot(H, V), 0.0);
     vec3 F = FresnelSchlick(cosTheta,F0);
@@ -130,17 +136,17 @@ vec3 CalcIrradiance(vec3 radiance , vec3 N,vec3 V,vec3 L, vec3 H, vec3 albedo,fl
     return dLo;
 }
 
-vec3 CalcDirLightIrradiance(DirLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
+vec3 CalcDirLightIrradiance(DirLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic, vec3 F0)
 {
     vec3 L = normalize(-light.direction.xyz);
     vec3 H = normalize(V + L);
 
     vec3 radiance = light.irradiance;
 
-    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
+    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic, F0);
 }
 
-vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
+vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic, vec3 F0)
 {
     vec3 L = normalize(light.position - fragPos);
     vec3 H = normalize(V + L);
@@ -154,11 +160,11 @@ vec3 CalcPointLightIrradiance(PointLight light , vec3 N,vec3 V, vec3 albedo,floa
     // vec3 radiance = vec3(3.0, 0, 0);
     // vec3 radiance = vec3(3.0, 0, 0);
 
-    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
+    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic, F0);
 }
 
 // https://learnopengl-cn.github.io/02%20Lighting/05%20Light%20casters/
-vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic)
+vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float roughness, float metallic, vec3 F0)
 {
 	vec3 L = normalize(light.position - fragPos);
     vec3 H = normalize(V + L);
@@ -169,7 +175,7 @@ vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float 
 
     vec3 radiance = light.irradiance * intensity;
 
-    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic);
+    return CalcIrradiance(radiance, N, V, L, H, albedo, roughness, metallic, F0);
 }
 
 vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
@@ -202,24 +208,35 @@ void main()
     float ao = pow(texture(material.ao, TexCoord).r,2.2);
     ao *= intensity.mro.z;
 
-    vec3 N = normalize(Normal);
+    // calc F0
+    vec3 F0 = vec3(0.04f);
+    F0 = mix(F0, albedo, metallic);
+
+    vec3 N = normalize(normal);
     vec3 V = normalize(viewPos - fragPos);
 
     vec3 Lo = vec3(0.0);
 
     // calc irradiance in directional lights
-    Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness, metallic);    
+    Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness, metallic , F0);    
 
     // calc irradiance in point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
 	{
-		Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic);    
+		Lo += CalcPointLightIrradiance(pointLights[i], N, V, albedo, roughness,metallic, F0);    
 	}
 
     // calc irradiance in spot lights
-    Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic);    
+    Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic, F0); 
 
-    vec3 ambient = vec3(0.03) * albedo * ao;
+
+    float cosTheta = max(dot(N, V), 0.0);
+    vec3 Ks = FresnelSchlickRoughness(cosTheta, F0, roughness);
+    vec3 Kd = 1 - Ks;
+    Kd *= (1.0 - metallic);
+    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 diffuse = irradiance * albedo;
+    vec3 ambient = Kd * diffuse * ao;
     vec3 color = ambient + Lo;
 
     // HDR to LDR
@@ -229,13 +246,16 @@ void main()
     // color += vColor;
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
 
-    // PBR debug
-    finalColor = mix(finalColor, vec4(albedo,1), debug.x);
+    // debug
+    finalColor = mix(finalColor, vec4(albedo,1), debug_pbr.x);
     vec3 debugNormal = 0.5 * normal + 0.5;
-    finalColor = mix(finalColor, vec4(debugNormal,1), debug.y);
-    finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug.z);
-    finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug.w);
-
+    finalColor = mix(finalColor, vec4(debugNormal,1), debug_pbr.y);
+    finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug_pbr.z);
+    finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug_pbr.w);
+    finalColor = mix(finalColor, vec4(ambient, 1), debug_light.x);
+    
+    // finalColor = vec4(diffuse, 1.0);
+    // finalColor = vec4(Lo, 1.0);
     // Output final color
 	FragColor = finalColor;
 }

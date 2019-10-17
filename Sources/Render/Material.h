@@ -18,17 +18,19 @@ public:
 
 	Material(string vsPath, string fsPath) : Shader(vsPath, fsPath)
 	{
+		//Shader(vsPath, fsPath);
 		this->shader = dynamic_cast<Shader*>(this);
 	}
 	
 	~Material()
 	{
+		
 		delete this;
 	}
 
 
 	// texture
-	void AddTexture(Texture texture)
+	void AddTexture(Texture &texture)
 	{
 		Shader::use();
 
@@ -54,24 +56,39 @@ public:
 			break;
 		case TextureType::Albedo:
 			SetParam("material.albedo", m_textureSlot);
+			break;
 		case TextureType::Normal:
 			SetParam("material.normal", m_textureSlot);
+			break;
 		case TextureType::Metallic:
 			SetParam("material.metallic", m_textureSlot);
+			break;
 		case TextureType::Roughness:
 			SetParam("material.roughness", m_textureSlot);
+			break;
 		case TextureType::MRO:
 			SetParam("material.mro", m_textureSlot);
+			break;
 		case TextureType::AO:
 			SetParam("material.ao", m_textureSlot);
+			break;
 		case TextureType::Specular:
 			SetParam("material.specular", m_textureSlot);
+			break;
 		case TextureType::Diffuse:
 			SetParam("material.diffuse", m_textureSlot);
+			break;
 		case TextureType::Cube:
 			SetParam("environmentMap", m_textureSlot);
+			texture.SetType(TextureType::Cube);
+			break;
+		case TextureType::Irridiance:
+			SetParam("irradianceMap", m_textureSlot);
+			texture.SetType(TextureType::Cube);
+			break;	
 		case TextureType::Equirectangular:
 			SetParam("equirectangularMap", m_textureSlot);
+			break;
 
 		}
 	}
@@ -84,9 +101,11 @@ public:
 			{
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(textures[i].format, textures[i].id);
-				if(textures[i].useMip)
+				if (textures[i].useMip)
 					glGenerateMipmap(GL_TEXTURE_2D);
 			}
+			else
+				break;
 		}
 	}
 

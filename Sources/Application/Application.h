@@ -11,7 +11,6 @@
 #include <GLFW/glfw3.h>
 #include <chaoGL.h>
 
-
 class Application
 {
 public:

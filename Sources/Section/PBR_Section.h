@@ -8,20 +8,27 @@ class PBR_Section : public Level
 {
 private:
 
-	Shader* helloPBRShader;
-	unsigned int albedo, normal, metallic, roughness, ao;
-	Shader* helloPBRShader_Fill;
+	Material* helloPBRMaterial;
+	Material* helloPBRMaterial_Fill;
+	Texture albedo, normal, metallic, roughness, ao;
+	Texture albedo_Fill, normal_Fill, metallic_Fill, roughness_Fill, ao_Fill;
 
-	Shader* currentPBRShader;
+
+	Material* currentPBRMaterial;
 	glm::vec4 pbrDebugParam = glm::vec4(0);
+	glm::vec4 lightDebugParam = glm::vec4(0);
 
 	Light* pbrSpotlight;
 	Light* pbrPointlight1;
+
+	glm::vec3 basicColor = glm::vec3(1.0f);
+
 
 public:
 
 	PBR_Section() : Level()
 	{
+		Level::Level();
 		Initialize();
 	}
 

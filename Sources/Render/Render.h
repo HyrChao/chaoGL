@@ -106,8 +106,6 @@ public:
 	static void DrawSphere(Material* material, glm::mat4 &model)
 	{
 		material->use();
-		material->BindTextures();
-
 		Render::SetVertexShaderParams(material, model);
 		Render::SetShaderLightParams(material);
 		glBindVertexArray(CommonAssets::instance->sphereVAO);

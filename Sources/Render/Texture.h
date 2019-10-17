@@ -31,6 +31,7 @@ enum TextureType
     Diffuse,
     Specular,
     Cube,
+	Irridiance,
 	Equirectangular,
     LUT,
 };
@@ -86,6 +87,8 @@ struct Texture
 	{
 		this->type = type;
 		if (type == TextureType::Cube)
+			format = GL_TEXTURE_CUBE_MAP;
+		else if (type == TextureType::Irridiance)
 			format = GL_TEXTURE_CUBE_MAP;
 	}
 };

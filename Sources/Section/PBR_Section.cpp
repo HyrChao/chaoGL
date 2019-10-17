@@ -54,17 +54,47 @@ void PBR_Section::Initialize()
 	Light* spotlight = new Light(spotlightp1);
 	pbrSpotlight = spotlight;
 
-	albedo = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
-	normal = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_normal.png");
-	metallic = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_metallic.png");
-	roughness = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_roughness.png");
+	albedo.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
+	albedo.SetType(TextureType::Albedo);
+	normal.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_normal.png");
+	normal.SetType(TextureType::Normal);
+	metallic.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_metallic.png");
+	metallic.SetType(TextureType::Metallic);
+	roughness.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_roughness.png");
+	roughness.SetType(TextureType::Roughness);
 	//ao = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
-	ao = CommonAssets::instance->whiteTex;
+	ao.id = CommonAssets::instance->whiteTex;
+	ao.SetType(TextureType::AO);
 
-	helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
-	helloPBRShader_Fill = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+	albedo_Fill.id = CommonAssets::instance->whiteTex;
+	albedo_Fill.SetType(TextureType::Albedo);
+	normal_Fill.id = CommonAssets::instance->flatNormal;
+	normal_Fill.SetType(TextureType::Normal);
+	metallic_Fill.id = CommonAssets::instance->whiteTex;
+	metallic_Fill.SetType(TextureType::Metallic);
+	roughness_Fill.id = CommonAssets::instance->whiteTex;
+	roughness_Fill.SetType(TextureType::Roughness);
+	ao_Fill.id = CommonAssets::instance->whiteTex;
+	ao_Fill.SetType(TextureType::AO);
 
-	currentPBRShader = helloPBRShader;
+	helloPBRMaterial = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+	helloPBRMaterial->AddTexture(albedo);
+	helloPBRMaterial->AddTexture(normal);
+	helloPBRMaterial->AddTexture(metallic);
+	helloPBRMaterial->AddTexture(roughness);
+	helloPBRMaterial->AddTexture(ao);
+	helloPBRMaterial->AddTexture(irradianceCubemap);
+
+	helloPBRMaterial_Fill = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+	helloPBRMaterial_Fill->AddTexture(albedo_Fill);
+	helloPBRMaterial_Fill->AddTexture(normal_Fill);
+	helloPBRMaterial_Fill->AddTexture(metallic_Fill);
+	helloPBRMaterial_Fill->AddTexture(roughness_Fill);
+	helloPBRMaterial_Fill->AddTexture(ao_Fill);
+	helloPBRMaterial_Fill->AddTexture(irradianceCubemap);
+
+
+	currentPBRMaterial = helloPBRMaterial;
 
 	initialized = true;
 }
@@ -81,55 +111,6 @@ void PBR_Section::Loop()
 		Initialize();
 	}
 
-	helloPBRShader->use();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, albedo);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, normal);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, metallic);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, roughness);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, ao);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	helloPBRShader->setInt("material.albedo", 0);
-	helloPBRShader->setInt("material.normal", 1);
-	helloPBRShader->setInt("material.metallic", 2);
-	helloPBRShader->setInt("material.roughness", 3);
-	helloPBRShader->setInt("material.ao", 4);
-
-	helloPBRShader->setVec3f("intensity.tint", glm::vec3(1.0f));
-	helloPBRShader_Fill->setVec3f("intensity.mro", glm::vec3(1.0f));
-
-
-
-	helloPBRShader_Fill->use();
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, CommonAssets::instance->whiteTex);
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, CommonAssets::instance->whiteTex);
-	glActiveTexture(GL_TEXTURE7);
-	glBindTexture(GL_TEXTURE_2D, CommonAssets::instance->whiteTex);
-	glActiveTexture(GL_TEXTURE8);
-	glBindTexture(GL_TEXTURE_2D, CommonAssets::instance->whiteTex);
-	glActiveTexture(GL_TEXTURE9);
-	glBindTexture(GL_TEXTURE_2D, CommonAssets::instance->whiteTex);
-
-	helloPBRShader_Fill->setInt("material.albedo", 5);
-	helloPBRShader_Fill->setInt("material.normal", 6);
-	helloPBRShader_Fill->setInt("material.metallic", 7);
-	helloPBRShader_Fill->setInt("material.roughness", 8);
-	helloPBRShader_Fill->setInt("material.ao", 9);
-
-	helloPBRShader_Fill->setVec3f("intensity.tint", glm::vec3(1.0f, 0.0f, 0.0f));
-	helloPBRShader_Fill->setVec3f("intensity.mro", glm::vec3(1.0f));
-
 	glm::mat4 model = glm::mat4(1.0f);
 
 	int nrRows = 7;
@@ -141,10 +122,18 @@ void PBR_Section::Loop()
 	if (Input::GetKeyOnce(GLFW_KEY_TAB))
 	{
 		pbrDebugParam = glm::vec4(0);
-		if (currentPBRShader == helloPBRShader)
-			currentPBRShader = helloPBRShader_Fill;
-		else
-			currentPBRShader = helloPBRShader;
+		lightDebugParam = glm::vec4(0);
+		if (currentPBRMaterial == helloPBRMaterial)
+		{
+			currentPBRMaterial = helloPBRMaterial_Fill;
+			basicColor = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		else 
+		{
+			currentPBRMaterial = helloPBRMaterial;
+			basicColor = glm::vec3(1.0f);
+		}
+
 	}
 
 	if (Input::GetKeyOnce(GLFW_KEY_F1))
@@ -168,6 +157,12 @@ void PBR_Section::Loop()
 		pbrDebugParam.w = 1;
 	}
 
+	if (Input::GetKeyOnce(GLFW_KEY_F5))
+	{
+		lightDebugParam = glm::vec4(0);
+		lightDebugParam.x = 1;
+	}
+
 	// light params change with time
 	float sunDirChangeSpeed = 0.3;
 	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
@@ -183,6 +178,13 @@ void PBR_Section::Loop()
 	pbrPointlight1->color = currentPointColor;
 
 	mroVar.z = 1;
+
+	currentPBRMaterial->use();
+	currentPBRMaterial->BindTextures();
+	currentPBRMaterial->setVec4f("debug_pbr", pbrDebugParam);
+	currentPBRMaterial->setVec4f("debug_light", lightDebugParam);
+	currentPBRMaterial->setVec3f("intensity.tint", basicColor);
+
 	for (int row = 0; row < nrRows; ++row)
 	{
 		for (int col = 0; col < nrColumns; ++col)
@@ -196,11 +198,10 @@ void PBR_Section::Loop()
 
 			mroVar.x = float(nrRows - row) / float(nrRows);
 			mroVar.y = float(col) / float(nrColumns);
-			currentPBRShader->use();
-			currentPBRShader->setVec4f("debug", pbrDebugParam);
-			currentPBRShader->setVec3f("intensity.mro", mroVar);
 
-			Render::DrawSphere(currentPBRShader, model);
+			currentPBRMaterial->setVec3f("intensity.mro", mroVar);
+
+			Render::DrawSphere(currentPBRMaterial, model);
 		}
 	}
 }

@@ -20,6 +20,7 @@ void CommonAssets::LoadCommonTextures()
 	blackTex = AssetsManager::TextureFromFile("/Assets/Texture/black.png");
 	whiteTex = AssetsManager::TextureFromFile("/Assets/Texture/white.png");
 	greyTex = AssetsManager::TextureFromFile("/Assets/Texture/grey.png");
+	flatNormal = AssetsManager::TextureFromFile("/Assets/Texture/flat.png");
 
 }
 

@@ -20,8 +20,6 @@ Application::Application(GLFWwindow* currentWin, int width, int height)
 	screenWidth = width;
 	screenHeight = height;
     
-
-
 	Application::InitApplication();
 }
 
@@ -50,6 +48,7 @@ void Application::InitApplication()
 	CommonAssets::instance = new CommonAssets();
 
     section = new Sections();
+
 }
 
 void Application::Update()
@@ -71,6 +70,7 @@ void Application::Update()
 
     Render::DrawOnFrameEnd();
     Time::UpdateTime();
+
 }
 
 
