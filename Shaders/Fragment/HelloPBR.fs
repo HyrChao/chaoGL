@@ -232,6 +232,7 @@ void main()
 
     float cosTheta = max(dot(N, V), 0.0);
     vec3 Ks = FresnelSchlickRoughness(cosTheta, F0, roughness);
+    // vec3 Ks = FresnelSchlick(cosTheta, F0);
     vec3 Kd = 1 - Ks;
     Kd *= (1.0 - metallic);
     vec3 irradiance = texture(irradianceMap, N).rgb;

@@ -144,26 +144,31 @@ void PBR_Section::Loop()
 	if (Input::GetKeyOnce(GLFW_KEY_F1))
 	{
 		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.x = 1;
 	}
 	else if (Input::GetKeyOnce(GLFW_KEY_F2))
 	{
 		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.y = 1;
 	}
 	else if (Input::GetKeyOnce(GLFW_KEY_F3))
 	{
 		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.z = 1;
 	}
 	else if (Input::GetKeyOnce(GLFW_KEY_F4))
 	{
 		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.w = 1;
 	}
 
 	if (Input::GetKeyOnce(GLFW_KEY_F5))
 	{
+		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		lightDebugParam.x = 1;
 	}
@@ -202,7 +207,7 @@ void PBR_Section::Loop()
 			));
 
 			mroVar.x = float(nrRows - row) / float(nrRows);
-			mroVar.y = float(col) / float(nrColumns);
+			mroVar.y = float(col + 1) / float(nrColumns);
 
 			currentPBRMaterial->setVec3f("intensity.mro", mroVar);
 
