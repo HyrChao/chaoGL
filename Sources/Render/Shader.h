@@ -22,6 +22,11 @@ public:
 	// id for shader program
 	unsigned int ID;
 
+	Shader()
+	{
+
+	}
+
 	// constraction
 	Shader(const string& vsPath, const string& fsPath)
 	{

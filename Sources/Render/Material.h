@@ -11,6 +11,11 @@ class Material : public Shader
 {
 public:
 
+	Material() : Shader()
+	{
+		this->shader = nullptr;
+	}
+
 	Material(Shader* shader) : Shader(shader->vsPath, shader->fsPath)
 	{
 		this->shader = shader;
@@ -84,7 +89,7 @@ public:
 			break;
 		case TextureType::Irridiance:
 			SetParam("irradianceMap", m_textureSlot);
-			texture.SetType(TextureType::Cube);
+			texture.SetType(TextureType::Irridiance);
 			break;	
 		case TextureType::Equirectangular:
 			SetParam("equirectangularMap", m_textureSlot);
@@ -155,7 +160,7 @@ public:
 
 private:
 
-	Shader* shader;
+	Shader* shader = nullptr;
 	Texture textures[maxTextureCount];
 	//unsigned int textureSlots[maxTextureCount];
 

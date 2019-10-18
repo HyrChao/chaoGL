@@ -77,22 +77,27 @@ void PBR_Section::Initialize()
 	ao_Fill.id = CommonAssets::instance->whiteTex;
 	ao_Fill.SetType(TextureType::AO);
 
-	helloPBRMaterial = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
-	helloPBRMaterial->AddTexture(albedo);
-	helloPBRMaterial->AddTexture(normal);
-	helloPBRMaterial->AddTexture(metallic);
-	helloPBRMaterial->AddTexture(roughness);
-	helloPBRMaterial->AddTexture(ao);
-	helloPBRMaterial->AddTexture(irradianceCubemap);
+	if (helloPBRMaterial == nullptr)
+	{
+		helloPBRMaterial = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+		helloPBRMaterial->AddTexture(albedo);
+		helloPBRMaterial->AddTexture(normal);
+		helloPBRMaterial->AddTexture(metallic);
+		helloPBRMaterial->AddTexture(roughness);
+		helloPBRMaterial->AddTexture(ao);
+		helloPBRMaterial->AddTexture(irradianceCubemap);
+	}
 
-	helloPBRMaterial_Fill = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
-	helloPBRMaterial_Fill->AddTexture(albedo_Fill);
-	helloPBRMaterial_Fill->AddTexture(normal_Fill);
-	helloPBRMaterial_Fill->AddTexture(metallic_Fill);
-	helloPBRMaterial_Fill->AddTexture(roughness_Fill);
-	helloPBRMaterial_Fill->AddTexture(ao_Fill);
-	helloPBRMaterial_Fill->AddTexture(irradianceCubemap);
-
+	if (helloPBRMaterial_Fill == nullptr)
+	{
+		helloPBRMaterial_Fill = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+		helloPBRMaterial_Fill->AddTexture(albedo_Fill);
+		helloPBRMaterial_Fill->AddTexture(normal_Fill);
+		helloPBRMaterial_Fill->AddTexture(metallic_Fill);
+		helloPBRMaterial_Fill->AddTexture(roughness_Fill);
+		helloPBRMaterial_Fill->AddTexture(ao_Fill);
+		helloPBRMaterial_Fill->AddTexture(irradianceCubemap);
+	}
 
 	currentPBRMaterial = helloPBRMaterial;
 

@@ -256,6 +256,7 @@ void main()
     
     // finalColor = vec4(diffuse, 1.0);
     // finalColor = vec4(Lo, 1.0);
+    // finalColor = vec4(color,1.0);
     // Output final color
 	FragColor = finalColor;
 }

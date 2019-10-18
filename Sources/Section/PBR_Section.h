@@ -8,8 +8,8 @@ class PBR_Section : public Level
 {
 private:
 
-	Material* helloPBRMaterial;
-	Material* helloPBRMaterial_Fill;
+	Material* helloPBRMaterial = nullptr;
+	Material* helloPBRMaterial_Fill = nullptr;
 	Texture albedo, normal, metallic, roughness, ao;
 	Texture albedo_Fill, normal_Fill, metallic_Fill, roughness_Fill, ao_Fill;
 
