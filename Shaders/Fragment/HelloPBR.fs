@@ -235,6 +235,7 @@ void main()
     // vec3 Ks = FresnelSchlick(cosTheta, F0);
     vec3 Kd = 1 - Ks;
     Kd *= (1.0 - metallic);
+    // Sample diffuse irradiance from irradiance cube map
     vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo;
     vec3 ambient = Kd * diffuse * ao;
