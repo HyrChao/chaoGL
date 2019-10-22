@@ -67,6 +67,7 @@ struct Texture
     TextureType type = TextureType::Albedo;
     string path = "/Assets/Texture/white.png";
 	bool genMip = true;
+	bool loaded = false;
 	int format = GL_TEXTURE_2D;
 
 	Texture()

@@ -44,6 +44,9 @@ void Render::SetupRenderProperty()
 	glEnable(GL_DEPTH_TEST);
 
 	glDepthFunc(GL_LEQUAL);;
+
+	// filter across cubemap faces
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
 void Render::DrawOnFrameBegin()

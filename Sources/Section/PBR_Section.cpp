@@ -108,11 +108,11 @@ void PBR_Section::Loop()
 {
 	float prefilterFadeSpeed = 0.5;
 	float epsilonRougness = 0.1f;
-	if (Input::GetKey(GLFW_KEY_PAGE_UP))
+	if (Input::GetKey(GLFW_KEY_PAGE_DOWN))
 	{
 		prefilterEnvMapRoughness += Time::deltaTime * prefilterFadeSpeed;
 	}
-	if (Input::GetKey(GLFW_KEY_PAGE_DOWN))
+	if (Input::GetKey(GLFW_KEY_PAGE_UP))
 	{
 		prefilterEnvMapRoughness -= Time::deltaTime * prefilterFadeSpeed;
 	}

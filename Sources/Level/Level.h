@@ -148,6 +148,7 @@ private:
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		prefilterEnvironmentMap.loaded = true;
 
 		specularPrefilterMaterial->AddTexture(envCubemap);
 		specularPrefilterMaterial->BindTextures();
@@ -207,8 +208,9 @@ private:
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
 		// Load skydome texture
 		LoadEquirectangularSkydomeTexture();
@@ -231,6 +233,10 @@ private:
 		}
 
 		Render::ResetViewport();
+		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.id);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		envCubemap.loaded = true;
+
 		// Setback to main farme buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

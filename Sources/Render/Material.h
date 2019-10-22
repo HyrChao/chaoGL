@@ -55,6 +55,22 @@ public:
 			return;
 		}
 
+		if (texture.genMip && !texture.loaded)
+		{
+			// Set texture parameters 
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			// Generate mipmap
+			glBindTexture(texture.format, texture.id);
+			glGenerateMipmap(texture.format);
+
+			texture.loaded = true;
+		}
+
 		switch (texture.type)
 		{
 		default:
@@ -116,8 +132,6 @@ public:
 			{
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(textures[i].format, textures[i].id);
-				if (textures[i].genMip)
-					glGenerateMipmap(GL_TEXTURE_2D);
 			}
 			else
 				break;
