@@ -23,7 +23,7 @@ private:
 
 	glm::vec3 basicColor = glm::vec3(1.0f);
 
-	float prefilterEnvMapRoughness_Nax = 4.0f;
+	float prefilterEnvMapRoughness_Max = 4.0f;
 	float prefilterEnvMapRoughness = 0.0f;
 
 public:
