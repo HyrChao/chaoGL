@@ -106,6 +106,29 @@ void PBR_Section::Initialize()
 
 void PBR_Section::Loop()
 {
+	float prefilterFadeSpeed = 0.5;
+	float epsilonRougness = 0.1f;
+	if (Input::GetKey(GLFW_KEY_PAGE_UP))
+	{
+		prefilterEnvMapRoughness += Time::deltaTime * prefilterFadeSpeed;
+	}
+	if (Input::GetKey(GLFW_KEY_PAGE_DOWN))
+	{
+		prefilterEnvMapRoughness -= Time::deltaTime * prefilterFadeSpeed;
+	}
+
+	if (abs(prefilterEnvMapRoughness - prefilterEnvMapRoughness_Nax) < epsilonRougness || prefilterEnvMapRoughness > prefilterEnvMapRoughness_Nax)
+		prefilterEnvMapRoughness = prefilterEnvMapRoughness_Nax;
+	else
+		if (prefilterEnvMapRoughness < 0)
+		{
+			prefilterEnvMapRoughness = 0.0f;
+		}
+
+
+	skydomMaterial->use();
+	skydomMaterial->SetParam("mipLevel", prefilterEnvMapRoughness);
+
 	Level::Loop();
 
 	//glm::vec4 clearColor = glm::vec4(0.1f);

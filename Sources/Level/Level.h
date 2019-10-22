@@ -11,7 +11,26 @@
 class  Level
 {
 public:
-	 Level();
+	 
+	 Level()
+	 {
+
+		 if (!globalInitialized)
+		 {
+			 // Generate new frame buffer to capture cubemap
+			 glGenFramebuffers(1, &captureFBO);
+			 glGenRenderbuffers(1, &captureRBO);
+
+			 equirectangularToCubemapMaterial = new Material("/Shaders/Common/HDR_EquirectangularMap.vs", "/Shaders/Common/HDR_EquirectangularMap.fs");
+			 irradianceConvolveMaterial = new Material("/Shaders/Common/IBL_Irradiance_Convolution.vs", "/Shaders/Common/IBL_Irradiance_Convolution.fs");
+			 specularPrefilterMaterial = new Material("/Shaders/Common/IBL_PBR_Specular_Convolution.vs", "/Shaders/Common/IBL_PBR_Specular_Convolution.fs");
+			 SetSkyDome();
+			 globalInitialized = true;
+		 }
+
+
+	 }
+
 	~ Level();
 
 
@@ -42,7 +61,8 @@ private:
 	{
 		CaptureEnvironmentCubemap();
 		CaptureIrradianceCubemap();
-		skydomMaterial = new Material("/Shaders/Common/HDR_Cube.vs", "/Shaders/Common/HDR_Cube.fs");
+		CaptureSpecularPrefilterMap();
+		skydomMaterial = new Material("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
 		skydomMaterial->AddTexture(envCubemap);
 		//skydomMaterial->AddTexture(irradianceCubemap);
 
@@ -61,10 +81,6 @@ private:
 	{
 		int irradianceCubeRes = 32;
 
-		// Generate new frame buffer to capture cubemap
-		glGenFramebuffers(1, &captureFBO);
-		glGenRenderbuffers(1, &captureRBO);
-
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
@@ -72,7 +88,7 @@ private:
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
 
-		irradianceCubemap.useMip = false;
+		irradianceCubemap.genMip = false;
 		irradianceCubemap.SetType(TextureType::Irridiance);
 		glGenTextures(1, &irradianceCubemap.id);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
@@ -111,12 +127,64 @@ private:
 
 	}
 
+	void CaptureSpecularPrefilterMap()
+	{
+		int maxPrefilterMapRes = 128;
+		int maxMipLevel = 5;
+
+		prefilterEnvironmentMap.SetType(TextureType::PrefilterEnvironment);
+		glGenTextures(1, &prefilterEnvironmentMap.id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterEnvironmentMap.id);
+
+		for (int i = 0; i < 6; i++)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, maxPrefilterMapRes, maxPrefilterMapRes, 0, GL_RGB, GL_FLOAT, 0);
+		}
+		// Set texture parameters 
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+		specularPrefilterMaterial->AddTexture(envCubemap);
+		specularPrefilterMaterial->BindTextures();
+		specularPrefilterMaterial->SetParam("projection", captureProjection);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+		for (int mip = 0; mip < maxMipLevel; mip++)
+		{
+			float currentRoughness = 0.0f;
+			currentRoughness = float(mip) / float(maxMipLevel - 1);
+			specularPrefilterMaterial->SetParam("roughness", currentRoughness);
+			int mipRes = maxPrefilterMapRes * std::pow(0.5, mip);
+
+			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipRes, mipRes);
+			Render::SetViewport(mipRes, mipRes);
+
+			for (int i = 0; i < 6; i++)
+			{
+				specularPrefilterMaterial->SetParam("view", captureViewMats[i]);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvironmentMap.id, mip);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				// Draw cube
+				glBindVertexArray(CommonAssets::instance->cubeVAO);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+				glBindVertexArray(0);
+			}
+		}
+
+		Render::ResetViewport();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	}
+
 	void CaptureEnvironmentCubemap()
 	{
-		// Generate new frame buffer to capture cubemap
-		glGenFramebuffers(1, &captureFBO);
-		glGenRenderbuffers(1, &captureRBO);
-
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
@@ -128,7 +196,7 @@ private:
 		glGenTextures(1, &envCubemap.id);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.id);
 		envCubemap.SetType(TextureType::Cube);
-		envCubemap.useMip = false;
+		envCubemap.genMip = false;
 
 		for (int i = 0; i < 6; i++)
 		{
@@ -181,6 +249,7 @@ protected:
 
 	Texture envCubemap;
 	Texture irradianceCubemap;
+	Texture prefilterEnvironmentMap;
 
 private:
 
@@ -203,10 +272,12 @@ private:
 	// captue projection mat
 	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 
-	// shader for convert equirectangular map tp cubmap 
+	// material for convert equirectangular map tp cubmap 
 	Material* equirectangularToCubemapMaterial;
-	// shader for convolve irradiance
+	// material for convolve irradiance
 	Material* irradianceConvolveMaterial;
+	// material for convolve specular 
+	Material* specularPrefilterMaterial;
 };
 
 #endif // !LEVEL_H

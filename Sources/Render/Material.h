@@ -85,16 +85,26 @@ public:
 			break;
 		case TextureType::Cube:
 			SetParam("environmentMap", m_textureSlot);
-			texture.SetType(TextureType::Cube);
 			break;
 		case TextureType::Irridiance:
 			SetParam("irradianceMap", m_textureSlot);
-			texture.SetType(TextureType::Irridiance);
 			break;	
+		case TextureType::PrefilterEnvironment:
+			SetParam("environmentMap", m_textureSlot);
+			break;
 		case TextureType::Equirectangular:
 			SetParam("equirectangularMap", m_textureSlot);
 			break;
+		}
+	}
 
+	// Remove texture from material's texture list, do not call it in main loop
+	void RemoveTexture(Texture &texture)
+	{
+		for (int i = 0; i < maxTextureCount; i++)
+		{
+			if (textures[i].id == texture.id)
+				textures[i].Reset();
 		}
 	}
 
@@ -106,7 +116,7 @@ public:
 			{
 				glActiveTexture(GL_TEXTURE0 + i);
 				glBindTexture(textures[i].format, textures[i].id);
-				if (textures[i].useMip)
+				if (textures[i].genMip)
 					glGenerateMipmap(GL_TEXTURE_2D);
 			}
 			else

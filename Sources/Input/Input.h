@@ -17,6 +17,12 @@ public:
 		return keyOnce[key];
 	}
 
+	static bool GetKey(int key)
+	{
+		return (glfwGetKey(window, key) == GLFW_PRESS);
+	}
+
+
 	static void SetCurrentWindow(GLFWwindow* window)
 	{
 		Input::window = window;

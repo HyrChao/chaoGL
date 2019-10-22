@@ -32,6 +32,7 @@ enum TextureType
     Specular,
     Cube,
 	Irridiance,
+	PrefilterEnvironment,
 	Equirectangular,
     LUT,
 };
@@ -65,7 +66,7 @@ struct Texture
     unsigned int id = 0;
     TextureType type = TextureType::Albedo;
     string path = "/Assets/Texture/white.png";
-	bool useMip = true;
+	bool genMip = true;
 	int format = GL_TEXTURE_2D;
 
 	Texture()
@@ -73,14 +74,14 @@ struct Texture
 		id = 0;
 		type = TextureType::Albedo;
 		path = "/Assets/Texture/white.png";
-		useMip = true;
+		genMip = true;
 	}
 
 	Texture(string path, TextureType type, bool useMip)
 	{
 		this->type = type;
 		this->path = path;
-		this->useMip = useMip;
+		this->genMip = useMip;
 	}
 
 	void SetType(TextureType type) 
@@ -90,6 +91,16 @@ struct Texture
 			format = GL_TEXTURE_CUBE_MAP;
 		else if (type == TextureType::Irridiance)
 			format = GL_TEXTURE_CUBE_MAP;
+		else if (type == TextureType::PrefilterEnvironment)
+			format = GL_TEXTURE_CUBE_MAP;
+	}
+
+	void Reset()
+	{
+		id = 0;
+		type = TextureType::Albedo;
+		path = "/Assets/Texture/white.png";
+		genMip = true;
 	}
 };
 
