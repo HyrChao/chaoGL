@@ -69,6 +69,8 @@ struct Texture
 	bool genMip = true;
 	bool loaded = false;
 	int format = GL_TEXTURE_2D;
+	int height = 8;
+	int weight = 8;
 
 	Texture()
 	{

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #ifndef RENDER_H
 #define RENDER_H
 
@@ -113,11 +113,39 @@ public:
 		glBindVertexArray(0);
 	}
     
+	// Debug frame buffer texture
+	static void DisplayFramebufferTexture(Texture texture)
+	{
+		GLuint textureID = texture.id;
+
+		if (!framebufferDebugInitialized)
+		{
+			framebufferDebugShader = new Shader("/Shaders/Debug/Debug_Framebuffer.vs", "/Shaders/Debug/Debug_Framebuffer.fs");
+			
+			framebufferDebugInitialized = true;
+		}
+		glm::vec2 anchor = glm::vec2(0.6, 0.6);
+		glActiveTexture(GL_TEXTURE0);
+		framebufferDebugShader->use();
+		framebufferDebugShader->setVec2f("anchor", anchor);
+		framebufferDebugShader->setMat4f("view", viewMat);
+		framebufferDebugShader->setMat4f("projection", projectMat);
+		framebufferDebugShader->setInt("bufferTex", 0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glBindVertexArray(CommonAssets::instance->recVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		glUseProgram(0);
+	}
+
 private:
 
     static glm::vec4 clearColor;
 	static int screenWidth;
 	static int screenHeight;
+
+	static Shader* framebufferDebugShader;
+	static bool framebufferDebugInitialized;
 
 };
 #endif

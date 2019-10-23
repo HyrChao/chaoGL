@@ -129,7 +129,8 @@ private:
 
 	void CaptureSpecularPrefilterMap()
 	{
-		int maxPrefilterMapRes = 128;
+		//int maxPrefilterMapRes = 128;
+		int maxPrefilterMapRes = 512;
 		int maxMipLevel = 5;
 
 		prefilterEnvironmentMap.SetType(TextureType::PrefilterEnvironment);
@@ -233,6 +234,8 @@ private:
 		}
 
 		Render::ResetViewport();
+
+		// generate the mipmaps after the cubemap's base texture is set
 		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.id);
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		envCubemap.loaded = true;
@@ -244,7 +247,8 @@ private:
 protected:
 
 	// Skydome texture
-	Texture equirectangularSkyTex = Texture("/Assets/Texture/HDR/Mans_Outside_2k.hdr", TextureType::Equirectangular, false);
+	//Texture equirectangularSkyTex = Texture("/Assets/Texture/HDR/Mans_Outside_2k.hdr", TextureType::Equirectangular, false);
+	Texture equirectangularSkyTex = Texture("/Assets/Texture/HDR/Ridgecrest_Road_Ref.hdr", TextureType::Equirectangular, false);
 
 	// Sun light (Main directional light)
 	Light* sunlight;

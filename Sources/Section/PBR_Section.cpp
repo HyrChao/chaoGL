@@ -130,6 +130,8 @@ void PBR_Section::Loop()
 
 	Level::Loop();
 
+	//Render::DisplayFramebufferTexture(equirectangularSkyTex);
+
 	//glm::vec4 clearColor = glm::vec4(0.1f);
 	//Render::SetClearColor(clearColor);
 
@@ -153,7 +155,8 @@ void PBR_Section::Loop()
 		if (currentPBRMaterial == helloPBRMaterial)
 		{
 			currentPBRMaterial = helloPBRMaterial_Fill;
-			basicColor = glm::vec3(1.0f, 0.0f, 0.0f);
+			//basicColor = glm::vec3(1.0f, 0.0f, 0.0f);
+			basicColor = glm::vec3(0.5f);
 		}
 		else 
 		{

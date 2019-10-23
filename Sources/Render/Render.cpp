@@ -9,6 +9,9 @@ glm::vec3 Render::viewPos;
 int Render::screenHeight;
 int Render::screenWidth;
 
+Shader* Render::framebufferDebugShader;
+bool Render::framebufferDebugInitialized = false;
+
 Render::Render(int screenWidth, int screenHeight)
 {
 	this->screenHeight = screenHeight;
