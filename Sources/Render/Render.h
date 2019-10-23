@@ -124,16 +124,16 @@ public:
 			
 			framebufferDebugInitialized = true;
 		}
-		glm::vec2 anchor = glm::vec2(0.6, 0.6);
+		glm::vec2 anchor = glm::vec2(0.4, 0.4);
 		glActiveTexture(GL_TEXTURE0);
 		framebufferDebugShader->use();
 		framebufferDebugShader->setVec2f("anchor", anchor);
-		framebufferDebugShader->setMat4f("view", viewMat);
-		framebufferDebugShader->setMat4f("projection", projectMat);
+		//framebufferDebugShader->setMat4f("view", viewMat);
+		//framebufferDebugShader->setMat4f("projection", projectMat);
 		framebufferDebugShader->setInt("bufferTex", 0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glBindVertexArray(CommonAssets::instance->recVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		glUseProgram(0);
 	}

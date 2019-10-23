@@ -24,6 +24,7 @@ public:
 			 equirectangularToCubemapMaterial = new Material("/Shaders/Common/HDR_EquirectangularMap.vs", "/Shaders/Common/HDR_EquirectangularMap.fs");
 			 irradianceConvolveMaterial = new Material("/Shaders/Common/IBL_Irradiance_Convolution.vs", "/Shaders/Common/IBL_Irradiance_Convolution.fs");
 			 specularPrefilterMaterial = new Material("/Shaders/Common/IBL_PBR_Specular_Convolution.vs", "/Shaders/Common/IBL_PBR_Specular_Convolution.fs");
+			 prefilterBRDFMaterial = new Material("/Shaders/Common/IBL_PBR_Prefilter_BRDF.vs", "/Shaders/Common/IBL_PBR_Prefilter_BRDF.fs");
 			 SetSkyDome();
 			 globalInitialized = true;
 		 }
@@ -62,6 +63,7 @@ private:
 		CaptureEnvironmentCubemap();
 		CaptureIrradianceCubemap();
 		CaptureSpecularPrefilterMap();
+		PrefilterBRDF();
 		skydomMaterial = new Material("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
 		skydomMaterial->AddTexture(envCubemap);
 		//skydomMaterial->AddTexture(irradianceCubemap);
@@ -244,6 +246,12 @@ private:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void PrefilterBRDF()
+	{
+
+	}
+
+
 protected:
 
 	// Skydome texture
@@ -260,6 +268,7 @@ protected:
 	Texture envCubemap;
 	Texture irradianceCubemap;
 	Texture prefilterEnvironmentMap;
+	Texture prefilterBRDFLUT;
 
 private:
 
@@ -288,6 +297,8 @@ private:
 	Material* irradianceConvolveMaterial;
 	// material for convolve specular 
 	Material* specularPrefilterMaterial;
+	// material for prefilter BRDF
+	Material* prefilterBRDFMaterial;
 };
 
 #endif // !LEVEL_H

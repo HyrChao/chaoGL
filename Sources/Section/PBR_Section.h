@@ -26,6 +26,8 @@ private:
 	float prefilterEnvMapRoughness_Max = 4.0f;
 	float prefilterEnvMapRoughness = 0.0f;
 
+	bool frameBufferDebug = false;
+
 public:
 
 	PBR_Section() : Level()

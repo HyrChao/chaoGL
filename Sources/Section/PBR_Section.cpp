@@ -130,7 +130,14 @@ void PBR_Section::Loop()
 
 	Level::Loop();
 
-	//Render::DisplayFramebufferTexture(equirectangularSkyTex);
+	if (Input::GetKeyOnce(GLFW_KEY_CAPS_LOCK))
+		if (frameBufferDebug)
+			frameBufferDebug = false;
+		else
+			frameBufferDebug = true;
+
+	if(frameBufferDebug)
+		Render::DisplayFramebufferTexture(equirectangularSkyTex);
 
 	//glm::vec4 clearColor = glm::vec4(0.1f);
 	//Render::SetClearColor(clearColor);
