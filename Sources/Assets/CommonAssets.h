@@ -67,10 +67,10 @@ private:
 
 	// recangle verts
 	float recVertices[20] = {
-		0.0f,  0.0f, 0.0f,  0.0f, 0.0f,
-		1.0f,  0.0f, 0.0f,   1.0f, 0.0f,
+		-1.0f,  -1.0f, 0.0f,  0.0f, 0.0f,
+		1.0f,  -1.0f, 0.0f,   1.0f, 0.0f,
 		1.0f,  1.0f, 0.0f,   1.0f, 1.0f,
-		0.0f,  1.0f, 0.0f,  0.0f, 1.0f
+		-1.0f,  1.0f, 0.0f,  0.0f, 1.0f
 	};
 
 	// indices for recangle

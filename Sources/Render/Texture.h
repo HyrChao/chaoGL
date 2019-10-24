@@ -32,9 +32,10 @@ enum TextureType
     Specular,
     Cube,
 	Irridiance,
-	PrefilterEnvironment,
+	PrefilterEnv,
 	Equirectangular,
-    LUT,
+	LUT,
+	BRDFLUT,
 };
 
 enum TextureSlot
@@ -94,8 +95,10 @@ struct Texture
 			format = GL_TEXTURE_CUBE_MAP;
 		else if (type == TextureType::Irridiance)
 			format = GL_TEXTURE_CUBE_MAP;
-		else if (type == TextureType::PrefilterEnvironment)
+		else if (type == TextureType::PrefilterEnv)
 			format = GL_TEXTURE_CUBE_MAP;
+		else
+			format = GL_TEXTURE_2D;
 	}
 
 	void Reset()
@@ -104,6 +107,7 @@ struct Texture
 		type = TextureType::Albedo;
 		path = "/Assets/Texture/white.png";
 		genMip = true;
+		format = GL_TEXTURE_2D;
 	}
 };
 

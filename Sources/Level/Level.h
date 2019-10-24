@@ -135,7 +135,7 @@ private:
 		int maxPrefilterMapRes = 512;
 		int maxMipLevel = 5;
 
-		prefilterEnvironmentMap.SetType(TextureType::PrefilterEnvironment);
+		prefilterEnvironmentMap.SetType(TextureType::PrefilterEnv);
 		glGenTextures(1, &prefilterEnvironmentMap.id);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterEnvironmentMap.id);
 
@@ -248,7 +248,30 @@ private:
 
 	void PrefilterBRDF()
 	{
+		int prefilterBRDFRes = 512;
+		prefilterBRDFLUT.SetType(TextureType::BRDFLUT);
+		glGenTextures(1, &prefilterBRDFLUT.id);
+		// pre-allocate enough memory for the LUT texture.
+		glBindTexture(GL_TEXTURE_2D, prefilterBRDFLUT.id);
+		// use float 16 to get a more precise result
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, prefilterBRDFRes, prefilterBRDFRes, 0, GL_RG, GL_FLOAT, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, prefilterBRDFRes, prefilterBRDFRes);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prefilterBRDFLUT.id, 0);
+
+		glViewport(0, 0, prefilterBRDFRes, prefilterBRDFRes);
+		prefilterBRDFMaterial->use();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		Render::DrawQuad();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glUseProgram(0);
+		Render::ResetViewport();
 	}
 
 

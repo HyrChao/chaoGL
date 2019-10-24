@@ -103,14 +103,16 @@ public:
 			SetParam("environmentMap", m_textureSlot);
 			break;
 		case TextureType::Irridiance:
-			SetParam("irradianceMap", m_textureSlot);
+			SetParam("IBL.irradianceMap", m_textureSlot);
 			break;	
-		case TextureType::PrefilterEnvironment:
-			SetParam("environmentMap", m_textureSlot);
+		case TextureType::PrefilterEnv:
+			SetParam("IBL.prefilterEnv", m_textureSlot);
 			break;
 		case TextureType::Equirectangular:
 			SetParam("equirectangularMap", m_textureSlot);
 			break;
+		case TextureType::BRDFLUT:
+			SetParam("IBL.BRDFPrefilterMap", m_textureSlot);
 		}
 	}
 

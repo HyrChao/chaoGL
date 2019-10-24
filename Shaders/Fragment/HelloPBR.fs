@@ -50,7 +50,13 @@ struct SpotLight
 };  
 uniform SpotLight spotLight;
 
-uniform samplerCube irradianceMap;
+struct IBLMaps
+{
+    samplerCube irradianceMap;
+    samplerCube prefilterEnv;
+    sampler2D BRDFPrefilterMap;
+};
+uniform IBLMaps IBL;
 
 uniform vec3 viewPos;
 
@@ -236,7 +242,7 @@ void main()
     vec3 Kd = 1 - Ks;
     Kd *= (1.0 - metallic);
     // Sample diffuse irradiance from irradiance cube map
-    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 irradiance = texture(IBL.irradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo;
     vec3 ambient = Kd * diffuse * ao;
     vec3 color = ambient + Lo;

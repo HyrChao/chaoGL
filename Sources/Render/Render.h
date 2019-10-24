@@ -74,6 +74,13 @@ public:
 
 	static void DrawPlane();
 
+	static void DrawQuad()
+	{
+		glBindVertexArray(CommonAssets::instance->recVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+
 	static void DrawCube(Shader* shader, glm::mat4 &model)
 	{
 		shader->use();
@@ -116,7 +123,7 @@ public:
 	// Debug frame buffer texture
 	static void DisplayFramebufferTexture(Texture texture)
 	{
-		GLuint textureID = texture.id;
+		unsigned int textureID = texture.id;
 
 		if (!framebufferDebugInitialized)
 		{
@@ -124,17 +131,17 @@ public:
 			
 			framebufferDebugInitialized = true;
 		}
-		glm::vec2 anchor = glm::vec2(0.4, 0.4);
+		glm::vec2 anchor = glm::vec2(0.8, 0.8);
+		glm::vec2 scale = glm::vec2(0.3);
 		glActiveTexture(GL_TEXTURE0);
 		framebufferDebugShader->use();
 		framebufferDebugShader->setVec2f("anchor", anchor);
+		framebufferDebugShader->setVec2f("scale", scale);
 		//framebufferDebugShader->setMat4f("view", viewMat);
 		//framebufferDebugShader->setMat4f("projection", projectMat);
 		framebufferDebugShader->setInt("bufferTex", 0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glBindVertexArray(CommonAssets::instance->recVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		DrawQuad();
 		glUseProgram(0);
 	}
 

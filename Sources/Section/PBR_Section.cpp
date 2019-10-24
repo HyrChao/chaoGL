@@ -86,6 +86,8 @@ void PBR_Section::Initialize()
 		helloPBRMaterial->AddTexture(roughness);
 		helloPBRMaterial->AddTexture(ao);
 		helloPBRMaterial->AddTexture(irradianceCubemap);
+		helloPBRMaterial->AddTexture(prefilterEnvironmentMap);
+		helloPBRMaterial->AddTexture(prefilterBRDFLUT);
 	}
 
 	if (helloPBRMaterial_Fill == nullptr)
@@ -97,6 +99,8 @@ void PBR_Section::Initialize()
 		helloPBRMaterial_Fill->AddTexture(roughness_Fill);
 		helloPBRMaterial_Fill->AddTexture(ao_Fill);
 		helloPBRMaterial_Fill->AddTexture(irradianceCubemap);
+		helloPBRMaterial->AddTexture(prefilterEnvironmentMap);
+		helloPBRMaterial->AddTexture(prefilterBRDFLUT);
 	}
 
 	currentPBRMaterial = helloPBRMaterial;
@@ -137,7 +141,7 @@ void PBR_Section::Loop()
 			frameBufferDebug = true;
 
 	if(frameBufferDebug)
-		Render::DisplayFramebufferTexture(equirectangularSkyTex);
+		Render::DisplayFramebufferTexture(prefilterBRDFLUT);
 
 	//glm::vec4 clearColor = glm::vec4(0.1f);
 	//Render::SetClearColor(clearColor);
