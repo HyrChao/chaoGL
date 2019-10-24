@@ -66,6 +66,7 @@ uniform vec4 debug_pbr;
 uniform vec4 debug_light;
 
 const float PI = 3.14159265359;
+const float MAX_REFLECTION_LOD = 4.0;
 
 //Schlick Fresnel
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
@@ -220,8 +221,9 @@ void main()
 
     vec3 N = normalize(normal);
     vec3 V = normalize(viewPos - fragPos);
-
+    vec3 R = reflect(-V, N); 
     vec3 Lo = vec3(0.0);
+    float NdotV = max(dot(N, V), 0.0);
 
     // calc irradiance in directional lights
     Lo += CalcDirLightIrradiance(dirLight, N, V, albedo, roughness, metallic , F0);    
@@ -235,16 +237,18 @@ void main()
     // calc irradiance in spot lights
     Lo += CalcSpotLightIrradiance(spotLight, N, V, albedo, roughness,metallic, F0); 
 
-
-    float cosTheta = max(dot(N, V), 0.0);
-    vec3 Ks = FresnelSchlickRoughness(cosTheta, F0, roughness);
+    vec3 F        = FresnelSchlickRoughness(NdotV, F0, roughness);
+    vec3 Ks = F;
     // vec3 Ks = FresnelSchlick(cosTheta, F0);
     vec3 Kd = 1 - Ks;
     Kd *= (1.0 - metallic);
     // Sample diffuse irradiance from irradiance cube map
     vec3 irradiance = texture(IBL.irradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo;
-    vec3 ambient = Kd * diffuse * ao;
+    vec3 prefilteredColor = textureLod(IBL.prefilterEnv, R,  roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 envBRDF  = texture(IBL.BRDFPrefilterMap, vec2(NdotV, roughness)).rg;
+    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+    vec3 ambient = (Kd * diffuse + specular) * ao;
     vec3 color = ambient + Lo;
 
     // HDR to LDR
@@ -260,7 +264,8 @@ void main()
     finalColor = mix(finalColor, vec4(debugNormal,1), debug_pbr.y);
     finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug_pbr.z);
     finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug_pbr.w);
-    finalColor = mix(finalColor, vec4(ambient, 1), debug_light.x);
+    finalColor = mix(finalColor, vec4(irradiance, 1), debug_light.x);
+    finalColor = mix(finalColor, vec4(specular, 1), debug_light.y);
     
     // finalColor = vec4(diffuse, 1.0);
     // finalColor = vec4(Lo, 1.0);

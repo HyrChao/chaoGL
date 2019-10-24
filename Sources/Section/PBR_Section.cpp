@@ -99,8 +99,8 @@ void PBR_Section::Initialize()
 		helloPBRMaterial_Fill->AddTexture(roughness_Fill);
 		helloPBRMaterial_Fill->AddTexture(ao_Fill);
 		helloPBRMaterial_Fill->AddTexture(irradianceCubemap);
-		helloPBRMaterial->AddTexture(prefilterEnvironmentMap);
-		helloPBRMaterial->AddTexture(prefilterBRDFLUT);
+		helloPBRMaterial_Fill->AddTexture(prefilterEnvironmentMap);
+		helloPBRMaterial_Fill->AddTexture(prefilterBRDFLUT);
 	}
 
 	currentPBRMaterial = helloPBRMaterial;
@@ -201,14 +201,18 @@ void PBR_Section::Loop()
 		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.w = 1;
 	}
-
 	if (Input::GetKeyOnce(GLFW_KEY_F5))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		lightDebugParam.x = 1;
 	}
-
+	if (Input::GetKeyOnce(GLFW_KEY_F6))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		lightDebugParam.y = 1;
+	}
 	// light params change with time
 	float sunDirChangeSpeed = 0.3;
 	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
