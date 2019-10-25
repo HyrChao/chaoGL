@@ -237,10 +237,16 @@ void PBR_Section::PrefilterEnvDebug()
 			{
 				prefilterEnvMapRoughness = 0.0f;
 			}
-		skydomMaterial->RemoveTexture(envCubemap);
-		skydomMaterial->AddTexture(prefilterEnvironmentMap);
+		skydomMaterial->ReplaceTexture(envCubemap, prefilterEnvironmentMap);
 		skydomMaterial->use();
 		skydomMaterial->SetParam("mipLevel", prefilterEnvMapRoughness);
+	}
+	else 
+	{
+		skydomMaterial->ReplaceTexture(prefilterEnvironmentMap, envCubemap);
+		skydomMaterial->use();
+		skydomMaterial->SetParam("mipLevel", 0.0f);
+		prefilterEnvMapRoughness = 0.0f;
 	}
 }
 

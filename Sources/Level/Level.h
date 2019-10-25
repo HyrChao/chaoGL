@@ -80,7 +80,7 @@ private:
 
 	void CaptureIrradianceCubemap()
 	{
-		int res = 32;
+		int res = 64;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -157,20 +157,22 @@ private:
 
 	void CaptureEnvironmentCubemap()
 	{
+		int res = 512;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, res, res);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
 		// Generate cubemap
-		envCubemap.Gen(TextureType::Cube, 512, 512, TextureFormat::RGB, TextureRepeatMode::Clamp, TextureFilterMode::Trilinear, true, false);
+		envCubemap.Gen(TextureType::Cube, res, res, TextureFormat::RGB, TextureRepeatMode::Clamp, TextureFilterMode::Trilinear, true, false);
 
 		// Load skydome texture
 		LoadEquirectangularSkydomeTexture();
 		equirectangularToCubemapMaterial->AddTexture(equirectangularSkyTex);
 
-		Render::SetViewport(512, 512);  // don't forget to set view port to the same demensions before render
+		Render::SetViewport(res, res);  // don't forget to set view port to the same demensions before render
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		// Let's render!
 		equirectangularToCubemapMaterial->SetParam("projection", captureProjection);

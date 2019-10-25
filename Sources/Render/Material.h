@@ -82,11 +82,23 @@ public:
 		}
 	}
 
-	void ReplaceTexture(Texture& texture, TextureSlot slot)
+	void ReplaceTexture(Texture& pre_texture, Texture& texture)
 	{
-		Shader::use();
-		textures[slot] = texture;
-		SetParam(textures[slot].keyword, slot);
+		unsigned int tar_ID = pre_texture.id;
+		unsigned int ID = texture.id;
+		if (tar_ID != ID)
+		{
+			for (int i = 0; i < maxTextureCount; i++)
+			{
+				if (textures[i].id = tar_ID)
+				{
+					textures[i] = texture;
+					//Shader::use();
+					//SetParam(textures[i].keyword, i);
+					return;
+				}
+			}
+		}
 	}
 	void use() override
 	{
