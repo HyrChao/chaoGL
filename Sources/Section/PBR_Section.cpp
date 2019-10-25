@@ -6,8 +6,8 @@ void PBR_Section::Initialize()
 {
 	Light::ClearAllLight();
 
-	LightParam pointLightp1;
-	pointLightp1.type = LightType::Point;
+	Light::LightParam pointLightp1;
+	pointLightp1.type = Light::LightType::Point;
 	pointLightp1.pos = glm::vec3(1.0f, 3.0f, 1.0f);
 	pointLightp1.color = glm::vec3(1.0f, 0.02f, 0.1f);
 	pointLightp1.constant = 1.0f;
@@ -16,8 +16,8 @@ void PBR_Section::Initialize()
 	Light* pointLight1 = new Light(pointLightp1);
 	pbrPointlight1 = pointLight1;
 
-	LightParam pointLightp2;
-	pointLightp2.type = LightType::Point;
+	Light::LightParam pointLightp2;
+	pointLightp2.type = Light::LightType::Point;
 	pointLightp2.pos = glm::vec3(-5.0f, -3.0f, -5.0f);
 	pointLightp2.color = glm::vec3(0.1f, 0.8f, 0.1f);
 	pointLightp2.constant = 1.0f;
@@ -25,8 +25,8 @@ void PBR_Section::Initialize()
 	pointLightp2.quadratic = 1.8f;
 	Light* pointLight2 = new Light(pointLightp2);
 
-	LightParam pointLightp3;
-	pointLightp3.type = LightType::Point;
+	Light::LightParam pointLightp3;
+	pointLightp3.type = Light::LightType::Point;
 	pointLightp3.pos = glm::vec3(3.0f, -4.0f, -5.0f);
 	pointLightp3.color = glm::vec3(0.02f, 0.1f, 1.0f);
 	pointLightp3.constant = 1.0f;
@@ -34,16 +34,16 @@ void PBR_Section::Initialize()
 	pointLightp3.quadratic = 1.8f;
 	Light* pointLight3 = new Light(pointLightp3);
 
-	LightParam dirlightp1;
-	dirlightp1.type = LightType::Directional;
+	Light::LightParam dirlightp1;
+	dirlightp1.type = Light::LightType::Directional;
 	dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
 	dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
 	dirlightp1.dir = glm::vec3(-1, -1, -1);;
 	Light* dirLight = new Light(dirlightp1);
 	sunlight = dirLight;
 
-	LightParam spotlightp1;
-	spotlightp1.type = LightType::Spot;
+	Light::LightParam spotlightp1;
+	spotlightp1.type = Light::LightType::Spot;
 	spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -5.0f);
 	spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
 	spotlightp1.dir = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -54,6 +54,11 @@ void PBR_Section::Initialize()
 	Light* spotlight = new Light(spotlightp1);
 	pbrSpotlight = spotlight;
 
+	initialized = true;
+}
+
+void PBR_Section::InitBallsScene()
+{
 	albedo.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
 	albedo.SetType(TextureType::Albedo);
 	normal.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_normal.png");
@@ -104,52 +109,44 @@ void PBR_Section::Initialize()
 	}
 
 	currentPBRMaterial = helloPBRMaterial;
-
-	initialized = true;
+	ballsSceneInitialized = true;
 }
 
+// Main loop
 void PBR_Section::Loop()
 {
-	float prefilterFadeSpeed = 0.5;
-	if (Input::GetKey(GLFW_KEY_PAGE_DOWN))
-	{
-		prefilterEnvMapRoughness += Time::deltaTime * prefilterFadeSpeed;
-	}
-	if (Input::GetKey(GLFW_KEY_PAGE_UP))
-	{
-		prefilterEnvMapRoughness -= Time::deltaTime * prefilterFadeSpeed;
-	}
-
-	if (prefilterEnvMapRoughness > prefilterEnvMapRoughness_Max)
-		prefilterEnvMapRoughness = prefilterEnvMapRoughness_Max;
-	else
-		if (prefilterEnvMapRoughness < 0)
-		{
-			prefilterEnvMapRoughness = 0.0f;
-		}
-
-
-	skydomMaterial->use();
-	skydomMaterial->SetParam("mipLevel", prefilterEnvMapRoughness);
-
+	PrefilterEnvDebug();
 	Level::Loop();
-
-	if (Input::GetKeyOnce(GLFW_KEY_CAPS_LOCK))
-		if (frameBufferDebug)
-			frameBufferDebug = false;
-		else
-			frameBufferDebug = true;
-
-	if(frameBufferDebug)
-		Render::DisplayFramebufferTexture(prefilterBRDFLUT);
-
-	//glm::vec4 clearColor = glm::vec4(0.1f);
-	//Render::SetClearColor(clearColor);
 
 	if (!initialized)
 	{
 		Initialize();
 	}
+
+	FrameBufferDebug();
+
+
+	if (Input::GetKeyOnce(GLFW_KEY_TAB))
+	{
+		currentPBRScene++;
+
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+
+		if (currentPBRScene > (LastScene - 1))
+			currentPBRScene = 0;
+	}
+
+	PBRMaterialDebug();
+
+	SwitchPBRScene(currentPBRScene);
+
+}
+
+void PBR_Section::BallsScene()
+{
+	if (!ballsSceneInitialized)
+		InitBallsScene();
 
 	glm::mat4 model = glm::mat4(1.0f);
 
@@ -159,60 +156,6 @@ void PBR_Section::Loop()
 
 	glm::vec3 mroVar = glm::vec3(0.0f);
 
-	if (Input::GetKeyOnce(GLFW_KEY_TAB))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		if (currentPBRMaterial == helloPBRMaterial)
-		{
-			currentPBRMaterial = helloPBRMaterial_Fill;
-			//basicColor = glm::vec3(1.0f, 0.0f, 0.0f);
-			basicColor = glm::vec3(0.5f);
-		}
-		else 
-		{
-			currentPBRMaterial = helloPBRMaterial;
-			basicColor = glm::vec3(1.0f);
-		}
-
-	}
-
-	if (Input::GetKeyOnce(GLFW_KEY_F1))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.x = 1;
-	}
-	else if (Input::GetKeyOnce(GLFW_KEY_F2))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.y = 1;
-	}
-	else if (Input::GetKeyOnce(GLFW_KEY_F3))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.z = 1;
-	}
-	else if (Input::GetKeyOnce(GLFW_KEY_F4))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.w = 1;
-	}
-	if (Input::GetKeyOnce(GLFW_KEY_F5))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		lightDebugParam.x = 1;
-	}
-	if (Input::GetKeyOnce(GLFW_KEY_F6))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		lightDebugParam.y = 1;
-	}
 	// light params change with time
 	float sunDirChangeSpeed = 0.3;
 	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
@@ -253,5 +196,102 @@ void PBR_Section::Loop()
 
 			Render::DrawSphere(currentPBRMaterial, model);
 		}
+	}
+}
+
+void PBR_Section::MaterialBallsScene()
+{
+
+}
+
+void PBR_Section::PrefilterEnvDebug()
+{
+	float maxColodtime = 3.0;
+	float prefilterFadeSpeed = 0.5;
+	if (Input::GetKey(GLFW_KEY_PAGE_DOWN))
+	{
+		prefilterEnvMapRoughness += Time::deltaTime * prefilterFadeSpeed;
+		prefilterEnvDebugEnabled = true;
+		prefilterEnvDebugColdtime = maxColodtime;
+	}
+	if (Input::GetKey(GLFW_KEY_PAGE_UP))
+	{
+		prefilterEnvMapRoughness -= Time::deltaTime * prefilterFadeSpeed;
+		prefilterEnvDebugEnabled = true;
+		prefilterEnvDebugColdtime = maxColodtime;
+	}
+
+	if (prefilterEnvDebugEnabled)
+	{
+		prefilterEnvDebugColdtime -= Time::deltaTime;
+		if (prefilterEnvDebugColdtime < 0.0)
+		{
+			prefilterEnvDebugEnabled = false;
+			prefilterEnvDebugColdtime = maxColodtime;
+		}
+
+		if (prefilterEnvMapRoughness > prefilterEnvMapRoughness_Max)
+			prefilterEnvMapRoughness = prefilterEnvMapRoughness_Max;
+		else
+			if (prefilterEnvMapRoughness < 0)
+			{
+				prefilterEnvMapRoughness = 0.0f;
+			}
+		skydomMaterial->RemoveTexture(envCubemap);
+		skydomMaterial->AddTexture(prefilterEnvironmentMap);
+		skydomMaterial->use();
+		skydomMaterial->SetParam("mipLevel", prefilterEnvMapRoughness);
+	}
+}
+
+void PBR_Section::FrameBufferDebug()
+{
+	if (Input::GetKeyOnce(GLFW_KEY_CAPS_LOCK))
+		if (frameBufferDebug)
+			frameBufferDebug = false;
+		else
+			frameBufferDebug = true;
+
+	if (frameBufferDebug)
+		Render::DisplayFramebufferTexture(prefilterBRDFLUT);
+}
+
+void PBR_Section::PBRMaterialDebug()
+{
+	if (Input::GetKeyOnce(GLFW_KEY_F1))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		pbrDebugParam.x = 1;
+	}
+	else if (Input::GetKeyOnce(GLFW_KEY_F2))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		pbrDebugParam.y = 1;
+	}
+	else if (Input::GetKeyOnce(GLFW_KEY_F3))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		pbrDebugParam.z = 1;
+	}
+	else if (Input::GetKeyOnce(GLFW_KEY_F4))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		pbrDebugParam.w = 1;
+	}
+	if (Input::GetKeyOnce(GLFW_KEY_F5))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		lightDebugParam.x = 1;
+	}
+	if (Input::GetKeyOnce(GLFW_KEY_F6))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		lightDebugParam.y = 1;
 	}
 }

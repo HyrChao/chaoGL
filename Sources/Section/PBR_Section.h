@@ -34,9 +34,6 @@ public:
 	{
 		Level::Level();
 		Initialize();
-
-		skydomMaterial->RemoveTexture(envCubemap);
-		skydomMaterial->AddTexture(prefilterEnvironmentMap);
 	}
 
 	void Reset()
@@ -49,6 +46,56 @@ public:
 private:
 
 	void Initialize();
+
+	void SwitchPBRScene(int sceneID)
+	{
+		switch (sceneID)
+		{
+		default:
+			break;
+		case RustMetalBalls:
+			basicColor = glm::vec3(1.0f);
+			currentPBRMaterial = helloPBRMaterial;
+			BallsScene();
+			break;
+		case FlatColorBalls:
+			basicColor = glm::vec3(0.5f);
+			currentPBRMaterial = helloPBRMaterial_Fill;
+			BallsScene();
+			break;
+		case MaterialBalls:
+			break;
+
+		}
+
+	}
+
+	// Scene
+	void InitBallsScene();
+	void BallsScene();
+	void MaterialBallsScene();
+	bool ballsSceneInitialized = false;
+	// Debug
+	void PrefilterEnvDebug();
+	bool prefilterEnvDebugEnabled = false;
+	float prefilterEnvDebugColdtime = 3.0;
+	void FrameBufferDebug();
+	void PBRMaterialDebug();
+
+private:
+
+	enum PBR_Scene
+	{
+		RustMetalBalls,
+		FlatColorBalls,
+		MaterialBalls,
+		PBRModel,
+		LastScene
+	};
+
+	unsigned int currentPBRScene = RustMetalBalls;
+
+
 
 
 };

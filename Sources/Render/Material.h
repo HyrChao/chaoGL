@@ -46,6 +46,7 @@ public:
 			{
 				m_textureSlot = i;
 				textures[m_textureSlot] = texture;
+				SetParam(textures[m_textureSlot].keyword, m_textureSlot);
 				break;
 			}
 		}
@@ -55,65 +56,6 @@ public:
 			return;
 		}
 
-		if (texture.genMip && !texture.loaded)
-		{
-			// Set texture parameters 
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			// Generate mipmap
-			glBindTexture(texture.format, texture.id);
-			glGenerateMipmap(texture.format);
-
-			texture.loaded = true;
-		}
-
-		switch (texture.type)
-		{
-		default:
-			break;
-		case TextureType::Albedo:
-			SetParam("material.albedo", m_textureSlot);
-			break;
-		case TextureType::Normal:
-			SetParam("material.normal", m_textureSlot);
-			break;
-		case TextureType::Metallic:
-			SetParam("material.metallic", m_textureSlot);
-			break;
-		case TextureType::Roughness:
-			SetParam("material.roughness", m_textureSlot);
-			break;
-		case TextureType::MRO:
-			SetParam("material.mro", m_textureSlot);
-			break;
-		case TextureType::AO:
-			SetParam("material.ao", m_textureSlot);
-			break;
-		case TextureType::Specular:
-			SetParam("material.specular", m_textureSlot);
-			break;
-		case TextureType::Diffuse:
-			SetParam("material.diffuse", m_textureSlot);
-			break;
-		case TextureType::Cube:
-			SetParam("environmentMap", m_textureSlot);
-			break;
-		case TextureType::Irridiance:
-			SetParam("IBL.irradianceMap", m_textureSlot);
-			break;	
-		case TextureType::PrefilterEnv:
-			SetParam("IBL.prefilterEnv", m_textureSlot);
-			break;
-		case TextureType::Equirectangular:
-			SetParam("equirectangularMap", m_textureSlot);
-			break;
-		case TextureType::BRDFLUT:
-			SetParam("IBL.BRDFPrefilterMap", m_textureSlot);
-		}
 	}
 
 	// Remove texture from material's texture list, do not call it in main loop
@@ -133,13 +75,19 @@ public:
 			if (textures[i].id != 0)
 			{
 				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(textures[i].format, textures[i].id);
+				textures[i].Bind();
 			}
 			else
 				break;
 		}
 	}
 
+	void ReplaceTexture(Texture& texture, TextureSlot slot)
+	{
+		Shader::use();
+		textures[slot] = texture;
+		SetParam(textures[slot].keyword, slot);
+	}
 	void use() override
 	{
 		Shader::use();

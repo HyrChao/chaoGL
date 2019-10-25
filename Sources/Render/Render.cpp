@@ -85,7 +85,7 @@ void Render::SetShaderLightParams(Shader *shader)
     while (i != Light::lights.end())
     {
         Light *light = *i;
-        if (light->type == LightType::Directional)
+        if (light->type == Light::LightType::Directional)
         {
             shader->setVec3f("dirLight.direction", light->dir);
             shader->setVec3f("dirLight.ambient", 0.02f * light->color);
@@ -93,7 +93,7 @@ void Render::SetShaderLightParams(Shader *shader)
 			shader->setVec3f("dirLight.specular", 1.0f * light->color);
 			shader->setVec3f("dirLight.irradiance", 5.0f * light->color);
         }
-        else if (light->type == LightType::Point && pointLightNum < Light::maxPointLight)
+        else if (light->type == Light::LightType::Point && pointLightNum < Light::maxPointLight)
         {
             std::string num = std::to_string(pointLightNum);
             shader->setVec3f("pointLights[" + num + "].position", light->GetPos());
@@ -107,7 +107,7 @@ void Render::SetShaderLightParams(Shader *shader)
 
             pointLightNum++;
         }
-        else if (light->type == LightType::Spot)
+        else if (light->type == Light::LightType::Spot)
         {
             shader->setVec3f("spotLight.position", light->GetPos());
             shader->setVec3f("spotLight.direction", light->dir);

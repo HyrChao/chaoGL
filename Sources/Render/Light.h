@@ -9,30 +9,31 @@
 #include <glad/glad.h>
 #include <Object/Transform.h>
 
-enum LightType
-{
-    Directional,
-    Point,
-    Spot
-};
 
-struct LightParam
-{
-	LightType type = LightType::Point;
-	glm::vec3 pos;
-	glm::vec3 color;
-	glm::vec3 dir;
-	float constant;
-	float linear;
-	float quadratic;
-	float cutOffAngle;
-	float outerCutoffAngle;
-};
 
 class Light : public Transform
 {
 public:
     
+	enum LightType
+	{
+		Directional,
+		Point,
+		Spot
+	};
+
+	struct LightParam
+	{
+		LightType type = LightType::Point;
+		glm::vec3 pos;
+		glm::vec3 color;
+		glm::vec3 dir;
+		float constant;
+		float linear;
+		float quadratic;
+		float cutOffAngle;
+		float outerCutoffAngle;
+	};
 
     static list<Light*> lights;
     static int maxPointLight;

@@ -181,8 +181,8 @@ void Hello::HelloLight()
 		helloLightShader->setInt("material.diffuse_2", 1);
 		helloLightShader->setInt("material.specular", 2);
 
-		LightParam pointLightp1;
-		pointLightp1.type = LightType::Point;
+		Light::LightParam pointLightp1;
+		pointLightp1.type = Light::LightType::Point;
 		pointLightp1.pos = glm::vec3(0.0f, 3.0f, 0.0f);
 		pointLightp1.color = glm::vec3(0.6f, 0.2f, 0.2f);
 		pointLightp1.constant = 1.0f;
@@ -190,8 +190,8 @@ void Hello::HelloLight()
 		pointLightp1.quadratic = 0.032f;
 		Light* pointLight1 = new Light(pointLightp1);
 
-		LightParam pointLightp2;
-		pointLightp2.type = LightType::Point;
+		Light::LightParam pointLightp2;
+		pointLightp2.type = Light::LightType::Point;
 		pointLightp2.pos = glm::vec3(-5.0f, -3.0f, -5.0f);
 		pointLightp2.color = glm::vec3(0.1f, 0.8f, 0.1f);
 		pointLightp2.constant = 1.0f;
@@ -199,15 +199,15 @@ void Hello::HelloLight()
 		pointLightp2.quadratic = 1.8f;
 		Light* pointLight2 = new Light(pointLightp2);
 
-		LightParam dirlightp1;
-		dirlightp1.type = LightType::Directional;
+		Light::LightParam dirlightp1;
+		dirlightp1.type = Light::LightType::Directional;
 		dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
 		dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
 		dirlightp1.dir = glm::vec3(-1, -1, -1);;
 		dirLight = new Light(dirlightp1);
 
-		LightParam spotlightp1;
-		spotlightp1.type = LightType::Spot;
+		Light::LightParam spotlightp1;
+		spotlightp1.type = Light::LightType::Spot;
 		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
 		spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
 		spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);
@@ -280,8 +280,8 @@ void Hello::HelloModel()
 
 		Light::ClearAllLight();
 
-		LightParam pointLightp1;
-		pointLightp1.type = LightType::Point;
+		Light::LightParam pointLightp1;
+		pointLightp1.type = Light::LightType::Point;
 		pointLightp1.pos = glm::vec3(0.0f, 3.0f, 0.0f);
 		pointLightp1.color = glm::vec3(0.6f, 0.2f, 0.2f);
 		pointLightp1.constant = 1.0f;
@@ -289,8 +289,8 @@ void Hello::HelloModel()
 		pointLightp1.quadratic = 0.032f;
 		Light* pointLight1 = new Light(pointLightp1);
 
-		LightParam pointLightp2;
-		pointLightp2.type = LightType::Point;
+		Light::LightParam pointLightp2;
+		pointLightp2.type = Light::LightType::Point;
 		pointLightp2.pos = glm::vec3(-5.0f, -3.0f, -5.0f);
 		pointLightp2.color = glm::vec3(0.1f, 0.8f, 0.1f);
 		pointLightp2.constant = 1.0f;
@@ -298,15 +298,15 @@ void Hello::HelloModel()
 		pointLightp2.quadratic = 1.8f;
 		Light* pointLight2 = new Light(pointLightp2);
 
-		LightParam dirlightp1;
-		dirlightp1.type = LightType::Directional;
+		Light::LightParam dirlightp1;
+		dirlightp1.type = Light::LightType::Directional;
 		dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
 		dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
 		dirlightp1.dir = glm::vec3(-1, -1, -1);;
 		Light* dirLight = new Light(dirlightp1);
 
-		LightParam spotlightp1;
-		spotlightp1.type = LightType::Spot;
+		Light::LightParam spotlightp1;
+		spotlightp1.type = Light::LightType::Spot;
 		spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
 		spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
 		spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);

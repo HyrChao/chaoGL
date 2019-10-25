@@ -66,7 +66,6 @@ private:
 		PrefilterBRDF();
 		skydomMaterial = new Material("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
 		skydomMaterial->AddTexture(envCubemap);
-		//skydomMaterial->AddTexture(irradianceCubemap);
 
 	}
 
@@ -81,33 +80,17 @@ private:
 
 	void CaptureIrradianceCubemap()
 	{
-		int irradianceCubeRes = 32;
+		int res = 32;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, irradianceCubeRes, irradianceCubeRes);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, res, res);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
+		irradianceCubemap.Gen(TextureType::Irridiance, res, res, RGB, Clamp, Bilinear, true, false);
 
-		irradianceCubemap.genMip = false;
-		irradianceCubemap.SetType(TextureType::Irridiance);
-		glGenTextures(1, &irradianceCubemap.id);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
-		
-		for (int i = 0; i < 6; i++)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, irradianceCubeRes, irradianceCubeRes, 0, GL_RGB, GL_FLOAT, 0);
-		}
-
-		// Set texture parameters 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		Render::SetViewport(irradianceCubeRes, irradianceCubeRes);  // don't forget to set view port to the same demensions before render
+		Render::SetViewport(res, res);  // don't forget to set view port to the same demensions before render
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
 		irradianceConvolveMaterial->AddTexture(envCubemap);
@@ -132,26 +115,11 @@ private:
 	void CaptureSpecularPrefilterMap()
 	{
 		//int maxPrefilterMapRes = 128;
-		int maxPrefilterMapRes = 512;
+		int res = 512;
 		int maxMipLevel = 5;
 
-		prefilterEnvironmentMap.SetType(TextureType::PrefilterEnv);
-		glGenTextures(1, &prefilterEnvironmentMap.id);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterEnvironmentMap.id);
-
-		for (int i = 0; i < 6; i++)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, maxPrefilterMapRes, maxPrefilterMapRes, 0, GL_RGB, GL_FLOAT, 0);
-		}
-		// Set texture parameters 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-		prefilterEnvironmentMap.loaded = true;
+		// generate mip fisrt then replace it
+		prefilterEnvironmentMap.Gen(TextureType::PrefilterEnv, res, res, RGB, Clamp, Trilinear, true, true);
 
 		specularPrefilterMaterial->AddTexture(envCubemap);
 		specularPrefilterMaterial->BindTextures();
@@ -164,7 +132,7 @@ private:
 			float currentRoughness = 0.0f;
 			currentRoughness = float(mip) / float(maxMipLevel - 1);
 			specularPrefilterMaterial->SetParam("roughness", currentRoughness);
-			int mipRes = maxPrefilterMapRes * std::pow(0.5, mip);
+			int mipRes = res * std::pow(0.5, mip);
 
 			glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipRes, mipRes);
@@ -196,24 +164,7 @@ private:
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
 		// Generate cubemap
-
-		glGenTextures(1, &envCubemap.id);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.id);
-		envCubemap.SetType(TextureType::Cube);
-		envCubemap.genMip = false;
-
-		for (int i = 0; i < 6; i++)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, 0);
-		}
-
-		// Set texture parameters 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+		envCubemap.Gen(TextureType::Cube, 512, 512, TextureFormat::RGB, TextureRepeatMode::Clamp, TextureFilterMode::Trilinear, true, false);
 
 		// Load skydome texture
 		LoadEquirectangularSkydomeTexture();
@@ -238,9 +189,7 @@ private:
 		Render::ResetViewport();
 
 		// generate the mipmaps after the cubemap's base texture is set
-		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap.id);
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-		envCubemap.loaded = true;
+		envCubemap.GenerateMips();
 
 		// Setback to main farme buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -248,24 +197,16 @@ private:
 
 	void PrefilterBRDF()
 	{
-		int prefilterBRDFRes = 512;
-		prefilterBRDFLUT.SetType(TextureType::BRDFLUT);
-		glGenTextures(1, &prefilterBRDFLUT.id);
-		// pre-allocate enough memory for the LUT texture.
-		glBindTexture(GL_TEXTURE_2D, prefilterBRDFLUT.id);
-		// use float 16 to get a more precise result
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, prefilterBRDFRes, prefilterBRDFRes, 0, GL_RG, GL_FLOAT, 0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		int res = 512;
+		// use HDR to get a more precise result
+		prefilterBRDFLUT.Gen(TextureType::BRDFLUT, res, res, RG, Clamp, Bilinear, true, false);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, prefilterBRDFRes, prefilterBRDFRes);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, res, res);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prefilterBRDFLUT.id, 0);
 
-		glViewport(0, 0, prefilterBRDFRes, prefilterBRDFRes);
+		glViewport(0, 0, res, res);
 		prefilterBRDFMaterial->use();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		Render::DrawQuad();

@@ -243,12 +243,12 @@ void main()
     vec3 Kd = 1 - Ks;
     Kd *= (1.0 - metallic);
     // Sample diffuse irradiance from irradiance cube map
-    vec3 irradiance = texture(IBL.irradianceMap, N).rgb;
+    vec3 irradiance = Kd * texture(IBL.irradianceMap, N).rgb;
     vec3 diffuse = irradiance * albedo;
     vec3 prefilteredColor = textureLod(IBL.prefilterEnv, R,  roughness * MAX_REFLECTION_LOD).rgb;
     vec2 envBRDF  = texture(IBL.BRDFPrefilterMap, vec2(NdotV, roughness)).rg;
     vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
-    vec3 ambient = (Kd * diffuse + specular) * ao;
+    vec3 ambient = (diffuse + specular) * ao;
     vec3 color = ambient + Lo;
 
     // HDR to LDR
