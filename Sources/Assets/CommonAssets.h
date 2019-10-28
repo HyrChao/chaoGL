@@ -4,12 +4,12 @@
 
 #include <glad/glad.h>
 //#include <Render/Shader.h>
-//#include <Render/Render.h>
 //#include <Object/Transform.h>
 #include <glm.hpp>
 #include <vector>
 #include <iostream>
 
+#include <Render/Shader.h>
 #include <Assets/AssetsManager.h>
 
 class CommonAssets
@@ -34,6 +34,8 @@ public:
 	unsigned int blackTex, whiteTex, greyTex;
 	unsigned int flatNormal;
 
+	Shader* defaltErrorShader;
+	Shader* standardPBRShader;
 
 public:
 
@@ -45,6 +47,7 @@ private:
 	void LoadCube();
 	void LoadTriangle();
 	void LoadRecangle();
+	void LoadShaders();
 
 private:
 

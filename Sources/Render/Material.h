@@ -3,42 +3,53 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+#include <Assets/CommonAssets.h>
 #include <Render/Shader.h>
 #include <Render/Texture.h>
 #include <vector>
+#include <map>
 
-class Material : public Shader
+using namespace glm;
+
+class Material
 {
 public:
 
-	Material() : Shader()
+	Material()
 	{
-		this->shader = nullptr;
+		this->shader = CommonAssets::instance->defaltErrorShader;
 	}
 
-	Material(Shader* shader) : Shader(shader->vsPath, shader->fsPath)
+	Material(Shader* shader)
 	{
 		this->shader = shader;
 	}
 
-	Material(string vsPath, string fsPath) : Shader(vsPath, fsPath)
+	Material(string vsPath, string fsPath)
 	{
-		//Shader(vsPath, fsPath);
-		this->shader = dynamic_cast<Shader*>(this);
+		this->shader = new Shader(vsPath, fsPath);
+		//this->shader = dynamic_cast<Shader*>(this);
+		isUnique = true;
 	}
 	
 	~Material()
 	{
-		
+		if (isUnique)
+		{
+			delete(this->shader);
+		}
 		delete this;
 	}
 
 
+	void SetModelMat(glm::mat4 mat)
+	{
+		mat4Params["model"] = mat;
+	}
+
 	// texture
 	void AddTexture(Texture &texture)
 	{
-		Shader::use();
-
 		int m_textureSlot = -1;
 		for (int i = 0; i < maxTextureCount; i++)
 		{
@@ -52,7 +63,7 @@ public:
 		}
 		if (m_textureSlot < 0)
 		{
-			cout << "Reached to the max texture count for material " << fsPath.c_str() << endl;
+			cout << "Reached to the max texture count for material " << shader->fsPath.c_str() << endl;
 			return;
 		}
 
@@ -93,51 +104,85 @@ public:
 				if (textures[i].id = tar_ID)
 				{
 					textures[i] = texture;
-					//Shader::use();
-					//SetParam(textures[i].keyword, i);
 					return;
 				}
 			}
 		}
 	}
-	void use() override
+	void use()
 	{
-		Shader::use();
+		this->shader->use();
+		UpdateParams();
 		BindTextures();
 	}
 
 	// set uniform values
-	void SetParam(const std::string &name, bool value) const
+	void SetParam(const string &name, bool value)
 	{
-		setBool(name, value);
+		boolParams[name] = value;
+		//boolParams.insert(std::pair<string, bool>(name, value));
 	}
-	void SetParam(const std::string &name, int value) const
+	void SetParam(const string &name, int value)
 	{
-		setInt(name, value);
+		intParams[name] = value;
 	}
-	void SetParam(const std::string &name, float value) const
+	void SetParam(const string &name, float value)
 	{
-		setFloat(name, value);
+		floatParams[name] = value;
 	}
-	void SetParam(const std::string &name, float x, float y, float z) const
+	void SetParam(const string &name, float x, float y, float z)
 	{
-		setVec3f(name, x, y, z);
+		vec3Params[name] = vec3(x, y, z);
 	}
-	void SetParam(const std::string &name, glm::vec3 vec3) const
+	void SetParam(const string &name, glm::vec3 vec3)
 	{
-		setVec3f(name, vec3);
+		vec3Params[name] = vec3;
 	}
-	void SetParam(const std::string &name, float x, float y, float z, float w) const
+	void SetParam(const string &name, float x, float y, float z, float w)
 	{
-		setVec4f(name, x, y, z, w);
+		vec4Params[name] = vec4(x, y, z, w);
 	}
-	void SetParam(const std::string &name, glm::vec4 vec4) const
+	void SetParam(const string &name, glm::vec4 vec4)
 	{
-		setVec4f(name, vec4);
+		vec4Params[name] = vec4;
 	}
-	void SetParam(const std::string &name, glm::mat4 mat) const
+	void SetParam(const string &name, glm::mat4 mat)
 	{
-		setMat4f(name, mat);;
+		mat4Params[name] = mat;
+	}
+
+private:
+
+	void UpdateParams()
+	{
+		for (map<string, bool>::iterator it = boolParams.begin(); it != boolParams.end(); it++)
+		{
+			shader->setBool(it->first, it->second);
+		}
+		for (map<string, float>::iterator it = floatParams.begin(); it != floatParams.end(); it++)
+		{
+			shader->setFloat(it->first, it->second);
+		}
+		for (map<string, int>::iterator it = intParams.begin(); it != intParams.end(); it++)
+		{
+			shader->setInt(it->first, it->second);
+		}
+		for (map<string, vec2>::iterator it = vec2Params.begin(); it != vec2Params.end(); it++)
+		{
+			shader->setVec2f(it->first, it->second);
+		}
+		for (map<string, vec3>::iterator it = vec3Params.begin(); it != vec3Params.end(); it++)
+		{
+			shader->setVec3f(it->first, it->second);
+		}
+		for (map<string, vec4>::iterator it = vec4Params.begin(); it != vec4Params.end(); it++)
+		{
+			shader->setVec4f(it->first, it->second);
+		}
+		for (map<string, mat4>::iterator it = mat4Params.begin(); it != mat4Params.end(); it++)
+		{
+			shader->setMat4f(it->first, it->second);
+		}
 	}
 
 public:
@@ -146,12 +191,18 @@ public:
 
 private:
 
+	bool isUnique = false;
+
+	map<string, bool> boolParams;
+	map<string, float> floatParams;
+	map<string, int> intParams;
+	map<string, vec2> vec2Params;
+	map<string, vec3> vec3Params;
+	map<string, vec4> vec4Params;
+	map<string, mat4> mat4Params;
+
 	Shader* shader = nullptr;
 	Texture textures[maxTextureCount];
-	//unsigned int textureSlots[maxTextureCount];
-
-	//vector<Texture> textures;
-	//vector<unsigned int> textureSlots;
 };
 
 #endif // !MATERIAL_H

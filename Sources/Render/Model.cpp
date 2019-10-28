@@ -131,17 +131,14 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
 
 void Model::Draw(Shader* shader)
 {
-    // Use Shader
+
     shader->use();
-//    cout << "Draw mesh "<< endl;
-    // Transform & View & Projection
+
     Render::SetVertexShaderParams(shader, this->modelMat);
     Render::SetShaderLightParams(shader);
     
-    for (unsigned int i = 0; i < meshes.size(); i++) {
-        
+    for (unsigned int i = 0; i < meshes.size(); i++) 
+	{     
         meshes[i].Draw(shader);
-        //cout << "Draw mesh \n"<<std::isprint(i)<< endl;
-//        printf("Draw mesh %u\n", i);
     }
 }

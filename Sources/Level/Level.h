@@ -25,6 +25,12 @@ public:
 			 irradianceConvolveMaterial = new Material("/Shaders/Common/IBL_Irradiance_Convolution.vs", "/Shaders/Common/IBL_Irradiance_Convolution.fs");
 			 specularPrefilterMaterial = new Material("/Shaders/Common/IBL_PBR_Specular_Convolution.vs", "/Shaders/Common/IBL_PBR_Specular_Convolution.fs");
 			 prefilterBRDFMaterial = new Material("/Shaders/Common/IBL_PBR_Prefilter_BRDF.vs", "/Shaders/Common/IBL_PBR_Prefilter_BRDF.fs");
+			 
+			 CaptureEnvironmentCubemap();
+			 CaptureIrradianceCubemap();
+			 CaptureSpecularPrefilterMap();
+			 PrefilterBRDF();
+			 
 			 SetSkyDome();
 			 globalInitialized = true;
 		 }
@@ -60,22 +66,17 @@ private:
 
 	void SetSkyDome()
 	{
-		CaptureEnvironmentCubemap();
-		CaptureIrradianceCubemap();
-		CaptureSpecularPrefilterMap();
-		PrefilterBRDF();
-		skydomMaterial = new Material("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
+		skydomeShader = new Shader("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
+		skydomMaterial = new Material(skydomeShader);
 		skydomMaterial->AddTexture(envCubemap);
-
 	}
 
 	void DrawSkydome()
 	{
 		glm::mat4 modelMat = glm::mat4(1.0f);
-		////glm::translate(modelMat, glm::vec3(0.0f));
-		//glm::vec3 scale = glm::vec3(80);
-		//modelMat = glm::scale(modelMat, scale);
-		Render::DrawCube(skydomMaterial, modelMat);
+		skydomMaterial->SetModelMat(modelMat);
+		skydomMaterial->use();
+		Render::DrawCube();
 	}
 
 	void CaptureIrradianceCubemap()
@@ -99,6 +100,7 @@ private:
 		for (int i = 0; i < 6; i++)
 		{
 			irradianceConvolveMaterial->SetParam("view", captureViewMats[i]);
+			irradianceConvolveMaterial->use();
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceCubemap.id, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Draw cube
@@ -141,6 +143,7 @@ private:
 			for (int i = 0; i < 6; i++)
 			{
 				specularPrefilterMaterial->SetParam("view", captureViewMats[i]);
+				specularPrefilterMaterial->use();
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterEnvironmentMap.id, mip);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				// Draw cube
@@ -179,6 +182,7 @@ private:
 		for (int i = 0; i < 6; i++)
 		{
 			equirectangularToCubemapMaterial->SetParam("view", captureViewMats[i]);
+			equirectangularToCubemapMaterial->use();
 			//https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glFramebufferTexture2D.xml
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap.id, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

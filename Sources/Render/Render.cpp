@@ -70,6 +70,10 @@ void Render::DrawOnFrameBegin()
     
     // Update light
     UpdateLight();
+
+	// Refresh shader params
+	UpdateShaderLightParams();
+	UpdateShaderCameraVP();
 }
 
 void Render::DrawOnFrameEnd()
@@ -128,6 +132,7 @@ void Render::SetShaderLightParams(Shader *shader)
 
     }
 }
+
 
 void Render::UpdateLight() {
 

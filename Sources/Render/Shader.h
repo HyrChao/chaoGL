@@ -12,6 +12,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include <File/filesystem.h>
+#include <map>
 
 using namespace std;
 
@@ -22,17 +23,22 @@ public:
 	// id for shader program
 	unsigned int ID;
 
-	Shader()
-	{
-
-	}
+	static map<int, Shader*> loadedShaders;
 
 	// constraction
-	Shader(const string& vsPath, const string& fsPath)
+
+	Shader(const string& vsPath, const string& fsPath, bool isSceneShader = false)
 	{
 		this->vsPath = vsPath;
 		this->fsPath = fsPath;
 		CreateShaderProgram();
+		isUseInScene = isSceneShader;
+		Shader::loadedShaders[ID] = this;
+	}
+
+	~Shader()
+	{
+		loadedShaders.erase(ID);
 	}
 
 	// use shader program
@@ -77,6 +83,42 @@ public:
 	{
 		glUniformMatrix4fv(glGetUniformLocation(ID,name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 	}
+
+
+	void SetParam(const std::string &name, bool value) const
+	{
+		setBool(name, value);
+	}
+	void SetParam(const std::string &name, int value) const
+	{
+		setInt(name, value);
+	}
+	void SetParam(const std::string &name, float value) const
+	{
+		setFloat(name, value);
+	}
+	void SetParam(const std::string &name, float x, float y, float z) const
+	{
+		setVec3f(name, x, y, z);
+	}
+	void SetParam(const std::string &name, glm::vec3 vec3) const
+	{
+		setVec3f(name, vec3);
+	}
+	void SetParam(const std::string &name, float x, float y, float z, float w) const
+	{
+		setVec4f(name, x, y, z, w);
+	}
+	void SetParam(const std::string &name, glm::vec4 vec4) const
+	{
+		setVec4f(name, vec4);
+	}
+	void SetParam(const std::string &name, glm::mat4 mat) const
+	{
+		setMat4f(name, mat);;
+	}
+
+	bool isUseInScene = false;
 
 protected:
 
@@ -166,6 +208,15 @@ protected:
 		glDeleteShader(fragment);
 
 	}
+
+	void ChangeErrorShader(Shader* errShader)
+	{
+		Shader::errorShader = errShader;
+	}
+
+private:
+
+	static Shader* errorShader;
 
 public:
 

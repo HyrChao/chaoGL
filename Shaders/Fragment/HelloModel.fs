@@ -16,9 +16,9 @@ struct FragOut
 
 struct Material 
 {
-	sampler2D diffuse_1;
-	sampler2D normal_1;
-    sampler2D specular_1;
+	sampler2D diffuse;
+	sampler2D normal;
+    sampler2D specular;
     float shininess;
 }; 
 
@@ -128,8 +128,8 @@ void main()
 {
 	// sample diffuse color 
 	FragOut frag;
-	vec4 diffuseCol_1 = texture(material.diffuse_1, TexCoord);
-    vec3 specularCol_1 = texture(material.specular_1, TexCoord).rgb;
+	vec4 diffuseCol_1 = texture(material.diffuse, TexCoord);
+    vec3 specularCol_1 = texture(material.specular, TexCoord).rgb;
 
 	frag.diffuse = diffuseCol_1.rgb;
 	frag.normal = normalize(Normal);

@@ -84,7 +84,7 @@ void PBR_Section::InitBallsScene()
 
 	if (helloPBRMaterial == nullptr)
 	{
-		helloPBRMaterial = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+		helloPBRMaterial = new Material(CommonAssets::instance->standardPBRShader);
 		helloPBRMaterial->AddTexture(albedo);
 		helloPBRMaterial->AddTexture(normal);
 		helloPBRMaterial->AddTexture(metallic);
@@ -97,7 +97,7 @@ void PBR_Section::InitBallsScene()
 
 	if (helloPBRMaterial_Fill == nullptr)
 	{
-		helloPBRMaterial_Fill = new Material("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+		helloPBRMaterial_Fill = new Material(CommonAssets::instance->standardPBRShader);
 		helloPBRMaterial_Fill->AddTexture(albedo_Fill);
 		helloPBRMaterial_Fill->AddTexture(normal_Fill);
 		helloPBRMaterial_Fill->AddTexture(metallic_Fill);
@@ -174,9 +174,9 @@ void PBR_Section::BallsScene()
 
 	currentPBRMaterial->use();
 	currentPBRMaterial->BindTextures();
-	currentPBRMaterial->setVec4f("debug_pbr", pbrDebugParam);
-	currentPBRMaterial->setVec4f("debug_light", lightDebugParam);
-	currentPBRMaterial->setVec3f("intensity.tint", basicColor);
+	currentPBRMaterial->SetParam("debug_pbr", pbrDebugParam);
+	currentPBRMaterial->SetParam("debug_light", lightDebugParam);
+	currentPBRMaterial->SetParam("intensity.tint", basicColor);
 
 	for (int row = 0; row < nrRows; ++row)
 	{
@@ -192,9 +192,10 @@ void PBR_Section::BallsScene()
 			mroVar.x = float(nrRows - row) / float(nrRows);
 			mroVar.y = float(col + 1) / float(nrColumns);
 
-			currentPBRMaterial->setVec3f("intensity.mro", mroVar);
-
-			Render::DrawSphere(currentPBRMaterial, model);
+			currentPBRMaterial->SetParam("intensity.mro", mroVar);
+			currentPBRMaterial->SetModelMat(model);
+			currentPBRMaterial->use();
+			Render::DrawSphere();
 		}
 	}
 }
@@ -260,6 +261,7 @@ void PBR_Section::FrameBufferDebug()
 
 	if (frameBufferDebug)
 		Render::DisplayFramebufferTexture(prefilterBRDFLUT);
+		//Render::DisplayFramebufferTexture(envCubemap);
 }
 
 void PBR_Section::PBRMaterialDebug()

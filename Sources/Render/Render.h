@@ -19,6 +19,73 @@ public:
 	static void SetupRenderProperty();
 	static void DrawOnFrameBegin();
 	static void DrawOnFrameEnd();
+
+	static void UpdateShaderLightParams()
+	{
+		for (map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
+		{
+			Shader* shader = it->second;
+			shader->use();
+			list<Light*>::iterator i = Light::lights.begin();
+			int pointLightNum = 0;
+			while (i != Light::lights.end())
+			{
+				Light *light = *i;
+				if (light->type == Light::LightType::Directional)
+				{
+					shader->setVec3f("dirLight.direction", light->dir);
+					shader->setVec3f("dirLight.ambient", 0.02f * light->color);
+					shader->setVec3f("dirLight.diffuse", 0.5f * light->color);
+					shader->setVec3f("dirLight.specular", 1.0f * light->color);
+					shader->setVec3f("dirLight.irradiance", 5.0f * light->color);
+				}
+				else if (light->type == Light::LightType::Point && pointLightNum < Light::maxPointLight)
+				{
+					std::string num = std::to_string(pointLightNum);
+					shader->setVec3f("pointLights[" + num + "].position", light->GetPos());
+					shader->setFloat("pointLights[" + num + "].constant", light->constant);
+					shader->setFloat("pointLights[" + num + "].linear", light->linear);
+					shader->setFloat("pointLights[" + num + "].quadratic", light->quadratic);
+					shader->setVec3f("pointLights[" + num + "].ambient", 0.01f * light->color);
+					shader->setVec3f("pointLights[" + num + "].diffuse", 0.5f * light->color);
+					shader->setVec3f("pointLights[" + num + "].specular", 0.8f * light->color);
+					shader->setVec3f("pointLights[" + num + "].irradiance", 5.0f * light->color);
+
+					pointLightNum++;
+				}
+				else if (light->type == Light::LightType::Spot)
+				{
+					shader->setVec3f("spotLight.position", light->GetPos());
+					shader->setVec3f("spotLight.direction", light->dir);
+					shader->setFloat("spotLight.cutOff", light->cutOff);  // cutoff is cosine of angle
+					shader->setFloat("spotLight.outerCutOff", light->outerCutOff);
+					shader->setVec3f("spotLight.ambient", 0.01f * light->color);
+					shader->setVec3f("spotLight.diffuse", 0.8f * light->color);
+					shader->setVec3f("spotLight.specular", 0.5f * light->color);
+					shader->setVec3f("spotLight.irradiance", 5.0f * light->color);
+				}
+				else
+				{
+
+				}
+
+				i++;
+
+			}
+		}
+	}
+
+	static void UpdateShaderCameraVP()
+	{
+		for (map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
+		{
+			it->second->use();
+			it->second->setMat4f("view", viewMat);
+			it->second->setMat4f("projection", projectMat);
+			it->second->setVec3f("viewPos", viewPos);
+		}
+	}
+
     static void SetVertexShaderParams(Shader *shader, glm::mat4 model = glm::mat4(1.0))
     {
         shader->setMat4f("view", viewMat);
@@ -26,6 +93,8 @@ public:
         shader->setVec3f("viewPos", viewPos);
         shader->setMat4f("model", model);
     }
+
+
     static void SetShaderLightParams(Shader* shader);
     static void SetClearColor(glm::vec4 color)
     {
@@ -90,13 +159,9 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 	}
-	static void DrawCube(Material* material, glm::mat4 &model)
+	static void DrawCube()
 	{
-		material->use();
-		material->BindTextures();
 		glBindVertexArray(CommonAssets::instance->cubeVAO);
-		Render::SetVertexShaderParams(material, model);
-		Render::SetShaderLightParams(material);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 	}
@@ -110,11 +175,8 @@ public:
 		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
-	static void DrawSphere(Material* material, glm::mat4 &model)
+	static void DrawSphere()
 	{
-		material->use();
-		Render::SetVertexShaderParams(material, model);
-		Render::SetShaderLightParams(material);
 		glBindVertexArray(CommonAssets::instance->sphereVAO);
 		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
