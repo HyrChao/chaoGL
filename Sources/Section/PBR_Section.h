@@ -1,10 +1,9 @@
 #ifndef PBR_SECTION_H
 #define PBR_SECTION_H
 
-#include <Level/Level.h>
-#include<Input/Input.h>
+#include <Section/PBR_Basic.h>
 
-class PBR_Section : public Level
+class PBR_Section : public PBR_Basic
 {
 private:
 
@@ -15,8 +14,6 @@ private:
 
 
 	Material* currentPBRMaterial;
-	glm::vec4 pbrDebugParam = glm::vec4(0);
-	glm::vec4 lightDebugParam = glm::vec4(0);
 
 	Light* pbrSpotlight;
 	Light* pbrPointlight1;
@@ -30,15 +27,10 @@ private:
 
 public:
 
-	PBR_Section() : Level()
+	PBR_Section() : PBR_Basic()
 	{
-		Level::Level();
+		PBR_Basic::PBR_Basic();
 		Initialize();
-	}
-
-	void Reset()
-	{
-		initialized = false;
 	}
 
 	void Loop();
@@ -80,7 +72,6 @@ private:
 	bool prefilterEnvDebugEnabled = false;
 	float prefilterEnvDebugColdtime = 3.0;
 	void FrameBufferDebug();
-	void PBRMaterialDebug();
 
 private:
 

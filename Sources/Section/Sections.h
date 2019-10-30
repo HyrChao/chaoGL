@@ -3,6 +3,7 @@
 
 #include <Section/Hello.h>
 #include <Section/PBR_Section.h>
+#include <Section/Model_Section.h>
 enum SectionEnum
 {
     None,
@@ -24,6 +25,7 @@ private:
 
 	Hello* hello;
 	PBR_Section* pbr_section;
+	Model_Section* model_section;
     SectionEnum cureentSection = SectionEnum::PBR;
 
 

@@ -9,7 +9,8 @@
 #define Model_h
 
 #include <Render/Mesh.h>
-
+#include <filesystem>
+#include <iostream>
 
 class Model : public Transform
 {
@@ -20,15 +21,16 @@ public:
     
     Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0),glm::vec3 rotation = glm::vec3(0),glm::vec3 scale = glm::vec3(1)) : Transform(pos,rotation,scale)
     {
+		string fullPath = FileSystem::getPath(path);
         modelMat = glm::translate(modelMat, this->pos);
         modelMat = glm::rotate(modelMat, this->rotation.x,glm::vec3(1.0,0,0));
         modelMat = glm::rotate(modelMat,this->rotation.y,glm::vec3(0,1.0,0));
         modelMat = glm::rotate(modelMat,this->rotation.z,glm::vec3(0,0,1.0));
         modelMat = glm::scale(modelMat, this->scale);
         gammaCorrection = gamma;
-        LoadModel(path);
+		LoadModel_SingleMaterial(fullPath);
     }
-    void Draw(Shader* shader);
+    void Draw();
 
 	glm::mat4 GetMat() { return modelMat; }
 
@@ -71,7 +73,7 @@ private:
     // model data
     vector<Mesh> meshes;
     string directory;
-    
+	string name;
 	// update model mat
 	void UpdateMat()
 	{
@@ -86,11 +88,14 @@ private:
 	}
 
     // functions
-    void LoadModel(string path);
+    void LoadModel_SingleMaterial(string path);
+	void ProcessTextures();
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
     vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
                                          TextureType typeName);
+	Texture Model::LoadTexture(string path, TextureType type);
+
 };
 
 #endif /* Model_hpp */

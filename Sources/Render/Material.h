@@ -18,28 +18,27 @@ public:
 	Material()
 	{
 		this->shader = CommonAssets::instance->defaltErrorShader;
+		isShaderInstance = true;
 	}
 
 	Material(Shader* shader)
 	{
 		this->shader = shader;
+		isShaderInstance = true;
 	}
 
 	Material(string vsPath, string fsPath)
 	{
-		this->shader = new Shader(vsPath, fsPath);
+		this->shader_unique = make_unique<Shader>(vsPath, fsPath);
+		this->shader = shader_unique.get();
 		//this->shader = dynamic_cast<Shader*>(this);
-		isUnique = true;
+		isShaderInstance = false;
 	}
 	
-	~Material()
-	{
-		if (isUnique)
-		{
-			delete(this->shader);
-		}
-		delete this;
-	}
+	//~Material()
+	//{
+
+	//}
 
 
 	void SetModelMat(glm::mat4 mat)
@@ -69,6 +68,14 @@ public:
 
 	}
 
+	void ClearTextrues()
+	{
+		for (int i = 0; i < maxTextureCount; i++)
+		{
+				textures[i].Reset();
+		}
+	}
+
 	// Remove texture from material's texture list, do not call it in main loop
 	void RemoveTexture(Texture &texture)
 	{
@@ -89,7 +96,10 @@ public:
 				textures[i].Bind();
 			}
 			else
+			{
+				glActiveTexture(GL_TEXTURE0);
 				break;
+			}
 		}
 	}
 
@@ -114,6 +124,11 @@ public:
 		this->shader->use();
 		UpdateParams();
 		BindTextures();
+	}
+
+	void ChangeShader(Shader* shader)
+	{
+		this->shader = shader;
 	}
 
 	// set uniform values
@@ -191,7 +206,7 @@ public:
 
 private:
 
-	bool isUnique = false;
+	bool isShaderInstance = true;
 
 	map<string, bool> boolParams;
 	map<string, float> floatParams;
@@ -201,7 +216,8 @@ private:
 	map<string, vec4> vec4Params;
 	map<string, mat4> mat4Params;
 
-	Shader* shader = nullptr;
+	std::unique_ptr<Shader> shader_unique;
+	Shader* shader;
 	Texture textures[maxTextureCount];
 };
 

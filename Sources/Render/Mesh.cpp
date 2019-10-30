@@ -38,30 +38,13 @@ void Mesh::SetupMesh()
     glBindVertexArray(0);
 }
 
-void Mesh::Draw(Shader* shader)
+void Mesh::Draw()
 {    
-    // Texture
-    unsigned int diffuseNr = 0;
-    unsigned int specularNr = 0;
-    for(unsigned int i = 0; i < textures.size(); i++)
-    {
-        glActiveTexture(GL_TEXTURE0 + i); // active texture
-        // get texture number（N in TypeN）
-        std::string number = "";
-        TextureType type = textures[i].type;
-        std::string name =TextureTypeToString(type);
-        // transform string to lower
-        transform(name.begin(), name.end(), name.begin(), ::tolower);
-        if(type == TextureType::Diffuse && diffuseNr != 0)
-            number = std::to_string(diffuseNr++);
-        else if(type == TextureType::Specular && specularNr != 0)
-            number = std::to_string(specularNr++);
-        // texture naming foramt in shader : Type_num
-        shader->setInt(("material" + number + "." + name).c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
-    glActiveTexture(GL_TEXTURE0);
-    
+    //// transform string to lower
+    //transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+	material->use();
+
     // draw mesh
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

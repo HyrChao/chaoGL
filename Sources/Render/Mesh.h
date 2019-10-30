@@ -33,23 +33,37 @@ public:
     // mesh data
     vector<Vertex> vertices;
     vector<unsigned int> indices;
-    vector<Texture> textures;
     // func
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, mat4 modelMat)
     {
         this->vertices = vertices;
         this->indices = indices;
-        this->textures = textures;
+		this -> modelMat = modelMat;
+
+		this->material = make_unique<Material>(CommonAssets::instance->standardPBRShader);
+
+		for (int i = 0; i < textures.size(); i++)
+		{
+			material->AddTexture(textures[i]);
+		}
+		material->SetModelMat(modelMat);
+
         SetupMesh();
     }
-    ~Mesh()
-    {
-        
-    }
-    void Draw(Shader* shader);
+  //  ~Mesh()
+  //  {
+		//// no need to manually delete material, because we already use unique ptr
+  //  }
+    void Draw();
+
 private:
     // render buffer
     unsigned int VAO, VBO, EBO;
+	mat4 modelMat;
+	// provent error during destroction
+	unique_ptr<Material> material;
+	 
+	
     // func
     void SetupMesh();
     

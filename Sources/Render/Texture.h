@@ -61,15 +61,15 @@ enum TextureFormat
 
 enum TextureSlot
 {
-	TextureSlot1 =  0,
-	TextureSlot2 =  1,
-	TextureSlot3 =  3,
-	TextureSlot4 =  4,
-	TextureSlot5 =  5,
-	TextureSlot6 =  6,
-	TextureSlot7 =  7,
-	TextureSlot8 =  8,
-	TextureSlot9 =  9,
+	TextureSlot1 = 0,
+	TextureSlot2 = 1,
+	TextureSlot3 = 3,
+	TextureSlot4 = 4,
+	TextureSlot5 = 5,
+	TextureSlot6 = 6,
+	TextureSlot7 = 7,
+	TextureSlot8 = 8,
+	TextureSlot9 = 9,
 	TextureSlot10 = 10,
 	TextureSlot11 = 11,
 	TextureSlot12 = 12,
@@ -80,7 +80,10 @@ enum TextureSlot
 	TempSlot1 = 17,
 	TempSlot2 = 18,
 	TempSlot3 = 19,
-	TempSlot4 = 20
+	TempSlot4 = 20,
+	PBR_BRDF = 21,
+	PBR_Prefilter = 22,
+	PBR_Irridiance = 23
 };
 
 enum GL_TextureSlot
@@ -140,6 +143,10 @@ public:
 		this->type = type;
 		this->path = path;
 	}
+
+	//~Texture()
+	//{
+	//}
 
 	void Gen(TextureType type, unsigned int width, unsigned height, TextureFormat format = RGB,TextureRepeatMode repeat = Repeat, TextureFilterMode filter = Trilinear, bool isHDR = false, bool genMip = true)
 	{
@@ -280,6 +287,12 @@ public:
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);
 	}
+
+	void Free()
+	{
+		
+	}
+
 
 	void SetType(TextureType type) 
 	{

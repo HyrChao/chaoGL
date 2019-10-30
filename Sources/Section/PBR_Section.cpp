@@ -115,8 +115,11 @@ void PBR_Section::InitBallsScene()
 // Main loop
 void PBR_Section::Loop()
 {
+	ChangeEnvironment();
+
+
 	PrefilterEnvDebug();
-	Level::Loop();
+	PBR_Basic::Loop();
 
 	if (!initialized)
 	{
@@ -130,14 +133,9 @@ void PBR_Section::Loop()
 	{
 		currentPBRScene++;
 
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-
 		if (currentPBRScene > (LastScene - 1))
 			currentPBRScene = 0;
 	}
-
-	PBRMaterialDebug();
 
 	SwitchPBRScene(currentPBRScene);
 
@@ -172,7 +170,6 @@ void PBR_Section::BallsScene()
 
 	mroVar.z = 1;
 
-	currentPBRMaterial->use();
 	currentPBRMaterial->BindTextures();
 	currentPBRMaterial->SetParam("debug_pbr", pbrDebugParam);
 	currentPBRMaterial->SetParam("debug_light", lightDebugParam);
@@ -262,44 +259,4 @@ void PBR_Section::FrameBufferDebug()
 	if (frameBufferDebug)
 		Render::DisplayFramebufferTexture(prefilterBRDFLUT);
 		//Render::DisplayFramebufferTexture(envCubemap);
-}
-
-void PBR_Section::PBRMaterialDebug()
-{
-	if (Input::GetKeyOnce(GLFW_KEY_F1))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.x = 1;
-	}
-	else if (Input::GetKeyOnce(GLFW_KEY_F2))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.y = 1;
-	}
-	else if (Input::GetKeyOnce(GLFW_KEY_F3))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.z = 1;
-	}
-	else if (Input::GetKeyOnce(GLFW_KEY_F4))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		pbrDebugParam.w = 1;
-	}
-	if (Input::GetKeyOnce(GLFW_KEY_F5))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		lightDebugParam.x = 1;
-	}
-	if (Input::GetKeyOnce(GLFW_KEY_F6))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-		lightDebugParam.y = 1;
-	}
 }

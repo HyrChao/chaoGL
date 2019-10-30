@@ -4,6 +4,7 @@ Sections::Sections()
 {
 	hello = new Hello();
 	pbr_section = new PBR_Section();
+	model_section = new Model_Section();
 }
 
 Sections::~Sections()
@@ -33,7 +34,7 @@ void Sections::SwitchSections()
             hello->HelloLight();
             break;
         case SectionEnum::LoadModel:
-            hello->HelloModel();
+            model_section->Loop();
             break;
         case SectionEnum::PBR:
 			pbr_section->Loop();

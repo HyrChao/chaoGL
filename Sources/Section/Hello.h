@@ -25,10 +25,6 @@ private:
     bool helloModelInitialized = false;
     
     
-    Model *helloModel;
-    Shader *helloModelShader;
-	unsigned int diffuseTex_1, diffuseTex_2, specularTex;
-
 	Shader* helloTriShader;
 	Shader* helloTexShader;
 	Shader* helloProjShader;
@@ -40,7 +36,7 @@ private:
     Light* spotLight;
     Light* dirLight;
     
-
+	unsigned int specularTex, diffuseTex_1, diffuseTex_2;
 
 
     glm::vec3 lightCol;
@@ -71,8 +67,6 @@ public:
     
     void HelloLight();
     void HelloLightInit();
-    void HelloModel();
-    void HelloPBR();
 
 	void Reset()
 	{

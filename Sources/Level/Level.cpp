@@ -1,7 +1,7 @@
 
 #include <Level/Level.h>
 
-
+Material* Level::skydomMaterial;
 Shader* Level::skydomeShader;
 bool Level::globalInitialized;
 

@@ -14,33 +14,24 @@ public:
 	 
 	 Level()
 	 {
-
-		 if (!globalInitialized)
-		 {
-			 // Generate new frame buffer to capture cubemap
-			 glGenFramebuffers(1, &captureFBO);
-			 glGenRenderbuffers(1, &captureRBO);
-
-			 equirectangularToCubemapMaterial = new Material("/Shaders/Common/HDR_EquirectangularMap.vs", "/Shaders/Common/HDR_EquirectangularMap.fs");
-			 irradianceConvolveMaterial = new Material("/Shaders/Common/IBL_Irradiance_Convolution.vs", "/Shaders/Common/IBL_Irradiance_Convolution.fs");
-			 specularPrefilterMaterial = new Material("/Shaders/Common/IBL_PBR_Specular_Convolution.vs", "/Shaders/Common/IBL_PBR_Specular_Convolution.fs");
-			 prefilterBRDFMaterial = new Material("/Shaders/Common/IBL_PBR_Prefilter_BRDF.vs", "/Shaders/Common/IBL_PBR_Prefilter_BRDF.fs");
-			 
-			 CaptureEnvironmentCubemap();
-			 CaptureIrradianceCubemap();
-			 CaptureSpecularPrefilterMap();
-			 PrefilterBRDF();
-			 
-			 SetSkyDome();
-			 globalInitialized = true;
-		 }
-
-
+		 GlobalInitialize();
+		 LoadEquirectangularSkydomeTexture();
+		 LevelInitialize();
+	 }
+	 Level(string skyHDRTexture_path)
+	 {
+		GlobalInitialize();
+		equirectangularSkyTex.path = skyHDRTexture_path;
+		LoadEquirectangularSkydomeTexture();
+		LevelInitialize();
 	 }
 
 	~ Level();
 
-
+	void Reset()
+	{
+		initialized = false;
+	}
 
 	void SetSunLight(Light* sunlight)
 	{
@@ -53,7 +44,42 @@ protected:
 
 	virtual void Loop();
 
+	void ChangeEnvironment()
+	{
+		skydomMaterial->ClearTextrues();
+		skydomMaterial->AddTexture(envCubemap);
+	}
+
 private:
+
+
+	void GlobalInitialize()
+	{
+		if (!globalInitialized)
+		{
+			skydomeShader = new Shader("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
+			skydomMaterial = new Material(skydomeShader);
+			skydomMaterial->AddTexture(envCubemap);
+			globalInitialized = true;
+		}
+	}
+
+	void LevelInitialize()
+	{
+		// Generate new frame buffer to capture cubemap
+		glGenFramebuffers(1, &captureFBO);
+		glGenRenderbuffers(1, &captureRBO);
+
+		equirectangularToCubemapMaterial = new Material("/Shaders/Common/HDR_EquirectangularMap.vs", "/Shaders/Common/HDR_EquirectangularMap.fs");
+		irradianceConvolveMaterial = new Material("/Shaders/Common/IBL_Irradiance_Convolution.vs", "/Shaders/Common/IBL_Irradiance_Convolution.fs");
+		specularPrefilterMaterial = new Material("/Shaders/Common/IBL_PBR_Specular_Convolution.vs", "/Shaders/Common/IBL_PBR_Specular_Convolution.fs");
+		prefilterBRDFMaterial = new Material("/Shaders/Common/IBL_PBR_Prefilter_BRDF.vs", "/Shaders/Common/IBL_PBR_Prefilter_BRDF.fs");
+
+		CaptureEnvironmentCubemap();
+		CaptureIrradianceCubemap();
+		CaptureSpecularPrefilterMap();
+		PrefilterBRDF();
+	}
 
 	void LoadEquirectangularSkydomeTexture()
 	{
@@ -66,9 +92,7 @@ private:
 
 	void SetSkyDome()
 	{
-		skydomeShader = new Shader("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
-		skydomMaterial = new Material(skydomeShader);
-		skydomMaterial->AddTexture(envCubemap);
+
 	}
 
 	void DrawSkydome()
@@ -172,7 +196,6 @@ private:
 		envCubemap.Gen(TextureType::Cube, res, res, TextureFormat::RGB, TextureRepeatMode::Clamp, TextureFilterMode::Trilinear, true, false);
 
 		// Load skydome texture
-		LoadEquirectangularSkydomeTexture();
 		equirectangularToCubemapMaterial->AddTexture(equirectangularSkyTex);
 
 		Render::SetViewport(res, res);  // don't forget to set view port to the same demensions before render
@@ -231,8 +254,9 @@ protected:
 	// Sun light (Main directional light)
 	Light* sunlight;
 
-	Material* skydomMaterial;
+	static Material* skydomMaterial;
 
+	bool resourceLoaded = false;
 	bool initialized = false;
 
 	Texture envCubemap;

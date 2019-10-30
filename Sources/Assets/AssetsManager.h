@@ -48,17 +48,16 @@ public:
 		}
 		else
 		{
-			std::cout << "Texture failed to load at path: " << path << std::endl;
+			std::cout << "Texture failed to load at path: " << filename << std::endl;
 			stbi_image_free(data);
 		}
 
 		return textureID;
 	}
 
-	inline static unsigned int TextureFromFile(const char *name, const string &directory, bool gamma = false)
+	inline static unsigned int TextureFromFile_FullPath(const char *fullpath, bool gamma = false)
 	{
-		string filename = string(name);
-		filename = directory + '/' + filename;
+		string filename = string(fullpath);
 
 		unsigned int textureID;
 		glGenTextures(1, &textureID);
@@ -89,7 +88,7 @@ public:
 		}
 		else
 		{
-			std::cout << "Texture failed to load at path: " << name << std::endl;
+			std::cout << "Texture failed to load at path: " << filename << std::endl;
 			stbi_image_free(data);
 		}
 
@@ -129,17 +128,27 @@ public:
 		return hdrTextureID;
 	}
 
+	inline static string ExtractFileName(const std::string& fullPath)
+	{
+		const size_t lastSlashIndex = fullPath.find_last_of("/\\");
+		return fullPath.substr(lastSlashIndex + 1);
+	}
+
 	inline static const char* TextureTypeToString(TextureType type)
 	{
 		switch (type)
 		{
-		case Diffuse:   return "diffuse";
-		case Normal:   return "normal";
-		case Specular: return "specular";
-		case MRO: return "mro";
-		case Cube: return "cube";
-		case LUT: return "lut";
-		default:      return "diffuse";
+		case Diffuse:   return "_diffuse";
+		case Albedo: return "_albedo";
+		case Metallic: return "_matallic";
+		case Roughness: return "_roughness";
+		case Normal:   return "_normal";
+		case Specular: return "_specular";
+		case MRO: return "_mro";
+		case Cube: return "_cube";
+		case LUT: return "_lut";
+		case AO: return "_ao";
+		default:      return "_diffuse";
 		}
 	}
 };

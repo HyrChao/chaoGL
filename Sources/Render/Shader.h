@@ -38,7 +38,8 @@ public:
 
 	~Shader()
 	{
-		loadedShaders.erase(ID);
+		if(!Shader::loadedShaders.empty() && this != NULL)
+			Shader::loadedShaders.erase(this->ID);
 	}
 
 	// use shader program
