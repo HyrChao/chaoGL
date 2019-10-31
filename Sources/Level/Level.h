@@ -113,7 +113,7 @@ private:
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, res, res);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
-		irradianceCubemap.Gen(TextureType::Irridiance, res, res, RGB, Clamp, Bilinear, true, false);
+		irradianceCubemap.Gen(Texture::TextureType::Irridiance, res, res, Texture::RGB, Texture::Clamp, Texture::Bilinear, true, false);
 
 		Render::SetViewport(res, res);  // don't forget to set view port to the same demensions before render
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
@@ -145,7 +145,7 @@ private:
 		int maxMipLevel = 5;
 
 		// generate mip fisrt then replace it
-		prefilterEnvironmentMap.Gen(TextureType::PrefilterEnv, res, res, RGB, Clamp, Trilinear, true, true);
+		prefilterEnvironmentMap.Gen(Texture::TextureType::PrefilterEnv, res, res, Texture::RGB, Texture::Clamp, Texture::Trilinear, true, true);
 
 		specularPrefilterMaterial->AddTexture(envCubemap);
 		specularPrefilterMaterial->BindTextures();
@@ -193,7 +193,7 @@ private:
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
 		// Generate cubemap
-		envCubemap.Gen(TextureType::Cube, res, res, TextureFormat::RGB, TextureRepeatMode::Clamp, TextureFilterMode::Trilinear, true, false);
+		envCubemap.Gen(Texture::TextureType::Cube, res, res, Texture::TextureFormat::RGB, Texture::Clamp, Texture::Trilinear, true, false);
 
 		// Load skydome texture
 		equirectangularToCubemapMaterial->AddTexture(equirectangularSkyTex);
@@ -228,7 +228,7 @@ private:
 	{
 		int res = 512;
 		// use HDR to get a more precise result
-		prefilterBRDFLUT.Gen(TextureType::BRDFLUT, res, res, RG, Clamp, Bilinear, true, false);
+		prefilterBRDFLUT.Gen(Texture::TextureType::BRDFLUT, res, res, Texture::RG, Texture::Clamp, Texture::Bilinear, true, false);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -249,7 +249,7 @@ protected:
 
 	// Skydome texture
 	//Texture equirectangularSkyTex = Texture("/Assets/Texture/HDR/Mans_Outside_2k.hdr", TextureType::Equirectangular, false);
-	Texture equirectangularSkyTex = Texture("/Assets/Texture/HDR/Ridgecrest_Road_Ref.hdr", TextureType::Equirectangular, false);
+	Texture equirectangularSkyTex = Texture("/Assets/Texture/HDR/Ridgecrest_Road_Ref.hdr", Texture::TextureType::Equirectangular, false);
 
 	// Sun light (Main directional light)
 	Light* sunlight;

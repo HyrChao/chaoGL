@@ -134,20 +134,20 @@ public:
 		return fullPath.substr(lastSlashIndex + 1);
 	}
 
-	inline static const char* TextureTypeToString(TextureType type)
+	inline static const char* TextureTypeToString(Texture::TextureType type)
 	{
 		switch (type)
 		{
-		case Diffuse:   return "_diffuse";
-		case Albedo: return "_albedo";
-		case Metallic: return "_matallic";
-		case Roughness: return "_roughness";
-		case Normal:   return "_normal";
-		case Specular: return "_specular";
-		case MRO: return "_mro";
-		case Cube: return "_cube";
-		case LUT: return "_lut";
-		case AO: return "_ao";
+		case Texture::Diffuse:   return "_diffuse";
+		case Texture::Albedo: return "_albedo";
+		case Texture::Metallic: return "_matallic";
+		case Texture::Roughness: return "_roughness";
+		case Texture::Normal:   return "_normal";
+		case Texture::Specular: return "_specular";
+		case Texture::MRO: return "_mro";
+		case Texture::Cube: return "_cube";
+		case Texture::LUT: return "_lut";
+		case Texture::AO: return "_ao";
 		default:      return "_diffuse";
 		}
 	}

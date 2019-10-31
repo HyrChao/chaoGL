@@ -54,37 +54,40 @@ void PBR_Section::Initialize()
 	Light* spotlight = new Light(spotlightp1);
 	pbrSpotlight = spotlight;
 
+	if (helloPBRShader == nullptr)
+		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
+	
 	initialized = true;
 }
 
 void PBR_Section::InitBallsScene()
 {
 	albedo.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
-	albedo.SetType(TextureType::Albedo);
+	albedo.SetType(Texture::TextureType::Albedo);
 	normal.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_normal.png");
-	normal.SetType(TextureType::Normal);
+	normal.SetType(Texture::TextureType::Normal);
 	metallic.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_metallic.png");
-	metallic.SetType(TextureType::Metallic);
+	metallic.SetType(Texture::TextureType::Metallic);
 	roughness.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_roughness.png");
-	roughness.SetType(TextureType::Roughness);
+	roughness.SetType(Texture::TextureType::Roughness);
 	//ao = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
 	ao.id = CommonAssets::instance->whiteTex;
-	ao.SetType(TextureType::AO);
+	ao.SetType(Texture::TextureType::AO);
 
 	albedo_Fill.id = CommonAssets::instance->whiteTex;
-	albedo_Fill.SetType(TextureType::Albedo);
+	albedo_Fill.SetType(Texture::TextureType::Albedo);
 	normal_Fill.id = CommonAssets::instance->flatNormal;
-	normal_Fill.SetType(TextureType::Normal);
+	normal_Fill.SetType(Texture::TextureType::Normal);
 	metallic_Fill.id = CommonAssets::instance->whiteTex;
-	metallic_Fill.SetType(TextureType::Metallic);
+	metallic_Fill.SetType(Texture::TextureType::Metallic);
 	roughness_Fill.id = CommonAssets::instance->whiteTex;
-	roughness_Fill.SetType(TextureType::Roughness);
+	roughness_Fill.SetType(Texture::TextureType::Roughness);
 	ao_Fill.id = CommonAssets::instance->whiteTex;
-	ao_Fill.SetType(TextureType::AO);
+	ao_Fill.SetType(Texture::TextureType::AO);
 
 	if (helloPBRMaterial == nullptr)
 	{
-		helloPBRMaterial = new Material(CommonAssets::instance->standardPBRShader);
+		helloPBRMaterial = new Material(helloPBRShader);
 		helloPBRMaterial->AddTexture(albedo);
 		helloPBRMaterial->AddTexture(normal);
 		helloPBRMaterial->AddTexture(metallic);
@@ -97,7 +100,7 @@ void PBR_Section::InitBallsScene()
 
 	if (helloPBRMaterial_Fill == nullptr)
 	{
-		helloPBRMaterial_Fill = new Material(CommonAssets::instance->standardPBRShader);
+		helloPBRMaterial_Fill = new Material(helloPBRShader);
 		helloPBRMaterial_Fill->AddTexture(albedo_Fill);
 		helloPBRMaterial_Fill->AddTexture(normal_Fill);
 		helloPBRMaterial_Fill->AddTexture(metallic_Fill);

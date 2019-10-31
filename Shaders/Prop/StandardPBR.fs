@@ -2,7 +2,9 @@
 out vec4 FragColor;
 
 in vec3 Normal;
-in vec3 vColor;
+in vec3 Bitangent;
+in vec3 Tangent;
+in vec4 vColor;
 in vec2 TexCoord;
 in vec3 fragPos;
 
@@ -187,14 +189,9 @@ vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float 
 
 vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
 {
-    vec3 Q1  = dFdx(fragPos);
-    vec3 Q2  = dFdy(fragPos);
-    vec2 st1 = dFdx(TexCoord);
-    vec2 st2 = dFdy(TexCoord);
-
-    vec3 N   = normalize(Normal);
-    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-    vec3 B  = -normalize(cross(N, T));
+    vec3 N   = Normal;
+    vec3 T  = Tangent;
+    vec3 B  = Bitangent;
     mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangentNormal);
@@ -260,7 +257,8 @@ void main()
 
     // debug
     finalColor = mix(finalColor, vec4(albedo,1), debug_pbr.x);
-    vec3 debugNormal = 0.5 * normal + 0.5;
+    vec3 debugNormal = 0.5 * Tangent + 0.5;
+    // vec3 debugNormal = 0.5 * vec3(normalize(TexCoord),0.0) + 0.5;
     finalColor = mix(finalColor, vec4(debugNormal,1), debug_pbr.y);
     finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug_pbr.z);
     finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug_pbr.w);

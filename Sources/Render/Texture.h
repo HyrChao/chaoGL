@@ -20,45 +20,6 @@
 using namespace std;
 
 
-enum TextureType
-{
-	Albedo,
-    Normal,
-	Metallic,
-	Roughness,
-	AO,
-    MRO,
-    Diffuse,
-    Specular,
-    Cube,
-	Irridiance,
-	PrefilterEnv,
-	Equirectangular,
-	LUT,
-	BRDFLUT,
-};
-
-enum TextureFilterMode
-{
-	Point,
-	Bilinear,
-	Trilinear
-};
-
-enum TextureRepeatMode
-{
-	Repeat,
-	Clamp
-};
-
-enum TextureFormat
-{
-	R,
-	RG,
-	RGB,
-	RGBA,
-};
-
 enum TextureSlot
 {
 	TextureSlot1 = 0,
@@ -112,6 +73,44 @@ enum GL_TextureSlot
 
 struct Texture
 {
+	enum TextureType
+	{
+		Albedo,
+		Normal,
+		Metallic,
+		Roughness,
+		AO,
+		MRO,
+		Diffuse,
+		Specular,
+		Cube,
+		Irridiance,
+		PrefilterEnv,
+		Equirectangular,
+		LUT,
+		BRDFLUT,
+	};
+
+	enum TextureFilterMode
+	{
+		Point,
+		Bilinear,
+		Trilinear
+	};
+
+	enum TextureRepeatMode
+	{
+		Repeat,
+		Clamp
+	};
+
+	enum TextureFormat
+	{
+		R,
+		RG,
+		RGB,
+		RGBA,
+	};
 public:
     unsigned int id = 0;
     TextureType type = TextureType::Albedo;
@@ -395,6 +394,8 @@ public:
 
 		this->id = textureID;
 	}
+
+
 };
 
 

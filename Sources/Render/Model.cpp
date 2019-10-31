@@ -10,8 +10,8 @@
 void Model::LoadModel_SingleMaterial(string path)
 {
     Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FixInfacingNormals);
-	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate);
+	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FixInfacingNormals);
     
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -21,8 +21,9 @@ void Model::LoadModel_SingleMaterial(string path)
     
 	name = AssetsManager::ExtractFileName(path);
     directory = path.substr(0, path.find_last_of("/"));
-    
+	cout << "Loading model "<< name << " from path "<< directory << importer.GetErrorString() << endl;
     ProcessNode(scene->mRootNode, scene);
+	cout << "Load model " << name << "success" << endl;
 }
 
 void Model::ProcessNode(aiNode *node, const aiScene *scene)
@@ -72,7 +73,43 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         }
         else
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+
+		if (mesh->mTangents) // check if mesh have tangent information
+		{
+			glm::vec3 vec;
+			vec.x = mesh->mTangents[i].x;
+			vec.y = mesh->mTangents[i].y;
+			vec.z = mesh->mTangents[i].z;
+			vertex.Tangent = vec;
+		}
+		else
+			vertex.Tangent = glm::vec3(0.0f, 0.0f, 0.0f);
         
+		if (mesh->mBitangents) // check if mesh have bitangent information
+		{
+			glm::vec3 vec;
+			vec.x = mesh->mBitangents[i].x;
+			vec.y = mesh->mBitangents[i].y;
+			vec.z = mesh->mBitangents[i].z;
+			vertex.Bitangent = vec;
+		}
+		else
+			vertex.Bitangent = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		if (mesh->mColors[0]) // check if mesh have color information
+		{
+			glm::vec4 vec;
+			vec.r = mesh->mColors[0][i].r;
+			vec.g = mesh->mColors[0][i].g;
+			vec.b = mesh->mColors[0][i].b;
+			vec.a = mesh->mColors[0][i].a;
+			vertex.Color = vec;
+		}
+		else
+			vertex.Color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+
+
         vertices.push_back(vertex);
     }
     // process index
@@ -89,39 +126,39 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 		// check all files in directory
 		string texturePath = entry.path().string();
 		string textureName = AssetsManager::ExtractFileName(texturePath);
-		if (textureName.find(AssetsManager::TextureTypeToString(TextureType::Albedo)) != string::npos)
+		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Albedo)) != string::npos)
 		{
-			Texture textureLoaded = LoadTexture(texturePath, TextureType::Albedo);
+			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Albedo);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName <<" in path "<<texturePath << " to model " <<name<<std::endl;
 		}
-		if (textureName.find(AssetsManager::TextureTypeToString(TextureType::Normal)) != string::npos)
+		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Normal)) != string::npos)
 		{
-			Texture textureLoaded = LoadTexture(texturePath, TextureType::Normal);
+			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Normal);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
-		if (textureName.find(AssetsManager::TextureTypeToString(TextureType::Roughness)) != string::npos)
+		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Roughness)) != string::npos)
 		{
-			Texture textureLoaded = LoadTexture(texturePath, TextureType::Roughness);
+			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Roughness);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
-		if (textureName.find(AssetsManager::TextureTypeToString(TextureType::Metallic)) != string::npos)
+		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Metallic)) != string::npos)
 		{
-			Texture textureLoaded = LoadTexture(texturePath, TextureType::Metallic);
+			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Metallic);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
-		if (textureName.find(AssetsManager::TextureTypeToString(TextureType::MRO)) != string::npos)
+		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::MRO)) != string::npos)
 		{
-			Texture textureLoaded = LoadTexture(texturePath, TextureType::MRO);
+			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::MRO);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
-		if (textureName.find(AssetsManager::TextureTypeToString(TextureType::AO)) != string::npos)
+		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::AO)) != string::npos)
 		{
-			Texture textureLoaded = LoadTexture(texturePath, TextureType::AO);
+			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::AO);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
@@ -148,7 +185,7 @@ void Model::ProcessTextures()
 
 }
 
-Texture Model::LoadTexture(string path, TextureType type)
+Texture Model::LoadTexture(string path, Texture::TextureType type)
 {
 	Texture texture;
 	bool skip = false;

@@ -23,7 +23,10 @@ struct Vertex
 {
     glm::vec3 Position;
     glm::vec3 Normal;
-    glm::vec2 TexCoords;
+	glm::vec2 TexCoords;
+	glm::vec3 Tangent;
+	glm::vec3 Bitangent;
+	glm::vec4 Color;
 };
 
 
@@ -67,16 +70,16 @@ private:
     // func
     void SetupMesh();
     
-    inline const char* TextureTypeToString(TextureType type)
+    inline const char* TextureTypeToString(Texture::TextureType type)
     {
         switch (type)
         {
-            case Diffuse:   return "diffuse";
-            case Normal:   return "normal";
-            case Specular: return "specular";
-            case MRO: return "mro";
-            case Cube: return "cube";
-            case LUT: return "lut";
+            case Texture::Diffuse:   return "diffuse";
+            case Texture::Normal:   return "normal";
+            case Texture::Specular: return "specular";
+            case Texture::MRO: return "mro";
+            case Texture::Cube: return "cube";
+            case Texture::LUT: return "lut";
             default:      return "diffuse";
         }
     }

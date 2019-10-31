@@ -93,8 +93,8 @@ private:
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
     vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
-                                         TextureType typeName);
-	Texture Model::LoadTexture(string path, TextureType type);
+		Texture::TextureType typeName);
+	Texture Model::LoadTexture(string path, Texture::TextureType type);
 
 };
 

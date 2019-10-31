@@ -86,7 +86,7 @@ private:
 
 	unsigned int currentPBRScene = RustMetalBalls;
 
-
+	Shader* helloPBRShader = nullptr;
 
 
 };
