@@ -137,6 +137,21 @@ void PBR_Section::Loop()
 			currentPBRScene = 0;
 	}
 
+	// light params change with time
+	float sunDirChangeSpeed = 0.3;
+	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
+	sunlight->dir = currentSunDir;
+
+	float spotDirChangeSpeed = 1;
+	glm::vec3 currentSpotDir = glm::vec3(cos((float)glfwGetTime() * spotDirChangeSpeed), 0.0f, sin((float)glfwGetTime() * spotDirChangeSpeed));
+	pbrSpotlight->dir = currentSpotDir;
+
+	float pointIntensityChangeSpeed = 2;
+	float pointIntensityMutiplier = 1 + sin((float)glfwGetTime() * pointIntensityChangeSpeed);
+	glm::vec3 currentPointColor = glm::vec3(pointIntensityMutiplier, 0.2 * pointIntensityMutiplier, 0.1 * pointIntensityMutiplier);
+	pbrPointlight1->color = currentPointColor;
+
+
 	SwitchPBRScene(currentPBRScene);
 
 }
@@ -153,20 +168,6 @@ void PBR_Section::BallsScene()
 	float spacing = 2.5;
 
 	glm::vec3 mroVar = glm::vec3(0.0f);
-
-	// light params change with time
-	float sunDirChangeSpeed = 0.3;
-	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
-	sunlight->dir = currentSunDir;
-
-	float spotDirChangeSpeed = 1;
-	glm::vec3 currentSpotDir = glm::vec3(cos((float)glfwGetTime() * spotDirChangeSpeed), 0.0f, sin((float)glfwGetTime() * spotDirChangeSpeed));
-	pbrSpotlight->dir = currentSpotDir;
-
-	float pointIntensityChangeSpeed = 2;
-	float pointIntensityMutiplier = 1 + sin((float)glfwGetTime() * pointIntensityChangeSpeed);
-	glm::vec3 currentPointColor = glm::vec3(pointIntensityMutiplier, 0.2 * pointIntensityMutiplier, 0.1 * pointIntensityMutiplier);
-	pbrPointlight1->color = currentPointColor;
 
 	mroVar.z = 1;
 

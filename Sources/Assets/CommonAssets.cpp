@@ -157,16 +157,16 @@ void CommonAssets::LoadSphere()
 		data.push_back(positions[i].x);
 		data.push_back(positions[i].y);
 		data.push_back(positions[i].z);
-		if (uv.size() > 0)
-		{
-			data.push_back(uv[i].x);
-			data.push_back(uv[i].y);
-		}
 		if (normals.size() > 0)
 		{
 			data.push_back(normals[i].x);
 			data.push_back(normals[i].y);
 			data.push_back(normals[i].z);
+		}
+		if (uv.size() > 0)
+		{
+			data.push_back(uv[i].x);
+			data.push_back(uv[i].y);
 		}
 		if (colors.size() > 0)
 		{
@@ -180,13 +180,13 @@ void CommonAssets::LoadSphere()
 		glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereEBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-		float stride = (3 + 2 + 3 + 3) * sizeof(float);
+		float stride = (3 + 3 + 2 + 3) * sizeof(float);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, stride, (void*)(8 * sizeof(float)));
 	}

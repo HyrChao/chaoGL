@@ -57,28 +57,28 @@ private:
 	{
 		if (!globalInitialized)
 		{
+			// Generate new frame buffer to capture cubemap
+			glGenFramebuffers(1, &captureFBO);
+			glGenRenderbuffers(1, &captureRBO);
+
 			skydomeShader = new Shader("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
 			skydomMaterial = new Material(skydomeShader);
 			skydomMaterial->AddTexture(envCubemap);
+			prefilterBRDFMaterial = new Material("/Shaders/Common/IBL_PBR_Prefilter_BRDF.vs", "/Shaders/Common/IBL_PBR_Prefilter_BRDF.fs");
+			PrefilterBRDF();
 			globalInitialized = true;
 		}
 	}
 
 	void LevelInitialize()
 	{
-		// Generate new frame buffer to capture cubemap
-		glGenFramebuffers(1, &captureFBO);
-		glGenRenderbuffers(1, &captureRBO);
-
 		equirectangularToCubemapMaterial = new Material("/Shaders/Common/HDR_EquirectangularMap.vs", "/Shaders/Common/HDR_EquirectangularMap.fs");
 		irradianceConvolveMaterial = new Material("/Shaders/Common/IBL_Irradiance_Convolution.vs", "/Shaders/Common/IBL_Irradiance_Convolution.fs");
 		specularPrefilterMaterial = new Material("/Shaders/Common/IBL_PBR_Specular_Convolution.vs", "/Shaders/Common/IBL_PBR_Specular_Convolution.fs");
-		prefilterBRDFMaterial = new Material("/Shaders/Common/IBL_PBR_Prefilter_BRDF.vs", "/Shaders/Common/IBL_PBR_Prefilter_BRDF.fs");
 
 		CaptureEnvironmentCubemap();
 		CaptureIrradianceCubemap();
 		CaptureSpecularPrefilterMap();
-		PrefilterBRDF();
 	}
 
 	void LoadEquirectangularSkydomeTexture()
@@ -269,7 +269,7 @@ private:
 	static Shader* skydomeShader;
 	static bool globalInitialized;
 
-	unsigned int captureFBO, captureRBO;
+	static unsigned int captureFBO, captureRBO;
 
 	// capture view mats from origin
 	glm::mat4 captureViewMats[6] =

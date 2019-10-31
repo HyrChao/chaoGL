@@ -90,6 +90,8 @@ int main()
 		return -1;
 	}
 
+	std::cout << "GL_Version: " <<glGetString(GL_VERSION) << std::endl;
+
 	// Rigist window adjust call back function 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
