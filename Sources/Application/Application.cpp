@@ -5,21 +5,50 @@ Application* Application::app;
 Sections* Application::section;
 Render* Application::render;
 
-int Application::screenWidth;
-int Application::screenHeight;
 bool Application::wireframeMode;
 
-Application::Application(GLFWwindow* currentWin, int width, int height)
+Application::Application()
 {
 
 
 	app = this;
 
-	BindCurrentWindow(currentWin);
+	// init GLFW
+	glfwInit();
 
-	screenWidth = width;
-	screenHeight = height;
+	//Window
+	RenderDevice::screenWidth = 800;
+	RenderDevice::screenHeight = 800;
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+	// Mac 10.9 later using OpenGL4.1
+	// need campative if using version 3.3
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);   //This is for mac OS
+
+	// Create a new window object
+	window = glfwCreateWindow(RenderDevice::screenWidth, RenderDevice::screenHeight, "chaoGL", NULL, NULL);
+	glfwMakeContextCurrent(window);
+
+	// Init GLAD
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+	}
+
+	std::cout << "GL_Version: " << glGetString(GL_VERSION) << std::endl;
+
+	// Rigist window adjust call back function 
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	BindCurrentWindow(window);
     
+	// Frame lock
+	glfwSwapInterval(1);
+
 	Application::InitApplication();
 }
 
@@ -32,16 +61,16 @@ Application::~Application()
 
 void Application::InitApplication()
 {
-    render = new Render(screenWidth, screenHeight);
+    render = new Render();
     
-    Mouse::SetMouseInitLocation(screenWidth,screenHeight);
+    Mouse::SetMouseInitLocation(RenderDevice::screenWidth, RenderDevice::screenHeight);
     
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// set input callback
 	glfwSetCursorPosCallback(window, Application::mouse_callback);
-    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+    glfwGetFramebufferSize(window, &RenderDevice::screenWidth, &RenderDevice::screenHeight);
     
 	Input::SetCurrentWindow(window);
 
@@ -83,7 +112,8 @@ void Application::OnFrameBegin()
 
 void Application::OnFrameEnd()
 {
-
+	// Event
+	glfwPollEvents();
 }
 
 void Application::ProcessInput()
@@ -126,5 +156,10 @@ void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	Camera::main->MoveView(Mouse::xoffset, Mouse::yoffset);
 }
 
-
+// Function called while change window size
+void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// Define viewport
+	glViewport(0, 0, width, height);
+}
 

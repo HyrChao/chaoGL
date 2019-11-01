@@ -10,7 +10,7 @@ Camera * Camera::main;
 
 Camera::Camera()
 {
-	SetScreenExtend(Application::screenWidth, Application::screenHeight);
+	SetScreenExtend(RenderDevice::screenWidth, RenderDevice::screenHeight);
 
 	cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 

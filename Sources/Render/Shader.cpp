@@ -1,5 +1,5 @@
 
 #include<Render/Shader.h>
 
-map<int, Shader*> Shader::loadedShaders;
+unordered_map<int, Shader*> Shader::loadedShaders;
 Shader* Shader::errorShader;

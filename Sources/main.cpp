@@ -6,8 +6,6 @@
 
 #include <Application/Application.h>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #ifdef __APPLE__
     #include <mach-o/dyld.h>
@@ -23,8 +21,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 int Close();
 
 
-//GLFWwindow* window;
-GLFWwindow* window;
 Application* app;
 
 char const * FileSystem::app_root;
@@ -63,40 +59,9 @@ int main()
 
     #endif
     
-    // init GLFW
-	glfwInit();
-
-	//Window
-	windowWidth = 800;
-	windowHeight = 800;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    #ifdef __APPLE__
-        // Mac 10.9 later using OpenGL4.1
-        // need campative if using version 3.3
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);   //This is for mac OS
-
-	// Create a new window object
-	window = glfwCreateWindow(windowWidth, windowHeight, "chaoGL", NULL, NULL);
-	glfwMakeContextCurrent(window);
-
-	// Init GLAD
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
-	std::cout << "GL_Version: " <<glGetString(GL_VERSION) << std::endl;
-
-	// Rigist window adjust call back function 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// App & Sections
-	app = new Application(window,windowWidth,windowHeight);
+	app = new Application();
 
 
 	
@@ -111,8 +76,6 @@ int main()
 		Application::OnFrameBegin();
 
 		Application::Update();
-		// Event
-		glfwPollEvents();
 
 		// on ftame end
 		Application::OnFrameEnd();
@@ -132,9 +95,4 @@ int Close()
 	return 0;
 }
 
-// Function called while change window size
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// Define viewport
-	glViewport(0, 0, width, height);
-}
+

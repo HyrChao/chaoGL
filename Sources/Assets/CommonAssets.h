@@ -39,7 +39,26 @@ public:
 
 public:
 
+	static void DrawPlane();
 
+	static void DrawQuad()
+	{
+		glBindVertexArray(CommonAssets::instance->recVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
+	static void DrawCube()
+	{
+		glBindVertexArray(CommonAssets::instance->cubeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+	static void DrawSphere()
+	{
+		glBindVertexArray(CommonAssets::instance->sphereVAO);
+		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+	}
 private:
 
 	void LoadCommonTextures();

@@ -3,18 +3,20 @@
 #define RENDER_H
 
 //#include <GLFW/glfw3.h>
-#include <glad/glad.h>
 //#include <Render/Shader.h>
 //#include <Render/Texture.h>
 #include <Render/Camera.h>
 #include <Render/Light.h>
+#include <Render/Capture.h>
+#include <Render/Shadow.h>
+
 //#include <Render/Material.h>
 
 class Render
 {
 public:
 
-	Render(int screenWidth, int screenHeight);
+	Render();
 	~Render();
 	static void SetupRenderProperty();
 	static void DrawOnFrameBegin();
@@ -22,7 +24,7 @@ public:
 
 	static void UpdateShaderLightParams()
 	{
-		for (map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
+		for (unordered_map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
 		{
 			Shader* shader = it->second;
 			shader->use();
@@ -77,7 +79,7 @@ public:
 
 	static void UpdateShaderCameraVP()
 	{
-		for (map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
+		for (unordered_map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
 		{
 			it->second->use();
 			it->second->setMat4f("view", viewMat);
@@ -112,14 +114,7 @@ public:
         }
     }
 
-	static void SetViewport(int screenWidth, int screenHeight)
-	{
-		glViewport(0, 0, screenWidth, screenHeight);
-	}
-	static void ResetViewport()
-	{
-		glViewport(0, 0, screenWidth, screenHeight);
-	}
+
 private:
     
     static void UpdateLight();
@@ -141,14 +136,7 @@ public:
 		glBindVertexArray(0);
 	}
 
-	static void DrawPlane();
 
-	static void DrawQuad()
-	{
-		glBindVertexArray(CommonAssets::instance->recVAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-	}
 
 	static void DrawCube(Shader* shader, glm::mat4 &model)
 	{
@@ -156,12 +144,6 @@ public:
 		glBindVertexArray(CommonAssets::instance->cubeVAO);
 		Render::SetVertexShaderParams(shader, model);
 		Render::SetShaderLightParams(shader);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-	}
-	static void DrawCube()
-	{
-		glBindVertexArray(CommonAssets::instance->cubeVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 	}
@@ -175,12 +157,7 @@ public:
 		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
-	static void DrawSphere()
-	{
-		glBindVertexArray(CommonAssets::instance->sphereVAO);
-		glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-	}
+
     
 	// Debug frame buffer texture
 	static void DisplayFramebufferTexture(Texture texture)
@@ -203,15 +180,14 @@ public:
 		//framebufferDebugShader->setMat4f("projection", projectMat);
 		framebufferDebugShader->setInt("bufferTex", 0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		DrawQuad();
+		CommonAssets::DrawQuad();
 		glUseProgram(0);
 	}
 
 private:
 
     static glm::vec4 clearColor;
-	static int screenWidth;
-	static int screenHeight;
+
 
 	static Shader* framebufferDebugShader;
 	static bool framebufferDebugInitialized;

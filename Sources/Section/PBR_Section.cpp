@@ -196,7 +196,7 @@ void PBR_Section::BallsScene()
 			currentPBRMaterial->SetParam("intensity.mro", mroVar);
 			currentPBRMaterial->SetModelMat(model);
 			currentPBRMaterial->use();
-			Render::DrawSphere();
+			CommonAssets::DrawSphere();
 		}
 	}
 }

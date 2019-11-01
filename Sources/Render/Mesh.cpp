@@ -56,6 +56,30 @@ void Mesh::Draw()
 
     // draw mesh
     glBindVertexArray(VAO);
+
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	//// vertex position
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	//// vertex normal
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+	//// vertex texcoord
+	//glEnableVertexAttribArray(2);
+	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+	//// vertex tangent
+	//glEnableVertexAttribArray(3);
+	//glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+	//// vertex bitangent
+	//glEnableVertexAttribArray(4);
+	//glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
+	//// vertex color
+	//glEnableVertexAttribArray(5);
+	//glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
+
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

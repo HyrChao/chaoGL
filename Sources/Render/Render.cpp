@@ -6,19 +6,11 @@ glm::mat4 Render::projectMat;
 glm::mat4 Render::viewMat;
 glm::vec3 Render::viewPos;
 
-int Render::screenHeight;
-int Render::screenWidth;
-
 Shader* Render::framebufferDebugShader;
 bool Render::framebufferDebugInitialized = false;
 
-Render::Render(int screenWidth, int screenHeight)
+Render::Render()
 {
-	this->screenHeight = screenHeight;
-	this->screenWidth = screenWidth;
-
-	ResetViewport();
-
 	if (render == nullptr)
 	{
 		render = this;
@@ -34,6 +26,8 @@ Render::Render(int screenWidth, int screenHeight)
 	}
 
 	SetupRenderProperty();
+
+	Capture::InitCapture();
 }
 
 Render::~Render()

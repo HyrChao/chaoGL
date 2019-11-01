@@ -15,7 +15,7 @@ class Application
 {
 public:
 
-	Application(GLFWwindow* currentWin, int width, int height);
+	Application();
 	~Application();
 
 	static void InitApplication();
@@ -45,13 +45,11 @@ public:
 
 public:
 
-	static int screenWidth;
-	static int screenHeight;
-
 private:
 	static void ProcessInput();
     static void UpdateKeys();
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 private:
 
