@@ -52,11 +52,16 @@ public:
 		int m_textureSlot = -1;
 		for (int i = 0; i < maxTextureCount; i++)
 		{
+
 			if (textures[i].id == 0)
 			{
 				m_textureSlot = i;
 				textures[m_textureSlot] = texture;
 				SetParam(textures[m_textureSlot].keyword, m_textureSlot);
+				break;
+			}
+			if (textures[i].id == texture.id && textures[i].type == texture.type)
+			{
 				break;
 			}
 		}
@@ -103,6 +108,20 @@ public:
 		}
 	}
 
+	void ReplaceTexture(Texture& texture)
+	{
+		for (int i = 0; i < maxTextureCount; i++)
+		{
+			if (textures[i].type == texture.type)
+			{
+				textures[i] = texture;
+				return;
+			}
+		}
+
+		AddTexture(texture);
+
+	}
 	void ReplaceTexture(Texture& pre_texture, Texture& texture)
 	{
 		unsigned int tar_ID = pre_texture.id;

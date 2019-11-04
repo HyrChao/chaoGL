@@ -53,12 +53,12 @@ void PBR_Section::Initialize()
 	spotlightp1.outerCutoffAngle = 47.5f;
 	Light* spotlight = new Light(spotlightp1);
 	pbrSpotlight = spotlight;
-
-	if (helloPBRShader == nullptr)
-		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs");
 	
+
+
 	initialized = true;
 }
+
 
 void PBR_Section::InitBallsScene()
 {
@@ -85,42 +85,37 @@ void PBR_Section::InitBallsScene()
 	ao_Fill.id = CommonAssets::instance->whiteTex;
 	ao_Fill.SetType(Texture::TextureType::AO);
 
-	if (helloPBRMaterial == nullptr)
+		if (helloPBRShader == nullptr)
 	{
+		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs", true);
+
 		helloPBRMaterial = new Material(helloPBRShader);
-		helloPBRMaterial->AddTexture(albedo);
-		helloPBRMaterial->AddTexture(normal);
-		helloPBRMaterial->AddTexture(metallic);
-		helloPBRMaterial->AddTexture(roughness);
-		helloPBRMaterial->AddTexture(ao);
-		helloPBRMaterial->AddTexture(irradianceCubemap);
-		helloPBRMaterial->AddTexture(prefilterEnvironmentMap);
-		helloPBRMaterial->AddTexture(prefilterBRDFLUT);
+		helloPBRMaterial_Fill = new Material(helloPBRShader);
+	
+		RegisterPBRShader(helloPBRShader);
+		InitPBR();
 	}
 
-	if (helloPBRMaterial_Fill == nullptr)
-	{
-		helloPBRMaterial_Fill = new Material(helloPBRShader);
-		helloPBRMaterial_Fill->AddTexture(albedo_Fill);
-		helloPBRMaterial_Fill->AddTexture(normal_Fill);
-		helloPBRMaterial_Fill->AddTexture(metallic_Fill);
-		helloPBRMaterial_Fill->AddTexture(roughness_Fill);
-		helloPBRMaterial_Fill->AddTexture(ao_Fill);
-		helloPBRMaterial_Fill->AddTexture(irradianceCubemap);
-		helloPBRMaterial_Fill->AddTexture(prefilterEnvironmentMap);
-		helloPBRMaterial_Fill->AddTexture(prefilterBRDFLUT);
-	}
+	helloPBRMaterial->AddTexture(albedo);
+	helloPBRMaterial->AddTexture(normal);
+	helloPBRMaterial->AddTexture(metallic);
+	helloPBRMaterial->AddTexture(roughness);
+	helloPBRMaterial->AddTexture(ao);
+
+	helloPBRMaterial_Fill->AddTexture(albedo_Fill);
+	helloPBRMaterial_Fill->AddTexture(normal_Fill);
+	helloPBRMaterial_Fill->AddTexture(metallic_Fill);
+	helloPBRMaterial_Fill->AddTexture(roughness_Fill);
+	helloPBRMaterial_Fill->AddTexture(ao_Fill);
 
 	currentPBRMaterial = helloPBRMaterial;
+
 	ballsSceneInitialized = true;
 }
 
 // Main loop
 void PBR_Section::Loop()
 {
-	ChangeEnvironment();
-
-
 	PrefilterEnvDebug();
 	PBR_Basic::Loop();
 

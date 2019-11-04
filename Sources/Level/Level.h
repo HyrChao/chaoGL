@@ -15,14 +15,12 @@ public:
 	 Level()
 	 {
 		 GlobalInitialize();
-		 LoadEquirectangularSkydomeTexture();
 		 LevelInitialize();
 	 }
 	 Level(string skyHDRTexture_path)
 	 {
 		GlobalInitialize();
 		equirectangularSkyTex.path = skyHDRTexture_path;
-		LoadEquirectangularSkydomeTexture();
 		LevelInitialize();
 	 }
 
@@ -44,7 +42,7 @@ protected:
 
 	virtual void Loop();
 
-	void ChangeEnvironment()
+	virtual void ChangeEnvironment(Texture& envCubemap)
 	{
 		skydomMaterial->ClearTextrues();
 		skydomMaterial->AddTexture(envCubemap);
@@ -53,15 +51,12 @@ protected:
 private:
 
 
+
 	void GlobalInitialize()
 	{
 		if (!globalInitialized)
 		{
-
-
 			skydomeShader = new Shader("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
-			skydomMaterial = new Material(skydomeShader);
-			skydomMaterial->AddTexture(envCubemap);
 			Capture::PrefilterBRDF(prefilterBRDFLUT);
 			globalInitialized = true;
 		}
@@ -69,9 +64,12 @@ private:
 
 	void LevelInitialize()
 	{
+		LoadEquirectangularSkydomeTexture();
 		Capture::CaptureEnvironmentCubemap(equirectangularSkyTex, envCubemap);
 		Capture::CaptureIrradianceCubemap(envCubemap, irradianceCubemap);
 		Capture::CaptureSpecularPrefilterMap(envCubemap, prefilterEnvironmentMap);
+		skydomMaterial = new Material(skydomeShader);
+		skydomMaterial->AddTexture(envCubemap);
 	}
 
 	void LoadEquirectangularSkydomeTexture()
@@ -80,6 +78,7 @@ private:
 		{
 			unsigned int textureID = AssetsManager::CubeTextureFromFile(equirectangularSkyTex.path.c_str());
 			equirectangularSkyTex.id = textureID;
+			envCubemap.path = equirectangularSkyTex.path;
 		}
 	}
 
@@ -92,6 +91,7 @@ private:
 	{
 		glm::mat4 modelMat = glm::mat4(1.0f);
 		skydomMaterial->SetModelMat(modelMat);
+		Render::SetMaterialCameraVP(skydomMaterial);
 		skydomMaterial->use();
 		CommonAssets::DrawCube();
 	}
@@ -108,7 +108,7 @@ protected:
 	// Sun light (Main directional light)
 	Light* sunlight;
 
-	static Material* skydomMaterial;
+	Material* skydomMaterial;
 
 	bool resourceLoaded = false;
 	bool initialized = false;

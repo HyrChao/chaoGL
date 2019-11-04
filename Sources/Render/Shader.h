@@ -37,12 +37,12 @@ private:
 
 public:
 
-	Shader(const string& vsPath, const string& fsPath, bool isSceneShader = false)
+	Shader(const string& vsPath, const string& fsPath, bool isProp = false)
 	{
 		this->vsPath = vsPath;
 		this->fsPath = fsPath;
 		CreateShaderProgram();
-		isUseInScene = isSceneShader;
+		this->isProp = isProp;
 		Shader::loadedShaders[ID] = this;
 	}
 
@@ -133,7 +133,7 @@ public:
 		setMat4f(name, mat);;
 	}
 
-	bool isUseInScene = false;
+	bool isProp = false;
 
 protected:
 
@@ -231,14 +231,15 @@ protected:
 
 private:
 	
-	int GetCachedUniformLocation(const string& name)
+
+	inline int GetCachedUniformLocation(const string& name)
 	{
-		if (cachedUniformLocation.find(name) != cachedUniformLocation.end())
-		{
-			return cachedUniformLocation[name];
-		}
+		//if (cachedUniformLocation.find(name) != cachedUniformLocation.end())
+		//{
+		//	return cachedUniformLocation[name];
+		//}
 		int location = glGetUniformLocation(ID, name.c_str());
-		cachedUniformLocation[name] = location;
+		//cachedUniformLocation[name] = location;
 
 		return location;
 	}

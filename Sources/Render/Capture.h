@@ -52,6 +52,7 @@ public:
 		RenderDevice::SetViewport(res, res);  // don't forget to set view port to the same demensions before render
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 
+		irradianceConvolveMaterial->ClearTextrues();
 		irradianceConvolveMaterial->AddTexture(envCubemap);
 		irradianceConvolveMaterial->BindTextures();
 		irradianceConvolveMaterial->SetParam("projection", captureProjection);
@@ -81,6 +82,7 @@ public:
 		// generate mip fisrt then replace it
 		prefilterEnvironmentMap.Gen(Texture::TextureType::PrefilterEnv, res, res, Texture::RGB, Texture::Clamp, Texture::Trilinear, true, true);
 
+		specularPrefilterMaterial->ClearTextrues();
 		specularPrefilterMaterial->AddTexture(envCubemap);
 		specularPrefilterMaterial->BindTextures();
 		specularPrefilterMaterial->SetParam("projection", captureProjection);
@@ -120,6 +122,7 @@ public:
 	{
 		int res = 512;
 
+
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
@@ -130,6 +133,7 @@ public:
 		envCubemap.Gen(Texture::TextureType::Cube, res, res, Texture::TextureFormat::RGB, Texture::Clamp, Texture::Trilinear, true, false);
 
 		// Load skydome texture
+		equirectangularToCubemapMaterial->ClearTextrues();
 		equirectangularToCubemapMaterial->AddTexture(equirectangularMap);
 
 		RenderDevice::SetViewport(res, res);  // don't forget to set view port to the same demensions before render

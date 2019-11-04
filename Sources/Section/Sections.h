@@ -26,7 +26,7 @@ private:
 	Hello* hello;
 	PBR_Section* pbr_section;
 	Model_Section* model_section;
-    SectionEnum cureentSection = SectionEnum::PBR;
+    SectionEnum cureentSection = SectionEnum::LoadModel;
 
 
 };

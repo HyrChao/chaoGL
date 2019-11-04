@@ -47,10 +47,9 @@ void Model_Section::Loop()
 		//spotlightp1.outerCutoffAngle = 50.0f;
 		//Light* spotlight = new Light(spotlightp1);
 
-		CommonAssets::instance->standardPBRShader->use();
-		CommonAssets::instance->standardPBRShader->setInt("IBL.irradianceMap", TextureSlot::PBR_Irridiance);
-		CommonAssets::instance->standardPBRShader->setInt("IBL.prefilterEnv", TextureSlot::PBR_Prefilter);
-		CommonAssets::instance->standardPBRShader->setInt("IBL.BRDFPrefilterMap", TextureSlot::PBR_BRDF);
+
+		RegisterPBRShader(CommonAssets::instance->standardPBRShader);
+		InitPBR();
 
 		if (model == nullptr)
 		{
@@ -63,8 +62,6 @@ void Model_Section::Loop()
 	//float timeVal = glm::sin(Time::time) * 0.02f;
 	float timeVal = Time::deltaTime;
 
-	ChangeEnvironment();
-
 	// light params change with time
 	float sunDirChangeSpeed = 0.3;
 	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
@@ -74,14 +71,8 @@ void Model_Section::Loop()
 	CommonAssets::instance->standardPBRShader->SetParam("debug_pbr", pbrDebugParam);
 	CommonAssets::instance->standardPBRShader->SetParam("debug_light", lightDebugParam);
 
-	glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_BRDF);
-	glBindTexture(GL_TEXTURE_2D, prefilterBRDFLUT.id);
-	glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_Irridiance);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
-	glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_Prefilter);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterEnvironmentMap.id);
-
 	model->Rotate(glm::vec3(0, timeVal, 0));
 	model->Draw();
 
 }
+

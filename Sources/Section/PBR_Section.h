@@ -29,15 +29,19 @@ public:
 
 	PBR_Section() : PBR_Basic()
 	{
-		PBR_Basic::PBR_Basic();
-		Initialize();
+
 	}
 
+
 	void Loop();
+
+protected:
+
 
 private:
 
 	void Initialize();
+
 
 	void SwitchPBRScene(int sceneID)
 	{

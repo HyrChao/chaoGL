@@ -3,6 +3,7 @@
 
 PBR_Basic::~PBR_Basic()
 {
+
 }
 
 
@@ -17,7 +18,7 @@ void PBR_Basic::Loop()
 	}
 
 	PBRMaterialDebug();
-
+	BindPBRTextures();
 }
 
 void PBR_Basic::PBRMaterialDebug()

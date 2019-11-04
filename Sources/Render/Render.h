@@ -27,6 +27,8 @@ public:
 		for (unordered_map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
 		{
 			Shader* shader = it->second;
+			if (!shader->isProp)
+				continue;
 			shader->use();
 			list<Light*>::iterator i = Light::lights.begin();
 			int pointLightNum = 0;
@@ -81,11 +83,23 @@ public:
 	{
 		for (unordered_map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
 		{
-			it->second->use();
-			it->second->setMat4f("view", viewMat);
-			it->second->setMat4f("projection", projectMat);
-			it->second->setVec3f("viewPos", viewPos);
+			Shader* shader = it->second;
+
+			if (!shader->isProp)
+				continue;
+
+			shader->use();
+			shader->setMat4f("view", viewMat);
+			shader->setMat4f("projection", projectMat);
+			shader->setVec3f("viewPos", viewPos);
 		}
+	}
+
+	static void SetMaterialCameraVP(Material* material)
+	{
+		material->SetParam("view", viewMat);
+		material->SetParam("projection", projectMat);
+		material->SetParam("viewPos", viewPos);
 	}
 
     static void SetVertexShaderParams(Shader *shader, glm::mat4 model = glm::mat4(1.0))
