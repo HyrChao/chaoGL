@@ -132,30 +132,35 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName <<" in path "<<texturePath << " to model " <<name<<std::endl;
 		}
+		
 		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Normal)) != string::npos)
 		{
 			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Normal);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
+
 		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Roughness)) != string::npos)
 		{
 			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Roughness);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
+
 		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Metallic)) != string::npos)
 		{
 			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Metallic);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
+
 		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::MRO)) != string::npos)
 		{
 			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::MRO);
 			textures.push_back(textureLoaded);
 			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
 		}
+
 		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::AO)) != string::npos)
 		{
 			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::AO);
@@ -164,25 +169,48 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 		}
 	}
 
-    
-    //// process material
-    //if(mesh->mMaterialIndex >= 0)
-    //{
-    //    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-    //    vector<Texture> diffuseMaps = LoadMaterialTextures(material,
-    //                                                       aiTextureType_DIFFUSE, TextureType::Diffuse);
-    //    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    //    vector<Texture> specularMaps = LoadMaterialTextures(material,
-    //                                                        aiTextureType_SPECULAR, TextureType::Specular);
-    //    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    //}
-    
+	LoadDefaultTexture(textures, Texture::Albedo);
+	LoadDefaultTexture(textures, Texture::Normal);
+	LoadDefaultTexture(textures, Texture::Roughness);
+	LoadDefaultTexture(textures, Texture::Metallic);
+	LoadDefaultTexture(textures, Texture::AO);
+
     return Mesh(vertices, indices, textures, this->modelMat);
 }
 
 void Model::ProcessTextures()
 {
 
+}
+
+void Model::LoadDefaultTexture(vector<Texture>& textures, Texture::TextureType type)
+{
+	bool hasTex = false;
+	for (auto i = textures.begin(); i != textures.end(); i++)
+	{
+		Texture tex = *i;
+		if (tex.type == type)
+		{
+			hasTex = true;
+			break;
+		}
+			
+	}
+
+	if (!hasTex)
+	{
+		Texture texture;
+		texture.SetType(type);
+		if (type == Texture::AO || type == Texture::Albedo)
+			texture.id = CommonAssets::instance->whiteTex;
+		else if (type == Texture::Normal)
+			texture.id = CommonAssets::instance->flatNormal;
+		else
+			texture.id = CommonAssets::instance->blackTex;
+
+		textures.push_back(texture);
+	}
+	
 }
 
 Texture Model::LoadTexture(string path, Texture::TextureType type)
@@ -201,7 +229,7 @@ Texture Model::LoadTexture(string path, Texture::TextureType type)
 	if (!skip)
 	{
 		texture.id = AssetsManager::TextureFromFile_FullPath(path.c_str());
-		texture.type = type;
+		texture.SetType(type);
 		texture.path = path.c_str();
 		AssetsManager::textures_loaded.push_back(texture);
 	}

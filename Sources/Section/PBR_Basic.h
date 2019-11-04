@@ -29,8 +29,14 @@ protected:
 
 	void RegisterPBRShader(Shader* shader)
 	{
+		for (vector<Shader*>::iterator it = pbrShaders.begin(); it != pbrShaders.end(); it++)
+		{
+			if (*it == shader)
+				return;
+		}
 		pbrShaders.push_back(shader);
 	}
+
 	void DeregisterPBRShader(Shader* shader)
 	{
 		for (vector<Shader*>::iterator it = pbrShaders.begin(); it != pbrShaders.end(); it++)
@@ -48,7 +54,10 @@ protected:
 			shader->setInt("IBL.irradianceMap", TextureSlot::PBR_Irridiance);
 			shader->setInt("IBL.prefilterEnv", TextureSlot::PBR_Prefilter);
 			shader->setInt("IBL.BRDFPrefilterMap", TextureSlot::PBR_BRDF);
-
+			glm::vec3 basicColor = glm::vec3(1.0f);
+			glm::vec3 basicMRO = glm::vec3(1.0f);
+			shader->setVec3f("intensity.tint", basicColor);
+			shader->setVec3f("intensity.mro", basicMRO);
 		}
 	}
 

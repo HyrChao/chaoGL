@@ -45,18 +45,17 @@ public:
 
 		this->material = make_unique<Material>(CommonAssets::instance->standardPBRShader);
 
-		for (int i = 0; i < textures.size(); i++)
+		for (auto it = textures.begin(); it != textures.end(); it++)
 		{
-			material->AddTexture(textures[i]);
+			Texture tex = *it;
+			material->AddTexture(tex);
 		}
+		
 		material->SetModelMat(modelMat);
 
         SetupMesh();
     }
-  //  ~Mesh()
-  //  {
-		//// no need to manually delete material, because we already use unique ptr
-  //  }
+
     void Draw();
 
 private:

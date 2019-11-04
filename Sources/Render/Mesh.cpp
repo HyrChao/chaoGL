@@ -54,8 +54,6 @@ void Mesh::Draw()
 
 	material->use();
 
-    // draw mesh
-    glBindVertexArray(VAO);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -79,7 +77,9 @@ void Mesh::Draw()
 	//glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
+	
+	// draw mesh
+	glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

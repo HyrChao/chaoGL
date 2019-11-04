@@ -90,6 +90,7 @@ private:
     // functions
     void LoadModel_SingleMaterial(string path);
 	void ProcessTextures();
+	void LoadDefaultTexture(vector<Texture>& textures, Texture::TextureType type);
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
     vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type,

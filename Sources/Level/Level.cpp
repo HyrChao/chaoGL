@@ -3,7 +3,7 @@
 
 Shader* Level::skydomeShader;
 bool Level::globalInitialized;
-
+Texture Level::prefilterBRDFLUT;
 
 
 Level::~Level()

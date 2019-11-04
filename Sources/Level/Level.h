@@ -116,7 +116,7 @@ protected:
 	Texture envCubemap;
 	Texture irradianceCubemap;
 	Texture prefilterEnvironmentMap;
-	Texture prefilterBRDFLUT;
+	static Texture prefilterBRDFLUT;
 
 private:
 

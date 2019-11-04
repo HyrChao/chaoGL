@@ -140,7 +140,7 @@ public:
 		{
 		case Texture::Diffuse:   return "_diffuse";
 		case Texture::Albedo: return "_albedo";
-		case Texture::Metallic: return "_matallic";
+		case Texture::Metallic: return "_metallic";
 		case Texture::Roughness: return "_roughness";
 		case Texture::Normal:   return "_normal";
 		case Texture::Specular: return "_specular";

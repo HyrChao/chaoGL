@@ -197,6 +197,8 @@ vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
     return normalize(TBN * tangentNormal);
 }
 
+
+
 void main()
 {
     // Textures sampling
@@ -256,9 +258,10 @@ void main()
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
 
     // debug
+    vec3 debugNormal = 0.5 * N + 0.5;
+    // vec3 debugNormal = 0.5 * Tangent + 0.5;
+    // vec3 debugNormal = abs(vec3(normalize(TexCoord),0.0));
     finalColor = mix(finalColor, vec4(albedo,1), debug_pbr.x);
-    vec3 debugNormal = 0.5 * Tangent + 0.5;
-    // vec3 debugNormal = 0.5 * vec3(normalize(TexCoord),0.0) + 0.5;
     finalColor = mix(finalColor, vec4(debugNormal,1), debug_pbr.y);
     finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug_pbr.z);
     finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug_pbr.w);
