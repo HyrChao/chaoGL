@@ -9,6 +9,13 @@ void Model_Section::Loop()
 	glm::vec4 clearColor = glm::vec4(0.07f);
 	clearColor.a = 1.0f;
 	Render::SetClearColor(clearColor);
+
+	float scaleVal = 0.01;
+	glm::vec3 pos = glm::vec3(0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(scaleVal);
+	glm::mat4 modelMat;
+
 	if (!initialized) {
 
 		Light::ClearAllLight();
@@ -53,9 +60,25 @@ void Model_Section::Loop()
 
 		if (model == nullptr)
 		{
-			model = new Model("/Assets/Model/pbr/shaderBall.fbx", false, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.01));
+			//model = new Model("/Assets/Model/pbr/shaderBall.fbx", false, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.01));
+
+			model = new Model("/Assets/Model/pbr//shaderBall.fbx", false, pos, rotation, scale);
 		}
 
+		if (modelMat_gold == nullptr)
+		{
+			modelMat_gold = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/tex_gold");
+		}
+
+		if (modelMat_grass == nullptr)
+		{
+			modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/tex_grass");
+		}
+
+		if (modelMat_wood == nullptr)
+		{
+			modelMat_wood = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/tex_wood");
+		}
 
 		initialized = true;
 	}
@@ -71,8 +94,24 @@ void Model_Section::Loop()
 	CommonAssets::instance->standardPBRShader->SetParam("debug_pbr", pbrDebugParam);
 	CommonAssets::instance->standardPBRShader->SetParam("debug_light", lightDebugParam);
 
-	model->Rotate(glm::vec3(0, timeVal, 0));
-	model->Draw();
+	modelMat = glm::rotate(modelMat, rotation.x, glm::vec3(1.0, 0, 0));
+	modelMat = glm::rotate(modelMat, rotation.y, glm::vec3(0, 1.0, 0));
+	modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0, 0, 1.0));
+	modelMat = glm::scale(modelMat, scale);
+
+
+	pos = glm::vec3(-3.0f, 0.0f, 0.0f);
+	modelMat = glm::translate(modelMat, pos/scaleVal);
+	model->Draw(modelMat_grass, modelMat);
+
+	pos = glm::vec3(3.0f, 0.0f, 0.0f);
+	modelMat = glm::translate(modelMat, pos / scaleVal);
+	model->Draw(modelMat_gold, modelMat);
+
+	modelMat = glm::translate(modelMat, pos / scaleVal);
+	model->Draw(modelMat_wood, modelMat);
+
+	//model->Rotate(glm::vec3(0, timeVal, 0));
 
 }
 

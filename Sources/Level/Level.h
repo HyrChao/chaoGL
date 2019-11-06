@@ -37,10 +37,9 @@ public:
 	}
 
 
+	virtual void Loop();
 
 protected:
-
-	virtual void Loop();
 
 	virtual void ChangeEnvironment(Texture& envCubemap)
 	{

@@ -23,7 +23,9 @@ public:
 private:
 
 
-
+	Material* modelMat_gold = nullptr;
+	Material* modelMat_grass = nullptr;
+	Material* modelMat_wood = nullptr;
 	Model* model = nullptr;
 
 };

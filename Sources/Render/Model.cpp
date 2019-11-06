@@ -7,6 +7,21 @@
 
 #include "Model.h"
 
+
+// update model mat
+
+inline void Model::UpdateMat()
+{
+	glm::mat4 newModelMat = glm::mat4(1.0f);
+	newModelMat = glm::translate(newModelMat, this->pos);
+	newModelMat = glm::rotate(newModelMat, this->rotation.x, glm::vec3(1.0, 0, 0));
+	newModelMat = glm::rotate(newModelMat, this->rotation.y, glm::vec3(0, 1.0, 0));
+	newModelMat = glm::rotate(newModelMat, this->rotation.z, glm::vec3(0, 0, 1.0));
+	newModelMat = glm::scale(newModelMat, this->scale);
+
+	modelMat = newModelMat;
+}
+
 void Model::LoadModel_SingleMaterial(string path)
 {
     Assimp::Importer importer;
@@ -120,62 +135,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
             indices.push_back(face.mIndices[j]);
     }
 
-	// process textures
-	for (const auto & entry : std::experimental::filesystem::directory_iterator(directory))
-	{
-		// check all files in directory
-		string texturePath = entry.path().string();
-		string textureName = AssetsManager::ExtractFileName(texturePath);
-		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Albedo)) != string::npos)
-		{
-			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Albedo);
-			textures.push_back(textureLoaded);
-			std::cout << "Load texture " << textureName <<" in path "<<texturePath << " to model " <<name<<std::endl;
-		}
-		
-		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Normal)) != string::npos)
-		{
-			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Normal);
-			textures.push_back(textureLoaded);
-			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
-		}
-
-		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Roughness)) != string::npos)
-		{
-			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Roughness);
-			textures.push_back(textureLoaded);
-			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
-		}
-
-		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::Metallic)) != string::npos)
-		{
-			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::Metallic);
-			textures.push_back(textureLoaded);
-			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
-		}
-
-		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::MRO)) != string::npos)
-		{
-			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::MRO);
-			textures.push_back(textureLoaded);
-			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
-		}
-
-		if (textureName.find(AssetsManager::TextureTypeToString(Texture::TextureType::AO)) != string::npos)
-		{
-			Texture textureLoaded = LoadTexture(texturePath, Texture::TextureType::AO);
-			textures.push_back(textureLoaded);
-			std::cout << "Load texture " << textureName << " in path " << texturePath << " to model " << name << std::endl;
-		}
-	}
-
-	LoadDefaultTexture(textures, Texture::Albedo);
-	LoadDefaultTexture(textures, Texture::Normal);
-	LoadDefaultTexture(textures, Texture::Roughness);
-	LoadDefaultTexture(textures, Texture::Metallic);
-	LoadDefaultTexture(textures, Texture::AO);
-
-    return Mesh(vertices, indices, textures, this->modelMat);
+    return Mesh(vertices, indices, this->modelMat);
 }
 
 void Model::ProcessTextures()
@@ -183,58 +143,7 @@ void Model::ProcessTextures()
 
 }
 
-void Model::LoadDefaultTexture(vector<Texture>& textures, Texture::TextureType type)
-{
-	bool hasTex = false;
-	for (auto i = textures.begin(); i != textures.end(); i++)
-	{
-		Texture tex = *i;
-		if (tex.type == type)
-		{
-			hasTex = true;
-			break;
-		}
-			
-	}
 
-	if (!hasTex)
-	{
-		Texture texture;
-		texture.SetType(type);
-		if (type == Texture::AO || type == Texture::Albedo)
-			texture.id = CommonAssets::instance->whiteTex;
-		else if (type == Texture::Normal)
-			texture.id = CommonAssets::instance->flatNormal;
-		else
-			texture.id = CommonAssets::instance->blackTex;
-
-		textures.push_back(texture);
-	}
-	
-}
-
-Texture Model::LoadTexture(string path, Texture::TextureType type)
-{
-	Texture texture;
-	bool skip = false;
-	for (unsigned int j = 0; j < AssetsManager::textures_loaded.size(); j++)
-	{
-		if (std::strcmp(AssetsManager::textures_loaded[j].path.data(), path.c_str()) == 0)
-		{
-			texture = AssetsManager::textures_loaded[j];
-			skip = true;
-			break;
-		}
-	}
-	if (!skip)
-	{
-		texture.id = AssetsManager::TextureFromFile_FullPath(path.c_str());
-		texture.SetType(type);
-		texture.path = path.c_str();
-		AssetsManager::textures_loaded.push_back(texture);
-	}
-	return texture;
-}
 
 //vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
 //                                 TextureType typeName)
@@ -268,11 +177,67 @@ Texture Model::LoadTexture(string path, Texture::TextureType type)
 //    return textures;
 //}
 
-void Model::Draw()
+Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale) : Transform(pos, rotation, scale)
+{
+	string fullPath = FileSystem::getPath(path);
+	modelMat = glm::translate(modelMat, this->pos);
+	modelMat = glm::rotate(modelMat, this->rotation.x, glm::vec3(1.0, 0, 0));
+	modelMat = glm::rotate(modelMat, this->rotation.y, glm::vec3(0, 1.0, 0));
+	modelMat = glm::rotate(modelMat, this->rotation.z, glm::vec3(0, 0, 1.0));
+	modelMat = glm::scale(modelMat, this->scale);
+	gammaCorrection = gamma;
+	LoadModel_SingleMaterial(fullPath);
+}
+
+void Model::Draw(Material* material)
 {
     
     for (unsigned int i = 0; i < meshes.size(); i++) 
 	{     
-        meshes[i].Draw();
+        meshes[i].Draw(material);
     }
+}
+void Model::Draw(Material* material, glm::mat4 modelMat)
+{
+
+	for (unsigned int i = 0; i < meshes.size(); i++)
+	{
+		meshes[i].Draw(material, modelMat);
+	}
+}
+
+inline void Model::SetPos(glm::vec3 pos)
+{
+	Transform::SetPos(pos);
+	UpdateMat();
+}
+
+inline void Model::SetRotation(glm::vec3 rotation)
+{
+	Transform::SetRotation(rotation);
+	UpdateMat();
+}
+
+inline void Model::SetScale(glm::vec3 scale)
+{
+	Transform::SetScale(scale);
+	UpdateMat();
+}
+
+inline void Model::Translate(glm::vec3 translate)
+{
+	Transform::Translate(translate);
+	UpdateMat();
+}
+
+inline void Model::Rotate(glm::vec3 rotate)
+{
+	Transform::Rotate(rotate);
+	UpdateMat();
+}
+
+inline void Model::Scale(glm::vec3 scale)
+{
+	Transform::Scale(scale);
+	UpdateMat();
 }

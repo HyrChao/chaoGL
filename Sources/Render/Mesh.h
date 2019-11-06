@@ -37,37 +37,31 @@ public:
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     // func
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures, mat4 modelMat)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, glm::mat4 modelMat)
     {
         this->vertices = vertices;
         this->indices = indices;
 		this -> modelMat = modelMat;
 
-		this->material = make_unique<Material>(CommonAssets::instance->standardPBRShader);
-
-		for (auto it = textures.begin(); it != textures.end(); it++)
-		{
-			Texture tex = *it;
-			material->AddTexture(tex);
-		}
-		
-		material->SetModelMat(modelMat);
+		//this->material = make_unique<Material>(CommonAssets::instance->standardPBRShader);
 
         SetupMesh();
     }
 
-    void Draw();
+	void Draw(Material* material);
+	void Draw(Material * material, glm::mat4 modelMat);
 
 private:
     // render buffer
     unsigned int VAO, VBO, EBO;
-	mat4 modelMat;
+	glm::mat4 modelMat;
 	// provent error during destroction
-	unique_ptr<Material> material;
+	//unique_ptr<Material> material;
 	 
 	
     // func
     void SetupMesh();
+
     
     inline const char* TextureTypeToString(Texture::TextureType type)
     {

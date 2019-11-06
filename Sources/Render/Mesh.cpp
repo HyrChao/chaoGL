@@ -47,11 +47,23 @@ void Mesh::SetupMesh()
     glBindVertexArray(0);
 }
 
-void Mesh::Draw()
+void Mesh::Draw(Material* material, glm::mat4 modelMat)
+{
+
+	material->SetModelMat(modelMat);
+	material->use();
+
+	// draw mesh
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void Mesh::Draw(Material* material)
 {    
     //// transform string to lower
     //transform(name.begin(), name.end(), name.begin(), ::tolower);
-
+	material->SetModelMat(modelMat);
 	material->use();
 
 

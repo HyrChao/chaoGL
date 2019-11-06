@@ -19,52 +19,20 @@ public:
     
     bool gammaCorrection;
     
-    Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0),glm::vec3 rotation = glm::vec3(0),glm::vec3 scale = glm::vec3(1)) : Transform(pos,rotation,scale)
-    {
-		string fullPath = FileSystem::getPath(path);
-        modelMat = glm::translate(modelMat, this->pos);
-        modelMat = glm::rotate(modelMat, this->rotation.x,glm::vec3(1.0,0,0));
-        modelMat = glm::rotate(modelMat,this->rotation.y,glm::vec3(0,1.0,0));
-        modelMat = glm::rotate(modelMat,this->rotation.z,glm::vec3(0,0,1.0));
-        modelMat = glm::scale(modelMat, this->scale);
-        gammaCorrection = gamma;
-		LoadModel_SingleMaterial(fullPath);
-    }
-    void Draw();
+	Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0), glm::vec3 rotation = glm::vec3(0), glm::vec3 scale = glm::vec3(1));
+	void Draw(Material * material);
+
+	void Draw(Material * material, glm::mat4 modelMat);
 
 	glm::mat4 GetMat() { return modelMat; }
 
-	virtual void SetPos(glm::vec3 pos)
-	{
-		Transform::SetPos(pos);
-		UpdateMat();
-	}
-	virtual void SetRotation(glm::vec3 rotation)
-	{
-		Transform::SetRotation(rotation);
-		UpdateMat();
-	}
-	virtual void SetScale(glm::vec3 scale)
-	{
-		Transform::SetScale(scale);
-		UpdateMat();
-	}
-	virtual void Translate(glm::vec3 translate)
-	{
-		Transform::Translate(translate);
-		UpdateMat();
-	}
+	virtual void SetPos(glm::vec3 pos);
+	virtual void SetRotation(glm::vec3 rotation);
+	virtual void SetScale(glm::vec3 scale);
+	virtual void Translate(glm::vec3 translate);
 
-	virtual void Rotate(glm::vec3 rotate)
-	{
-		Transform::Rotate(rotate);
-		UpdateMat();
-	}
-	virtual void Scale(glm::vec3 scale)
-	{
-		Transform::Scale(scale);
-		UpdateMat();
-	}
+	virtual void Rotate(glm::vec3 rotate);
+	virtual void Scale(glm::vec3 scale);
     
 protected:
 	glm::mat4 modelMat;
@@ -75,17 +43,7 @@ private:
     string directory;
 	string name;
 	// update model mat
-	void UpdateMat()
-	{
-		glm::mat4 newModelMat = glm::mat4(1.0f);
-		newModelMat = glm::translate(newModelMat, this->pos);
-		newModelMat = glm::rotate(newModelMat, this->rotation.x, glm::vec3(1.0, 0, 0));
-		newModelMat = glm::rotate(newModelMat, this->rotation.y, glm::vec3(0, 1.0, 0));
-		newModelMat = glm::rotate(newModelMat, this->rotation.z, glm::vec3(0, 0, 1.0));
-		newModelMat = glm::scale(newModelMat, this->scale);
-
-		modelMat = newModelMat;
-	}
+	void UpdateMat();
 
     // functions
     void LoadModel_SingleMaterial(string path);

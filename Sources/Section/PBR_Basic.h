@@ -20,9 +20,10 @@ public:
 
 	~PBR_Basic();
 
+	virtual void Loop() override;
+
 protected:
 
-	virtual void Loop();
 
 	glm::vec4 pbrDebugParam = glm::vec4(0);
 	glm::vec4 lightDebugParam = glm::vec4(0);
