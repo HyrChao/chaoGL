@@ -293,7 +293,7 @@ void Material::LoadDefaultTexture(vector<Texture>& textures, Texture::TextureTyp
 	{
 		Texture texture;
 		texture.SetType(type);
-		if (type == Texture::AO || type == Texture::Albedo)
+		if (type == Texture::AO || type == Texture::Albedo || type == Texture::Roughness)
 			texture.id = CommonAssets::instance->whiteTex;
 		else if (type == Texture::Normal)
 			texture.id = CommonAssets::instance->flatNormal;

@@ -22,11 +22,38 @@ public:
 
 private:
 
+	void Shadowmapping();
+	void ShaderBallScene();
+	void RockScene();
+
+private:
+
+	bool shaderballSceneInitialized = false;
+	bool rockSceneInitialized = false;
+	bool shadowSceneInitialized = false;
 
 	Material* modelMat_gold = nullptr;
 	Material* modelMat_grass = nullptr;
 	Material* modelMat_wood = nullptr;
 	Model* model = nullptr;
+
+	Model* rockModel = nullptr;
+	Material* rockMat = nullptr;
+
+	Model* colaModel = nullptr;
+	Material* mat_cola = nullptr;
+	Model* groudModel = nullptr;
+	Material* mat_ground = nullptr;
+
+	enum Model_Scene
+	{
+		ShadowScene,
+		ShaderBalls,
+		Rock,
+		LastScene
+	};
+
+	unsigned int currentModelScene = ShadowScene;
 
 };
 

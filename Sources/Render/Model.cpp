@@ -22,15 +22,17 @@ inline void Model::UpdateMat()
 	modelMat = newModelMat;
 }
 
-void Model::LoadModel_SingleMaterial(string path)
+void Model::LoadModel(string path)
 {
     Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FixInfacingNormals);
     
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        cout << "ERROR::ASSIMP::" << importer.GetErrorString() << endl;
+		cout << "ERROR::ASSIMP::" << importer.GetErrorString() << endl;
+		cout << "Load model " << name << " failed!" << endl;
         return;
     }
     
@@ -38,7 +40,7 @@ void Model::LoadModel_SingleMaterial(string path)
     directory = path.substr(0, path.find_last_of("/"));
 	cout << "Loading model "<< name << " from path "<< directory << importer.GetErrorString() << endl;
     ProcessNode(scene->mRootNode, scene);
-	cout << "Load model " << name << "success" << endl;
+	cout << "Load model " << name << " success" << endl;
 }
 
 void Model::ProcessNode(aiNode *node, const aiScene *scene)
@@ -61,7 +63,6 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     vector<Vertex> vertices;
     vector<unsigned int> indices;
-    vector<Texture> textures;
     
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -138,10 +139,6 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     return Mesh(vertices, indices, this->modelMat);
 }
 
-void Model::ProcessTextures()
-{
-
-}
 
 
 
@@ -177,7 +174,7 @@ void Model::ProcessTextures()
 //    return textures;
 //}
 
-Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale) : Transform(pos, rotation, scale)
+Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation , glm::vec3 scale) : Transform(pos, rotation, scale)
 {
 	string fullPath = FileSystem::getPath(path);
 	modelMat = glm::translate(modelMat, this->pos);
@@ -186,7 +183,7 @@ Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation,
 	modelMat = glm::rotate(modelMat, this->rotation.z, glm::vec3(0, 0, 1.0));
 	modelMat = glm::scale(modelMat, this->scale);
 	gammaCorrection = gamma;
-	LoadModel_SingleMaterial(fullPath);
+	LoadModel(fullPath);
 }
 
 void Model::Draw(Material* material)

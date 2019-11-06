@@ -19,7 +19,7 @@ public:
     
     bool gammaCorrection;
     
-	Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0), glm::vec3 rotation = glm::vec3(0), glm::vec3 scale = glm::vec3(1));
+	Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
 	void Draw(Material * material);
 
 	void Draw(Material * material, glm::mat4 modelMat);
@@ -45,9 +45,10 @@ private:
 	// update model mat
 	void UpdateMat();
 
+	void LoadModel(string path);
+
     // functions
-    void LoadModel_SingleMaterial(string path);
-	void ProcessTextures();
+	void ProcessTextures(string path);
 	void LoadDefaultTexture(vector<Texture>& textures, Texture::TextureType type);
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
