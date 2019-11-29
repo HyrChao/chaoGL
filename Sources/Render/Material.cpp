@@ -1,6 +1,7 @@
 #include <Render/Material.h>
-
-
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 // set uniform values
 
 
@@ -28,7 +29,7 @@ Material::Material(Shader * shader, string texturePath)
 
 	vector<Texture> textures;
 	// process textures
-	for (const auto & entry : std::experimental::filesystem::directory_iterator(FileSystem::getPath(texturePath)))
+	for (const auto & entry : std::filesystem::directory_iterator(FileSystem::getPath(texturePath)))
 	{
 		// check all files in directory
 		string texturePath = entry.path().string();
