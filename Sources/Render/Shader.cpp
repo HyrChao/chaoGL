@@ -4,14 +4,6 @@
 unordered_map<int, Shader*> Shader::loadedShaders;
 Shader* Shader::errorShader;
 
-Shader::Shader(const string & vsPath, const string & fsPath, bool isProp)
-{
-	this->vsPath = vsPath;
-	this->fsPath = fsPath;
-	CreateShaderProgram();
-	this->isProp = isProp;
-	Shader::loadedShaders[ID] = this;
-}
 
 Shader::~Shader()
 {

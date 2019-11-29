@@ -9,73 +9,31 @@
 class PBR_Basic : public Level
 {
 public:
-	PBR_Basic() : Level()
-	{
+	PBR_Basic();
+	PBR_Basic(string skyHDRPath);
 
-	}
-	PBR_Basic(string skyHDRPath) : Level(skyHDRPath)
-	{
-		
-	}
-
-	~PBR_Basic();
+	virtual ~PBR_Basic();
 
 	virtual void Loop() override;
 
 protected:
 
+	virtual void LoadLevelResource() override = 0;
+	virtual void Initialize() override;
 
 	glm::vec4 pbrDebugParam = glm::vec4(0);
 	glm::vec4 lightDebugParam = glm::vec4(0);
 
-	void RegisterPBRShader(Shader* shader)
-	{
-		for (vector<Shader*>::iterator it = pbrShaders.begin(); it != pbrShaders.end(); it++)
-		{
-			if (*it == shader)
-				return;
-		}
-		pbrShaders.push_back(shader);
-	}
+	void RegisterPBRShader(Shader* shader);
 
-	void DeregisterPBRShader(Shader* shader)
-	{
-		for (vector<Shader*>::iterator it = pbrShaders.begin(); it != pbrShaders.end(); it++)
-			if ((*it) == shader)
-				pbrShaders.erase(it);
-	}
+	void DeregisterPBRShader(Shader* shader);
 
 	// Call after shader registered 
-	void InitPBR()
-	{
-		for (auto it = pbrShaders.begin(); it != pbrShaders.end(); it++)
-		{
-			Shader* shader = *it;
-			shader->use();
-			shader->setInt("IBL.irradianceMap", TextureSlot::PBR_Irridiance);
-			shader->setInt("IBL.prefilterEnv", TextureSlot::PBR_Prefilter);
-			shader->setInt("IBL.BRDFPrefilterMap", TextureSlot::PBR_BRDF);
-			glm::vec3 basicColor = glm::vec3(1.0f);
-			glm::vec3 basicMRO = glm::vec3(1.0f);
-			shader->setVec3f("intensity.tint", basicColor);
-			shader->setVec3f("intensity.mro", basicMRO);
-		}
-	}
+	void InitPBR();
 
-	void BindPBRTextures()
-	{
-		glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_BRDF);
-		glBindTexture(GL_TEXTURE_2D, prefilterBRDFLUT.id);
-		glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_Irridiance);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
-		glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_Prefilter);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterEnvironmentMap.id);
-	}
+	void BindPBRTextures();
 
-	void DeregisterAllPBRShader()
-	{
-		pbrShaders.clear();
-	}
+	void DeregisterAllPBRShader();
 
 	vector<Shader*> pbrShaders;
 

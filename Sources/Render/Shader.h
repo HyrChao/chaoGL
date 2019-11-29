@@ -14,6 +14,8 @@
 #include <File/filesystem.h>
 #include <unordered_map>
 
+#include <Debug/Debug.h>
+
 using namespace std;
 
 class Shader
@@ -37,11 +39,14 @@ private:
 
 public:
 
-	Shader(const string& vsPath, const string& fsPath, bool isProp = false);
+	Shader(const string& vsPath, const string& fsPath, bool isProp = false) :
+		vsPath(vsPath), fsPath(fsPath), isProp(isProp)
+	{
+		CreateShaderProgram();
+		Shader::loadedShaders[ID] = this;
+	}
 
 	~Shader();
-
-
 
 	// use shader program
 	virtual void use();

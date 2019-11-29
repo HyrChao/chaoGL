@@ -10,20 +10,10 @@ public:
 	~RenderDevice();
 
 
-	static void SetScreenSize(int screenWidth, int screenHeight)
-	{
-		RenderDevice::screenHeight = screenHeight;
-		RenderDevice::screenWidth = screenWidth;
-	}
+	static void SetScreenSize(int screenWidth, int screenHeight);
 	
-	static void SetViewport(int screenWidth, int screenHeight)
-	{
-		glViewport(0, 0, screenWidth, screenHeight);
-	}
-	static void ResetViewport()
-	{
-		glViewport(0, 0, screenWidth, screenHeight);
-	}
+	static void SetViewport(int screenWidth, int screenHeight);
+	static void ResetViewport();
 
 
 private:

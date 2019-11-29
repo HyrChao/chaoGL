@@ -55,7 +55,6 @@ private:
 
 	static Application* app;
 	static Sections* section;
-	static Render* render;
 
 	//toggle
 	static bool wireframeMode;

@@ -13,9 +13,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-//#include <assimp/Importer.hpp>
-//#include <assimp/postprocess.h>
-//#include <assimp/scene.h>
+#include <Render/IDrawable.h>
 
 using namespace std;
 
@@ -30,7 +28,7 @@ struct Vertex
 };
 
 
-class Mesh
+class Mesh : public IDrawable
 {
 public:
     // mesh data
@@ -48,8 +46,18 @@ public:
         SetupMesh();
     }
 
-	void Draw(Material* material);
-	void Draw(Material * material, glm::mat4 modelMat);
+	void Draw(Material* material) const override;
+	void Draw(Material * material, glm::mat4& modelMat) const override;
+	void Bind(DrawableList& drawablelist , DrawableContext drawablecontext) const override
+	{
+		drawablelist[(IDrawable*)(this)] = drawablecontext;
+	}
+	void Bind(DrawableList& drawablelist, Material* material, glm::mat4 modelMat) const override
+	{
+		DrawableContext context(material, modelMat);
+		drawablelist[(IDrawable*)(this)] = context;
+	}
+
 
 private:
     // render buffer

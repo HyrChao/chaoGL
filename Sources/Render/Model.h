@@ -22,7 +22,9 @@ public:
 	Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
 	void Draw(Material * material);
 
-	void Draw(Material * material, glm::mat4 modelMat);
+	void Draw(Material * material, glm::mat4& modelMat);
+
+	void AddToDrawlist(Material * material, glm::mat4& modelMat);
 
 	glm::mat4 GetMat() { return modelMat; }
 

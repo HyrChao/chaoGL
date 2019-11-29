@@ -3,7 +3,6 @@
 GLFWwindow* Application::window;
 Application* Application::app;
 Sections* Application::section;
-Render* Application::render;
 
 bool Application::wireframeMode;
 
@@ -49,19 +48,26 @@ Application::Application()
 	// Frame lock
 	glfwSwapInterval(1);
 
+	Render::PrepareRender();
+
 	Application::InitApplication();
+
 }
 
 Application::~Application()
 {
 	//delete app;
 	delete section;
-    delete render;
 }
 
 void Application::InitApplication()
 {
-    render = new Render();
+    //render = new Render();
+
+	if (Camera::main == nullptr)
+	{
+		Camera::main = new Camera();
+	}
     
     Mouse::SetMouseInitLocation(RenderDevice::screenWidth, RenderDevice::screenHeight);
     
@@ -84,7 +90,11 @@ void Application::Update()
 {
 	ProcessInput();
 
-    Render::DrawOnFrameBegin();
+	Render::ExcuteDrawOnFrameBegin();
+
+	section->SwitchSections();
+
+	Render::ExcuteDraw();
 
 	// Fill mode
 	if (wireframeMode)
@@ -92,12 +102,13 @@ void Application::Update()
 	else
         Render::WireframeMode(false);
 
-	section->SwitchSections();
 
+    Render::ExcuteDrawOnFrameEnd();
 
 	glfwSwapBuffers(Application::GetWindow());
 
-    Render::DrawOnFrameEnd();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     Time::UpdateTime();
 
 }

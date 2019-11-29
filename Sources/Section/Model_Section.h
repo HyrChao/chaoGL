@@ -20,6 +20,11 @@ public:
 
 	void Loop() override;
 
+protected:
+
+	void LoadLevelResource() override;
+	void Initialize() override;
+
 private:
 
 	void Shadowmapping();

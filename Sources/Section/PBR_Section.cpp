@@ -4,8 +4,6 @@
 
 void PBR_Section::Initialize()
 {
-	Light::ClearAllLight();
-
 	Light::LightParam pointLightp1;
 	pointLightp1.type = Light::LightType::Point;
 	pointLightp1.pos = glm::vec3(1.0f, 3.0f, 1.0f);
@@ -34,13 +32,16 @@ void PBR_Section::Initialize()
 	pointLightp3.quadratic = 1.8f;
 	Light* pointLight3 = new Light(pointLightp3);
 
-	Light::LightParam dirlightp1;
-	dirlightp1.type = Light::LightType::Directional;
-	dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
-	dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
-	dirlightp1.dir = glm::vec3(-1, -1, -1);;
-	Light* dirLight = new Light(dirlightp1);
-	sunlight = dirLight;
+	if (sunlight)
+	{
+		Light::LightParam sunlightParam;
+		sunlightParam.type = Light::LightType::Directional;
+		sunlightParam.pos = glm::vec3(10.f, 10.f, 10.f);
+		sunlightParam.color = glm::vec3(1.0f, 1.0f, 1.0f);
+		sunlightParam.dir = glm::vec3(-1, -1, -1);;
+		sunlight->SetLightParam(sunlightParam);
+	}
+
 
 	Light::LightParam spotlightp1;
 	spotlightp1.type = Light::LightType::Spot;
@@ -55,12 +56,9 @@ void PBR_Section::Initialize()
 	pbrSpotlight = spotlight;
 	
 
-
-	initialized = true;
 }
 
-
-void PBR_Section::InitBallsScene()
+void PBR_Section::LoadLevelResource()
 {
 	albedo.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
 	albedo.SetType(Texture::TextureType::Albedo);
@@ -73,6 +71,12 @@ void PBR_Section::InitBallsScene()
 	//ao = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
 	ao.id = CommonAssets::instance->whiteTex;
 	ao.SetType(Texture::TextureType::AO);
+}
+
+
+void PBR_Section::InitBallsScene()
+{
+
 
 	albedo_Fill.id = CommonAssets::instance->whiteTex;
 	albedo_Fill.SetType(Texture::TextureType::Albedo);
@@ -85,7 +89,7 @@ void PBR_Section::InitBallsScene()
 	ao_Fill.id = CommonAssets::instance->whiteTex;
 	ao_Fill.SetType(Texture::TextureType::AO);
 
-		if (helloPBRShader == nullptr)
+	if (helloPBRShader == nullptr)
 	{
 		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs", true);
 
@@ -118,11 +122,6 @@ void PBR_Section::Loop()
 {
 	PrefilterEnvDebug();
 	PBR_Basic::Loop();
-
-	if (!initialized)
-	{
-		Initialize();
-	}
 
 	FrameBufferDebug();
 

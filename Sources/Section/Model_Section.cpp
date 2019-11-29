@@ -1,6 +1,49 @@
 #include <Section/Model_Section.h>
 
 
+void Model_Section::LoadLevelResource()
+{
+	glm::vec3 pos = glm::vec3(0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(0.01f);
+
+	if (groudModel == nullptr)
+		groudModel = new Model("/Assets/Model/common/flatplane.fbx", false, pos, rotation, scale);
+
+	if (mat_ground == nullptr)
+		if (modelMat_grass == nullptr)
+		{
+			modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
+			mat_ground = modelMat_grass;
+		}
+		else
+			mat_ground = modelMat_grass;
+
+	if (colaModel == nullptr)
+		colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
+	//colaModel = new Model("/Assets/Model/pbr/rock/sharprockfree.obj", false, pos, rotation, scale);
+
+	if (mat_cola == nullptr)
+		mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
+
+}
+
+void Model_Section::Initialize()
+{
+	if (sunlight)
+	{
+		Light::LightParam dirlightp1;
+		dirlightp1.type = Light::LightType::Directional;
+		dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
+		dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
+		dirlightp1.dir = glm::vec3(-1, -1, -1);;
+		sunlight->SetLightParam(dirlightp1);
+	}
+
+
+	RegisterPBRShader(CommonAssets::instance->standardPBRShader);
+	InitPBR();
+}
 
 void Model_Section::Loop()
 {
@@ -10,53 +53,19 @@ void Model_Section::Loop()
 	clearColor.a = 1.0f;
 	Render::SetClearColor(clearColor);
 
-
-	if (!initialized) {
-
-		Light::ClearAllLight();
-
-		//Light::LightParam pointLightp1;
-		//pointLightp1.type = Light::LightType::Point;
-		//pointLightp1.pos = glm::vec3(0.0f, 3.0f, 0.0f);
-		//pointLightp1.color = glm::vec3(0.6f, 0.2f, 0.2f);
-		//pointLightp1.constant = 1.0f;
-		//pointLightp1.linear = 0.09f;
-		//pointLightp1.quadratic = 0.032f;
-		//Light* pointLight1 = new Light(pointLightp1);
-
-		//Light::LightParam pointLightp2;
-		//pointLightp2.type = Light::LightType::Point;
-		//pointLightp2.pos = glm::vec3(-5.0f, -3.0f, -5.0f);
-		//pointLightp2.color = glm::vec3(0.1f, 0.8f, 0.1f);
-		//pointLightp2.constant = 1.0f;
-		//pointLightp2.linear = 0.7f;
-		//pointLightp2.quadratic = 1.8f;
-		//Light* pointLight2 = new Light(pointLightp2);
-
-		Light::LightParam dirlightp1;
-		dirlightp1.type = Light::LightType::Directional;
-		dirlightp1.pos = glm::vec3(10.f, 10.f, 10.f);
-		dirlightp1.color = glm::vec3(1.0f, 1.0f, 1.0f);
-		dirlightp1.dir = glm::vec3(-1, -1, -1);;
-		sunlight = new Light(dirlightp1);
-
-		//Light::LightParam spotlightp1;
-		//spotlightp1.type = Light::LightType::Spot;
-		//spotlightp1.pos = glm::vec3(-3.0f, -1.0f, -8.0f);
-		//spotlightp1.color = glm::vec3(1.0f, 1.0f, 0.1f);
-		//spotlightp1.dir = glm::vec3(3.0f, 1.0f, 8.0f);
-		//spotlightp1.cutOffAngle = 30.0f;
-		//spotlightp1.outerCutoffAngle = 50.0f;
-		//Light* spotlight = new Light(spotlightp1);
-
-
-		RegisterPBRShader(CommonAssets::instance->standardPBRShader);
-		InitPBR();
-
-		initialized = true;
-	}
 	//float timeVal = glm::sin(Time::time) * 0.02f;
 	float timeVal = Time::deltaTime;
+
+	static bool shadowmapDebug;
+	if (Input::GetKeyOnce(GLFW_KEY_CAPS_LOCK))
+		if (shadowmapDebug)
+			shadowmapDebug = false;
+		else
+			shadowmapDebug = true;
+
+	if (shadowmapDebug)
+		Render::DisplayFramebufferTexture(Shadow::shadowMap);
+	//Render::DisplayFramebufferTexture(envCubemap);
 
 	if (Input::GetKeyOnce(GLFW_KEY_TAB))
 	{
@@ -102,41 +111,28 @@ void Model_Section::Shadowmapping()
 
 	if (!shadowSceneInitialized)
 	{
-		if (groudModel == nullptr)
-			groudModel = new Model("/Assets/Model/common/flatplane.fbx", false, pos, rotation, scale);
-
-		if (mat_ground == nullptr)
-			if (modelMat_grass == nullptr)
-			{
-				modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
-				mat_ground = modelMat_grass;
-			}
-			else
-				mat_ground = modelMat_grass;
-				
-		if (colaModel == nullptr)
-			colaModel - new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
-
-		if (mat_cola == nullptr)
-			mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
 		shadowSceneInitialized = true;
+
+		groudModel->AddToDrawlist(mat_ground, modelMat);
+		colaModel->AddToDrawlist(mat_cola, modelMat);
 	}
+
 
 	//modelMat = glm::rotate(modelMat, rotation.y, glm::vec3(0, 1.0, 0));
 	//modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0, 0, 1.0));
 	modelMat = glm::scale(modelMat, scale);
 
 	modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(1.0, 0, 0));
-	modelMat = glm::translate(modelMat, glm::vec3(0.0, -3 / scaleVal, 0.0f));
+	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, 10 / scaleVal));
 
-	groudModel->Draw(mat_ground, modelMat);
 
-	//colaModel->Draw(mat_cola, modelMat);
-	modelMat = glm::rotate(modelMat, -90.0f, glm::vec3(1.0, 0, 0));
+	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, -5 / scaleVal));
+	modelMat = glm::rotate(modelMat, glm::radians(-90.0f), glm::vec3(1.0, 0, 0));
+	modelMat = glm::scale(modelMat, glm::vec3(30.0f));
 }
 
-void Model_Section::ShaderBallScene()
+void Model_Section::ShaderBallScene() 
 {
 	float scaleVal = 0.01;
 	glm::vec3 pos = glm::vec3(0.0f);

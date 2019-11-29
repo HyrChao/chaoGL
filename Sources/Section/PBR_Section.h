@@ -5,26 +5,6 @@
 
 class PBR_Section : public PBR_Basic
 {
-private:
-
-	Material* helloPBRMaterial = nullptr;
-	Material* helloPBRMaterial_Fill = nullptr;
-	Texture albedo, normal, metallic, roughness, ao;
-	Texture albedo_Fill, normal_Fill, metallic_Fill, roughness_Fill, ao_Fill;
-
-
-	Material* currentPBRMaterial;
-
-	Light* pbrSpotlight;
-	Light* pbrPointlight1;
-
-	glm::vec3 basicColor = glm::vec3(1.0f);
-
-	float prefilterEnvMapRoughness_Max = 4.0f;
-	float prefilterEnvMapRoughness = 0.0f;
-
-	bool frameBufferDebug = false;
-
 public:
 
 	PBR_Section() : PBR_Basic()
@@ -35,13 +15,15 @@ public:
 
 	void Loop() override;
 
+
+
 protected:
 
+	void Initialize() override;
+
+	void LoadLevelResource() override;
 
 private:
-
-	void Initialize();
-
 
 	void SwitchPBRScene(int sceneID)
 	{
@@ -76,6 +58,28 @@ private:
 	bool prefilterEnvDebugEnabled = false;
 	float prefilterEnvDebugColdtime = 3.0;
 	void FrameBufferDebug();
+
+private:
+
+	Material* helloPBRMaterial = nullptr;
+	Material* helloPBRMaterial_Fill = nullptr;
+	Texture albedo, normal, metallic, roughness, ao;
+	Texture albedo_Fill, normal_Fill, metallic_Fill, roughness_Fill, ao_Fill;
+
+
+	Material* currentPBRMaterial;
+
+	Light* pbrSpotlight;
+	Light* pbrPointlight1;
+
+	glm::vec3 basicColor = glm::vec3(1.0f);
+
+	float prefilterEnvMapRoughness_Max = 4.0f;
+	float prefilterEnvMapRoughness = 0.0f;
+
+	bool frameBufferDebug = false;
+
+
 
 private:
 

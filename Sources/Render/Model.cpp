@@ -190,16 +190,25 @@ void Model::Draw(Material* material)
 {
     
     for (unsigned int i = 0; i < meshes.size(); i++) 
-	{     
+	{
         meshes[i].Draw(material);
     }
 }
-void Model::Draw(Material* material, glm::mat4 modelMat)
+void Model::Draw(Material* material, glm::mat4& modelMat)
 {
 
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
 		meshes[i].Draw(material, modelMat);
+	}
+}
+
+void Model::AddToDrawlist(Material* material, glm::mat4& modelMat)
+{
+
+	for (unsigned int i = 0; i < meshes.size(); i++)
+	{
+		Render::AddToCurrentDrawableList(&meshes[i], material, modelMat);
 	}
 }
 

@@ -22,11 +22,6 @@ public:
 
 	Material(string vsPath, string fsPath);
 	
-	//~Material()
-	//{
-
-	//}
-
 
 	void SetModelMat(glm::mat4 mat);
 

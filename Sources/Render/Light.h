@@ -56,60 +56,21 @@ public:
     
     Light(LightParam param);
 	~Light();
-    
-	void SetCutoffEulerAbgle(float eulerAngle)
-	{
-		this->cutOff = cos(glm::radians(eulerAngle));
-	}
 
-	void SetOuterCutoffEulerAbgle(float eulerAngle)
-	{
-		this->outerCutOff = cos(glm::radians(eulerAngle));
-	}
+	void SetLightParam(LightParam & param);
+
+	void SetCutoffEulerAbgle(float eulerAngle);
+
+	void SetOuterCutoffEulerAbgle(float eulerAngle);
 
     void DrawAvatar();
-    void SetCutOff(float angle)
-    {
-        cutOff = glm::radians(angle);
-    }
-    void SetOuterCutOff(float angle)
-    {
-        outerCutOff = glm::radians(angle);
-    }
-    float GetCutOffAngle() const
-    {
-        return glm::degrees(cutOff);
-    }
-    float GetOuterCutOffAngle() const
-    {
-        return glm::degrees(outerCutOff);
-    }
-	static void AddLight(Light* light)
-	{
-		lights.push_back(light);
-	}
-	static void DelLight(Light* light)
-	{
-		list<Light*>::iterator i = lights.begin();
-
-		while (i != lights.end())
-		{
-			Light *pLight = *i;
-
-			if (pLight == light)
-			{
-				i = lights.erase(i);
-			}
-			else
-			{
-				++i;
-			}
-		}
-	}
-	static void ClearAllLight()
-	{
-		lights.clear();
-	}
+	void SetCutOff(float angle);
+	void SetOuterCutOff(float angle);
+	float GetCutOffAngle() const;
+	float GetOuterCutOffAngle() const;
+	static void AddLight(Light* light);
+	static void DelLight(Light* light);
+	static void ClearAllLight();
 
     
 private:

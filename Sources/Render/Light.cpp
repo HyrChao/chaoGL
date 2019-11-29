@@ -40,6 +40,30 @@ Light::~Light()
     }
 }
 
+void Light::SetLightParam(LightParam& param)
+{
+	pos = param.pos;
+	type = param.type;
+	color = param.color;
+	dir = param.dir;
+	constant = param.constant;
+	linear = param.linear;
+	quadratic = param.quadratic;
+	SetCutoffEulerAbgle(param.cutOffAngle);
+	SetOuterCutoffEulerAbgle(param.outerCutoffAngle);
+}
+
+void Light::SetCutoffEulerAbgle(float eulerAngle)
+{
+	this->cutOff = cos(glm::radians(eulerAngle));
+}
+
+void Light::SetOuterCutoffEulerAbgle(float eulerAngle)
+{
+	this->outerCutOff = cos(glm::radians(eulerAngle));
+}
+
+
 
 void Light::DrawAvatar()
 {
@@ -78,6 +102,55 @@ void Light::DrawAvatar()
 	glBindVertexArray(CommonAssets::instance->cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
+}
+
+void Light::SetCutOff(float angle)
+{
+	cutOff = glm::radians(angle);
+}
+
+void Light::SetOuterCutOff(float angle)
+{
+	outerCutOff = glm::radians(angle);
+}
+
+float Light::GetCutOffAngle() const
+{
+	return glm::degrees(cutOff);
+}
+
+float Light::GetOuterCutOffAngle() const
+{
+	return glm::degrees(outerCutOff);
+}
+
+void Light::AddLight(Light * light)
+{
+	lights.push_back(light);
+}
+
+void Light::DelLight(Light * light)
+{
+	list<Light*>::iterator i = lights.begin();
+
+	while (i != lights.end())
+	{
+		Light *pLight = *i;
+
+		if (pLight == light)
+		{
+			i = lights.erase(i);
+		}
+		else
+		{
+			++i;
+		}
+	}
+}
+
+void Light::ClearAllLight()
+{
+	lights.clear();
 }
 
 
