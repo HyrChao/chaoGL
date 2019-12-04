@@ -3,28 +3,7 @@
 
 void Model_Section::LoadLevelResource()
 {
-	glm::vec3 pos = glm::vec3(0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f);
-	glm::vec3 scale = glm::vec3(0.01f);
 
-	if (groudModel == nullptr)
-		groudModel = new Model("/Assets/Model/common/flatplane.fbx", false, pos, rotation, scale);
-
-	if (mat_ground == nullptr)
-		if (modelMat_grass == nullptr)
-		{
-			modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
-			mat_ground = modelMat_grass;
-		}
-		else
-			mat_ground = modelMat_grass;
-
-	if (colaModel == nullptr)
-		colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
-	//colaModel = new Model("/Assets/Model/pbr/rock/sharprockfree.obj", false, pos, rotation, scale);
-
-	if (mat_cola == nullptr)
-		mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
 }
 
@@ -112,28 +91,47 @@ void Model_Section::Shadowmapping()
 	if (!shadowSceneInitialized)
 	{
 
-		shadowSceneInitialized = true;
+		glm::vec3 pos = glm::vec3(0.0f);
+		glm::vec3 rotation = glm::vec3(0.0f);
+		glm::vec3 scale = glm::vec3(0.01f);
 
-		groudModel->AddToDrawlist(mat_ground, modelMat);
-		colaModel->AddToDrawlist(mat_cola, modelMat);
+		if (groudModel == nullptr)
+			groudModel = new Model("/Assets/Model/common/flatplane.fbx", false, pos, rotation, scale);
+
+		if (mat_ground == nullptr)
+			if (modelMat_grass == nullptr)
+			{
+				modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
+				mat_ground = modelMat_grass;
+			}
+			else
+				mat_ground = modelMat_grass;
+
+		if (colaModel == nullptr)
+			colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
+		//colaModel = new Model("/Assets/Model/pbr/rock/sharprockfree.obj", false, pos, rotation, scale);
+
+		if (mat_cola == nullptr)
+			mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
+
+		shadowSceneInitialized = true;
 	}
 
-
-	//modelMat = glm::rotate(modelMat, rotation.y, glm::vec3(0, 1.0, 0));
-	//modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0, 0, 1.0));
 	modelMat = glm::scale(modelMat, scale);
-
 	modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(1.0, 0, 0));
 	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, 10 / scaleVal));
-
+	groudModel->AddToDrawlist(mat_ground, modelMat);
 
 	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, -5 / scaleVal));
 	modelMat = glm::rotate(modelMat, glm::radians(-90.0f), glm::vec3(1.0, 0, 0));
 	modelMat = glm::scale(modelMat, glm::vec3(30.0f));
+	colaModel->AddToDrawlist(mat_cola, modelMat);
 }
 
 void Model_Section::ShaderBallScene() 
 {
+	drawlist.clear();
+
 	float scaleVal = 0.01;
 	glm::vec3 pos = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);
@@ -192,6 +190,8 @@ void Model_Section::ShaderBallScene()
 
 void Model_Section::RockScene()
 {
+	drawlist.clear();
+
 	float scaleVal = 0.01;
 	glm::vec3 pos = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);

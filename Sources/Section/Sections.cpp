@@ -2,24 +2,37 @@
 
 Sections::Sections()
 {
-	hello = new Hello();
-	pbr_section = new PBR_Section();
-	model_section = new Model_Section();
+	hello = make_unique<Hello>();
+	pbrLevel = make_unique<PBR_Section>();
+	modelLevel = make_unique<Model_Section>();
 }
 
 Sections::~Sections()
 {
-	delete hello;
-	delete pbr_section;
+
 }
 void Sections::SetSection(SectionEnum selectedSection)
 {
 	cureentSection = selectedSection;
+	pbrLevel->Reset();
+	modelLevel->Reset();
 
-
-	hello->Reset();
-	pbr_section->Reset();
+	switch (cureentSection) {
+	case SectionEnum::None:
+		break;
+	case SectionEnum::BlinnPhong:
+		break;
+	case SectionEnum::LoadModel:
+		Level::currentLevel = modelLevel.get();
+		break;
+	case SectionEnum::PBR:
+		Level::currentLevel = pbrLevel.get();
+		break;
+	default:
+		break;
+	}
 }
+
 SectionEnum Sections::GetCurrentSection()
 {
 	return cureentSection;
@@ -27,6 +40,7 @@ SectionEnum Sections::GetCurrentSection()
 
 void Sections::SwitchSections()
 {
+
     switch (cureentSection) {
         case SectionEnum::None:
             break;
@@ -34,10 +48,10 @@ void Sections::SwitchSections()
             hello->HelloLight();
             break;
         case SectionEnum::LoadModel:
-            model_section->Loop();
+			modelLevel->Loop();
             break;
         case SectionEnum::PBR:
-			pbr_section->Loop();
+			pbrLevel->Loop();
             break;
         default:
             break;

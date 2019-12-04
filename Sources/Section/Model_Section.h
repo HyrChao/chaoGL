@@ -4,7 +4,7 @@
 
 #include<Section/PBR_Basic.h>
 
-class Model_Section : PBR_Basic
+class Model_Section : public PBR_Basic
 {
 public:
 	Model_Section() : PBR_Basic("/Assets/Texture/HDR/Mans_Outside_2k.hdr")
@@ -19,6 +19,7 @@ public:
 
 
 	void Loop() override;
+
 
 protected:
 

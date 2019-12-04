@@ -4,7 +4,7 @@
 Shader* Level::skydomeShader;
 bool Level::globalInitialized;
 Texture Level::prefilterBRDFLUT;
-
+Level* Level::currentLevel = nullptr;
 
 Level::Level()
 {
@@ -40,12 +40,19 @@ void Level::SetSunLight(Light * sunlight)
 	this->sunlight = sunlight;
 }
 
+Light* Level::GetSunLight()
+{
+	return this->sunlight;
+}
+
 void Level::Loop()
 {
 	DrawSkydome();
 
 	if (!resourceInitialized)
 	{
+		currentLevel = this;
+
 		LoadLevelResource();
 
 		SetSkyDome();

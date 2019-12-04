@@ -23,9 +23,9 @@ public:
 
 private:
 
-	Hello* hello;
-	PBR_Section* pbr_section;
-	Model_Section* model_section;
+	unique_ptr<Hello> hello;
+	unique_ptr<Level> pbrLevel;
+	unique_ptr<Level> modelLevel;
     SectionEnum cureentSection = SectionEnum::LoadModel;
 
 

@@ -23,5 +23,5 @@ Transform::Transform(glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale)
 
 Transform::~Transform()
 {
-    delete this;
+
 }

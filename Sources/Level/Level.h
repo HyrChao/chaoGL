@@ -21,6 +21,8 @@ public:
 
 	void SetSunLight(Light* sunlight);
 
+	Light* GetSunLight();
+
 
 	virtual void Loop();
 
@@ -46,7 +48,9 @@ private:
 	void DrawSkydome();
 
 
+public:
 
+	static Level* currentLevel;
 
 protected:
 
