@@ -56,8 +56,8 @@ void Render::ExcuteDrawOnFrameBegin()
 	// Render shadow if has sunlight
 	if (sunlight != nullptr)
 	{
-		glm::mat4 lightProject = glm::ortho(10.0f, -10.0f, 10.0f, -10.0f, Shadow::nearplane, Shadow::farplane);
-		glm::mat4 lightView = glm::lookAt(sunlight->pos, glm::vec3(0.0f), glm::vec3(1.0f));
+		glm::mat4 lightProject = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, Shadow::nearplane, Shadow::farplane);
+		glm::mat4 lightView = glm::lookAt(sunlight->dir, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		sunlightSpaceMatrix = lightProject * lightView;
 
 		Shadow::RenderShadowMap(sunlightSpaceMatrix, Render::ExcuteDrawlistWithMaterial);

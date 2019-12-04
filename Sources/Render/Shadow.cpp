@@ -19,11 +19,11 @@ void Shadow::RenderShadowMap(glm::mat4& sunlightSpaceMat, void (*drawfunc)(Mater
 		shadowMapingMaterial = new Material("/Shaders/Common/ShadowDepthWrite.vs", "/Shaders/Common/ShadowDepthWrite.fs");
 	}
 
-
 	unsigned int res = glm::pow(2, shadowRes);
 	glViewport(0, 0, res, res);
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
-	glClear(0);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	shadowMapingMaterial->SetParam("lightSpaceMatrix", sunlightSpaceMat);
 	drawfunc(shadowMapingMaterial);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	RenderDevice::ResetViewport();
