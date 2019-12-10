@@ -127,5 +127,11 @@ void PBR_Basic::PBRMaterialDebug()
 		lightDebugParam = glm::vec4(0);
 		lightDebugParam.y = 1;
 	}
+	if (Input::GetKeyOnce(GLFW_KEY_F7))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+		lightDebugParam.z = 1;
+	}
 }
 

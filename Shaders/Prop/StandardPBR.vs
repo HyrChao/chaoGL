@@ -12,10 +12,12 @@ out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
 out vec3 fragPos;
+out vec4 lightspaceFragpos;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 lightspaceMatrix;
 
 void main()
 {
@@ -28,6 +30,9 @@ void main()
 	Tangent = normalize(vec3(model * vec4(aTangent, 0.0)));
 	Bitangent = normalize(vec3(model * vec4(aBitangent, 0.0)));
 
-	fragPos = vec3(model * vec4(aPos, 1.0));
-    gl_Position = projection * view * model * vec4(aPos, 1.0f);
+	// for light calc
+	vec4 modelPos = model * vec4(aPos, 1.0);
+	fragPos = vec3(modelPos);
+	lightspaceFragpos = lightspaceMatrix * modelPos;
+    gl_Position = projection * view * modelPos;
 }

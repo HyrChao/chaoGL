@@ -54,10 +54,7 @@ void Model_Section::Loop()
 			currentModelScene = 0;
 	}
 
-	// light params change with time
-	float sunDirChangeSpeed = 0.3;
-	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
-	sunlight->dir = currentSunDir;
+
 
 	CommonAssets::instance->standardPBRShader->use();
 	CommonAssets::instance->standardPBRShader->SetParam("debug_pbr", pbrDebugParam);
@@ -65,16 +62,31 @@ void Model_Section::Loop()
 
 	if (currentModelScene == ShadowScene)
 	{
+		// light params change with time
+		float sunDirChangeSpeed = 0.3;
+		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), 0.5f + 0.5f * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
+		sunlight->dir = currentSunDir;
+
 		Shadowmapping();
 	}
 
 	if (currentModelScene == ShaderBalls)
-	{
+	{	
+		// light params change with time
+		float sunDirChangeSpeed = 0.3;
+		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
+		sunlight->dir = currentSunDir;
+
 		ShaderBallScene();
 	}
 
 	if (currentModelScene == Rock)
 	{
+		// light params change with time
+		float sunDirChangeSpeed = 0.3;
+		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
+		sunlight->dir = currentSunDir;
+
 		RockScene();
 	}
 
@@ -86,7 +98,7 @@ void Model_Section::Shadowmapping()
 	glm::vec3 pos = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(scaleVal);
-	glm::mat4 modelMat;
+	glm::mat4 modelMat = glm::mat4(1.0f);
 
 	if (!shadowSceneInitialized)
 	{
@@ -114,16 +126,25 @@ void Model_Section::Shadowmapping()
 		if (mat_cola == nullptr)
 			mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
+
 		shadowSceneInitialized = true;
 	}
 
+	CommonAssets::instance->standardPBRShader->use();
+	CommonAssets::instance->standardPBRShader->setMat4f("lightspaceMatrix", Shadow::lightspaceMat);
+	CommonAssets::instance->standardPBRShader->setFloat("shadow.useShadow", 1.0f);
+	CommonAssets::instance->standardPBRShader->setInt("shadow.shadowmap", TextureSlot::Shadowmap);
+	glActiveTexture(GL_TEXTURE0 + TextureSlot::Shadowmap);
+	glBindTexture(GL_TEXTURE_2D, Shadow::shadowMap.id);
+
+	float pi = glm::pi<float>();
+	modelMat = glm::rotate(modelMat,pi/2, glm::vec3(1.0f, 0.0f, 0.0f));
 	modelMat = glm::scale(modelMat, scale);
-	modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(1.0, 0, 0));
-	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, 10 / scaleVal));
+	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, 10));
 	groudModel->AddToDrawlist(mat_ground, modelMat);
 
-	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, -5 / scaleVal));
-	modelMat = glm::rotate(modelMat, glm::radians(-90.0f), glm::vec3(1.0, 0, 0));
+	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, -5));
+	modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
 	modelMat = glm::scale(modelMat, glm::vec3(30.0f));
 	colaModel->AddToDrawlist(mat_cola, modelMat);
 }

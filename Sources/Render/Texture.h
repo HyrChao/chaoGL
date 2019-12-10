@@ -44,7 +44,8 @@ enum TextureSlot
 	TempSlot4 = 20,
 	PBR_BRDF = 21,
 	PBR_Prefilter = 22,
-	PBR_Irridiance = 23
+	PBR_Irridiance = 23,
+	Shadowmap = 24
 };
 
 enum GL_TextureSlot

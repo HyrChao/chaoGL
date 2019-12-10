@@ -7,6 +7,7 @@ in vec3 Tangent;
 in vec4 vColor;
 in vec2 TexCoord;
 in vec3 fragPos;
+in vec4 lightspaceFragpos;
 
 struct Material 
 {
@@ -60,12 +61,20 @@ struct IBLMaps
 };
 uniform IBLMaps IBL;
 
+struct Shadow
+{
+    float useShadow;
+    sampler2D shadowmap;
+};
+uniform Shadow shadow;
+
 uniform vec3 viewPos;
 
 // r, g, b, a  albedo, normal, matellic, roughness
 uniform vec4 debug_pbr;
-// r, g, b, a  irradiance
+// r, g, b, a  irradiance b : shadow
 uniform vec4 debug_light;
+// r: shadow
 
 const float PI = 3.14159265359;
 const float MAX_REFLECTION_LOD = 4.0;
@@ -197,7 +206,28 @@ vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
     return normalize(TBN * tangentNormal);
 }
 
+float CalcShadow(vec4 lightspacePos, vec3 lightDir, vec3 normal)
+{
+    // calc shadowmap texcoord by lightspace frag pos
+    vec3 projectPos  = lightspacePos.xyz/lightspacePos.w;
+    // NDC to (0,1)
+    projectPos = projectPos * 0.5 + 0.5;
+    // sampler depth from shadow map
+    float closeDepth = texture(shadow.shadowmap, projectPos.xy).r;
+    
+    // float bias = 0.0;
+    // float bias = 0.005;
+    float bias = max(0.05 * dot(lightDir , normal), 0.005);
+    // float bias = -0.005;
+    float currentDepth = projectPos.z;
+    float shadow = currentDepth - bias > closeDepth ? 1.0 : 0.0;
 
+    // fix  cast shadow while point far from farplane
+    if(currentDepth > 1.0)
+        shadow = 0.0;
+
+    return shadow;
+}
 
 void main()
 {
@@ -248,7 +278,10 @@ void main()
     vec2 envBRDF  = texture(IBL.BRDFPrefilterMap, vec2(NdotV, roughness)).rg;
     vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
     vec3 ambient = (diffuse + specular) * ao;
-    vec3 color = ambient + Lo;
+
+    float shadowVal = CalcShadow(lightspaceFragpos, normalize(dirLight.direction), N);
+    shadowVal = mix(0, shadowVal, shadow.useShadow);
+    vec3 color = ambient + Lo * (1 - shadowVal);
 
     // HDR to LDR
     color = color / (color + vec3(1.0));
@@ -267,6 +300,7 @@ void main()
     finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug_pbr.w);
     finalColor = mix(finalColor, vec4(irradiance, 1), debug_light.x);
     finalColor = mix(finalColor, vec4(specular, 1), debug_light.y);
+    finalColor = mix(finalColor, vec4(1 - shadowVal, 1 - shadowVal, 1 - shadowVal, 1), debug_light.z);
     
     // finalColor = vec4(diffuse, 1.0);
     // finalColor = vec4(Lo, 1.0);

@@ -22,6 +22,8 @@ public:
 	//static unsigned int shadowMap;
 	static Texture shadowMap;
 
+	static glm::mat4 lightspaceMat;
+
 private:
 
 	static void PrepareShaderAndTransformMatrix();
