@@ -212,21 +212,33 @@ float CalcShadow(vec4 lightspacePos, vec3 lightDir, vec3 normal)
     vec3 projectPos  = lightspacePos.xyz/lightspacePos.w;
     // NDC to (0,1)
     projectPos = projectPos * 0.5 + 0.5;
-    // sampler depth from shadow map
-    float closeDepth = texture(shadow.shadowmap, projectPos.xy).r;
     
     // float bias = 0.0;
     // float bias = 0.005;
     float bias = max(0.05 * dot(lightDir , normal), 0.005);
     // float bias = -0.005;
     float currentDepth = projectPos.z;
-    float shadow = currentDepth - bias > closeDepth ? 1.0 : 0.0;
+
+    // PCF shadow
+    float pcfshadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(shadow.shadowmap, 0);
+    for (int i = -1; i<=1 ; i++)
+    {
+        for (int j = -1; j <= 1; j++)
+        {
+            vec2 coord = projectPos.xy + vec2(i,j) * texelSize;
+            float pcfDepth = texture(shadow.shadowmap, coord).r;
+            pcfshadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+
+    pcfshadow /= 9.0;
 
     // fix  cast shadow while point far from farplane
     if(currentDepth > 1.0)
-        shadow = 0.0;
+        pcfshadow = 0.0;
 
-    return shadow;
+    return pcfshadow;
 }
 
 void main()
