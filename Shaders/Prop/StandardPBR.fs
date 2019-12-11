@@ -79,6 +79,14 @@ uniform vec4 debug_light;
 const float PI = 3.14159265359;
 const float MAX_REFLECTION_LOD = 4.0;
 
+const vec2 poissonDisk[4] = vec2[](
+  vec2( -0.94201624, -0.39906216 ),
+  vec2( 0.94558609, -0.76890725 ),
+  vec2( -0.094184101, -0.92938870 ),
+  vec2( 0.34495938, 0.29387760 )
+);
+
+
 //Schlick Fresnel
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
@@ -215,24 +223,24 @@ float CalcShadow(vec4 lightspacePos, vec3 lightDir, vec3 normal)
     
     // float bias = 0.0;
     // float bias = 0.005;
-    float bias = max(0.05 * dot(lightDir , normal), 0.005);
+    // float bias = max(0.05 * (1 - dot(normal , -lightDir)), 0.005);
+    float bias = 0.005 * tan(acos(clamp(dot(normal, -lightDir), 0.0, 1.0)));
+    bias = clamp(bias, 0.0, 0.01);
     // float bias = -0.005;
     float currentDepth = projectPos.z;
 
     // PCF shadow
     float pcfshadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadow.shadowmap, 0);
-    for (int i = -1; i<=1 ; i++)
+
+    for (int i = 0; i<4; i++)
     {
-        for (int j = -1; j <= 1; j++)
-        {
-            vec2 coord = projectPos.xy + vec2(i,j) * texelSize;
-            float pcfDepth = texture(shadow.shadowmap, coord).r;
-            pcfshadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
-        }
+        vec2 coord = projectPos.xy + poissonDisk[i] * texelSize;
+        float pcfDepth = texture(shadow.shadowmap, coord).r;
+        pcfshadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
     }
 
-    pcfshadow /= 9.0;
+    pcfshadow /= 4.0;
 
     // fix  cast shadow while point far from farplane
     if(currentDepth > 1.0)
@@ -291,7 +299,7 @@ void main()
     vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
     vec3 ambient = (diffuse + specular) * ao;
 
-    float shadowVal = CalcShadow(lightspaceFragpos, normalize(dirLight.direction), N);
+    float shadowVal = CalcShadow(lightspaceFragpos, normalize(dirLight.direction), Normal);
     shadowVal = mix(0, shadowVal, shadow.useShadow);
     vec3 color = ambient + Lo * (1 - shadowVal);
 

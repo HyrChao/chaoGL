@@ -94,30 +94,26 @@ void Model_Section::Loop()
 
 void Model_Section::Shadowmapping()
 {
-	float scaleVal = 0.01f;
-	glm::vec3 pos = glm::vec3(0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f);
-	glm::vec3 scale = glm::vec3(scaleVal);
-	glm::mat4 modelMat = glm::mat4(1.0f);
+
 
 	if (!shadowSceneInitialized)
 	{
 
 		glm::vec3 pos = glm::vec3(0.0f);
 		glm::vec3 rotation = glm::vec3(0.0f);
-		glm::vec3 scale = glm::vec3(0.01f);
+		glm::vec3 scale = glm::vec3(1.0f);
 
 		if (groudModel == nullptr)
-			groudModel = new Model("/Assets/Model/common/flatplane.fbx", false, pos, rotation, scale);
+			groudModel = new Model("/Assets/Model/common/groundbox.fbx", false, pos, rotation, scale);
 
 		if (mat_ground == nullptr)
 			if (modelMat_grass == nullptr)
 			{
-				modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
-				mat_ground = modelMat_grass;
+				modelMat_wood = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
+				mat_ground = modelMat_wood;
 			}
 			else
-				mat_ground = modelMat_grass;
+				mat_ground = modelMat_wood;
 
 		if (colaModel == nullptr)
 			colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
@@ -137,23 +133,24 @@ void Model_Section::Shadowmapping()
 	glActiveTexture(GL_TEXTURE0 + TextureSlot::Shadowmap);
 	glBindTexture(GL_TEXTURE_2D, Shadow::shadowMap.id);
 
+	glm::mat4 model = glm::mat4(1.0f);
 	float pi = glm::pi<float>();
-	modelMat = glm::rotate(modelMat,pi/2, glm::vec3(1.0f, 0.0f, 0.0f));
-	modelMat = glm::scale(modelMat, scale);
-	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, 10));
-	groudModel->AddToDrawlist(mat_ground, modelMat);
+	//modelMat = glm::rotate(modelMat,pi/2, glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(0.0, 0.0f, 0.0f));
+	groudModel->AddToDrawlist(mat_ground, model);
 
-	modelMat = glm::translate(modelMat, glm::vec3(0.0, 0.0f, -5));
-	modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
-	modelMat = glm::scale(modelMat, glm::vec3(30.0f));
-	colaModel->AddToDrawlist(mat_cola, modelMat);
+	glm::mat4 model_cola = glm::mat4(1.0f);
+	model_cola = glm::translate(model_cola, glm::vec3(0.0, 0.0f, 0.0f));
+	//modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
+	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
+	colaModel->AddToDrawlist(mat_cola, model_cola);
 }
 
 void Model_Section::ShaderBallScene() 
 {
 	drawlist.clear();
 
-	float scaleVal = 0.01;
+	float scaleVal = 1.0f;
 	glm::vec3 pos = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(scaleVal);
@@ -195,15 +192,16 @@ void Model_Section::ShaderBallScene()
 	modelMat = glm::scale(modelMat, scale);
 
 
-	pos = glm::vec3(-3.0f, 0.0f, 0.0f);
-	modelMat = glm::translate(modelMat, pos / scaleVal);
+	pos = glm::vec3(-10.0f, 0.0f, 0.0f);
+	modelMat = glm::translate(modelMat, pos);
 	model->Draw(modelMat_grass, modelMat);
 
-	pos = glm::vec3(3.0f, 0.0f, 0.0f);
-	modelMat = glm::translate(modelMat, pos / scaleVal);
+	pos = glm::vec3(10.0f, 0.0f, 0.0f);
+	modelMat = glm::translate(modelMat, pos);
 	model->Draw(modelMat_gold, modelMat);
 
-	modelMat = glm::translate(modelMat, pos / scaleVal);
+	pos = glm::vec3(10.0f, 0.0f, 0.0f);
+	modelMat = glm::translate(modelMat, pos);
 	model->Draw(modelMat_wood, modelMat);
 
 	//model->Rotate(glm::vec3(0, timeVal, 0));
@@ -213,11 +211,11 @@ void Model_Section::RockScene()
 {
 	drawlist.clear();
 
-	float scaleVal = 0.01;
+	float scaleVal = 1.0f;
 	glm::vec3 pos = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(scaleVal);
-	glm::mat4 modelMat;
+	glm::mat4 modelMat = glm::mat4(1.0f);
 
 	if (!rockSceneInitialized)
 	{

@@ -25,8 +25,10 @@ inline void Model::UpdateMat()
 void Model::LoadModel(string path)
 {
     Assimp::Importer importer;
+	float globalScale = 10.0f;
+	importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, globalScale);
 	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_GlobalScale);
 	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_FixInfacingNormals);
     
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -174,9 +176,11 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 //    return textures;
 //}
 
-Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation , glm::vec3 scale) : Transform(pos, rotation, scale)
+Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale) : Transform(pos, rotation, scale)
+
 {
 	string fullPath = FileSystem::getPath(path);
+	modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, this->pos);
 	modelMat = glm::rotate(modelMat, this->rotation.x, glm::vec3(1.0, 0, 0));
 	modelMat = glm::rotate(modelMat, this->rotation.y, glm::vec3(0, 1.0, 0));

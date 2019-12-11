@@ -10,8 +10,8 @@ unsigned int Shadow::shadowRes = 10;
 Texture Shadow::shadowMap;
 unsigned int Shadow::shadowFBO;
 
-float Shadow::farplane = 7.5f;
-//float Shadow::farplane = 10000.0f;
+//float Shadow::farplane = 7.5f;
+float Shadow::farplane = 10.0f;
 float Shadow::nearplane = 1.0f;
 
 void Shadow::RenderShadowMap(glm::mat4& sunlightSpaceMat, void (*drawfunc)(Material*))
