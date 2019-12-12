@@ -108,13 +108,13 @@ void Model_Section::Shadowmapping()
 			groudModel = new Model("/Assets/Model/common/groundbox.fbx", false, pos, rotation, scale);
 
 		if (mat_ground == nullptr)
-			if (modelMat_grass == nullptr)
+			if (modelMat_wood == nullptr)
 			{
-				modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
-				mat_ground = modelMat_grass;
+				modelMat_wood = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
+				mat_ground = modelMat_wood;
 			}
 			else
-				mat_ground = modelMat_grass;
+				mat_ground = modelMat_wood;
 
 		if (colaModel == nullptr)
 			colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
@@ -145,6 +145,10 @@ void Model_Section::Shadowmapping()
 	//modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
 	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
 	colaModel->AddToDrawlist(mat_cola, model_cola);
+
+	//glm::mat4 model_cola2 = glm::mat4(1.0f);
+	//model_cola = glm::translate(model_cola2, glm::vec3(-10.0, 30.0f, 0.0f));
+	//colaModel->AddToDrawlist(mat_cola, model_cola2);
 }
 
 void Model_Section::ShaderBallScene() 
