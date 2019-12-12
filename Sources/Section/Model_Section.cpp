@@ -64,8 +64,8 @@ void Model_Section::Loop()
 	{
 		// light params change with time
 		float sunDirChangeSpeed = 0.3;
-		float scale = 1.0f;
-		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), 0.1f + scale + scale * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
+		float scale = -1.0f;
+		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), -0.1f + scale + scale * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
 		sunlight->dir = currentSunDir;
 
 		Shadowmapping();
@@ -110,11 +110,11 @@ void Model_Section::Shadowmapping()
 		if (mat_ground == nullptr)
 			if (modelMat_grass == nullptr)
 			{
-				modelMat_wood = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
-				mat_ground = modelMat_wood;
+				modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
+				mat_ground = modelMat_grass;
 			}
 			else
-				mat_ground = modelMat_wood;
+				mat_ground = modelMat_grass;
 
 		if (colaModel == nullptr)
 			colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);

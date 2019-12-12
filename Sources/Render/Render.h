@@ -76,9 +76,6 @@ private:
 	static DrawableList* currentDrawablelist;
 
     static glm::vec4 clearColor;
-
-	static glm::mat4 sunlightSpaceMatrix;
-
 	static Shader* framebufferDebugShader;
 	static bool framebufferDebugInitialized;
 

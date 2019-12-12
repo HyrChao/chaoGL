@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <Render/Material.h>
 
+class Light;
+
 class Shadow
 {
 public:
@@ -12,14 +14,24 @@ public:
 	Shadow() = delete;
 	~Shadow() = delete;
 
-	static void RenderShadowMap(glm::mat4& sunlightSpaceMat, void(*drawfunc)(Material*));
+	static void RenderShadowMap(void(*drawfunc)(Material*));
 
 	static void InitShadow();
+
+	static void SetActiveSunlight(Light* sunlight);
+
+	static glm::mat4& GetShadowProjectionMat();
+
+	static glm::mat4& GetShadowViewMat();
+
+public:
 
 	static float nearplane;
 	static float farplane;
 	static float shadowdistance;
 	static float shadowrange;
+
+	static bool debugShadowView;
 
 	//static unsigned int shadowMap;
 	static Texture shadowMap;
@@ -32,11 +44,18 @@ private:
 	static void RenderScene();
 	static void GenerateBuffers();
 
+private:
+
 	static Material* shadowMapingMaterial;
 	static bool shadowMapShaderLoaded;
 
 	static unsigned int shadowFBO;
 	static unsigned int shadowRes;
+
+	static Light* activeSunlight;
+
+	static glm::mat4 projectionMat;
+	static glm::mat4 viewMat;
 
 };
 

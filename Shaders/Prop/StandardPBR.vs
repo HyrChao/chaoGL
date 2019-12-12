@@ -8,9 +8,9 @@ layout (location = 5) in vec4 aColor;
 
 out vec4 vColor;
 out vec2 TexCoord;
-out vec3 Normal;
 out vec3 Tangent;
 out vec3 Bitangent;
+out vec3 Normal;
 out vec3 fragPos;
 out vec4 lightspaceFragpos;
 
@@ -26,9 +26,9 @@ void main()
 	//replace this : Normal = mat3(transpose(inverse(model))) * aNormal;
 	//can update with scale, but two cost, replace with simple one
 	// see https://learnopengl-cn.github.io/02%20Lighting/02%20Basic%20Lighting/ for detail
-	Normal = normalize(vec3(model * vec4(aNormal, 0.0)));
 	Tangent = normalize(vec3(model * vec4(aTangent, 0.0)));
 	Bitangent = normalize(vec3(model * vec4(aBitangent, 0.0)));
+	Normal = normalize(vec3(model * vec4(aNormal, 0.0)));
 
 	// for light calc
 	vec4 modelPos = model * vec4(aPos, 1.0);

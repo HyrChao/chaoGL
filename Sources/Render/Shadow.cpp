@@ -1,6 +1,6 @@
 #include<Render/Shadow.h>
-
 #include <Render/RenderDevice.h>
+#include <Render/Light.h>
 
 Material* Shadow::shadowMapingMaterial;
 bool Shadow::shadowMapShaderLoaded = false;
@@ -16,19 +16,30 @@ float Shadow::nearplane = 1.0f;
 float Shadow::shadowdistance = 50.0f;
 float Shadow::shadowrange = 20.0f;
 
-void Shadow::RenderShadowMap(glm::mat4& sunlightSpaceMat, void (*drawfunc)(Material*))
+bool Shadow::debugShadowView = false;
+
+
+glm::mat4 Shadow::projectionMat;
+glm::mat4 Shadow::viewMat;
+
+Light* Shadow::activeSunlight = nullptr;
+
+void Shadow::RenderShadowMap(void (*drawfunc)(Material*))
 {
 	if (!shadowMapShaderLoaded)
 	{
 		shadowMapingMaterial = new Material("/Shaders/Common/ShadowDepthWrite.vs", "/Shaders/Common/ShadowDepthWrite.fs");
 	}
 
+	projectionMat = glm::ortho(-shadowrange, shadowrange, -shadowrange, shadowrange, nearplane, farplane);
+	viewMat = glm::lookAt(glm::normalize(-activeSunlight->dir) * shadowdistance, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightspaceMat = projectionMat * viewMat;
+
 	unsigned int res = glm::pow(2, shadowRes);
 	glViewport(0, 0, res, res);
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	lightspaceMat = sunlightSpaceMat;
-	shadowMapingMaterial->SetParam("lightSpaceMatrix", sunlightSpaceMat);
+	shadowMapingMaterial->SetParam("lightSpaceMatrix", lightspaceMat);
 	// cull front to fix Peter Panning
 	glCullFace(GL_FRONT);
 	drawfunc(shadowMapingMaterial);
@@ -66,6 +77,21 @@ void Shadow::InitShadow()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glActiveTexture(0);
+}
+
+void Shadow::SetActiveSunlight(Light * sunlight)
+{
+	activeSunlight = sunlight;
+}
+
+glm::mat4 & Shadow::GetShadowProjectionMat()
+{
+	return projectionMat;
+}
+
+glm::mat4 & Shadow::GetShadowViewMat()
+{
+	return viewMat;
 }
 
 void Shadow::RenderScene()

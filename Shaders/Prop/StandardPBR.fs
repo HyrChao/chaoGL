@@ -70,6 +70,7 @@ uniform Shadow shadow;
 
 uniform vec3 viewPos;
 
+uniform float normalstr = 0.3;
 // r, g, b, a  albedo, normal, matellic, roughness
 uniform vec4 debug_pbr;
 // r, g, b, a  irradiance b : shadow
@@ -206,9 +207,9 @@ vec3 CalcSpotLightIrradiance(SpotLight light , vec3 N,vec3 V, vec3 albedo,float 
 
 vec3 ConvertNormalToWorldspace(vec3 tangentNormal)
 {
-    vec3 N   = Normal;
     vec3 T  = Tangent;
     vec3 B  = Bitangent;
+    vec3 N  = Normal;
     mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangentNormal);
@@ -255,8 +256,9 @@ void main()
     vec3 albedo = texture(material.albedo,TexCoord).rgb; 
     albedo = pow(albedo,vec3(2.2f)); // convert from SRGB to linear space
     albedo *= intensity.tint;
-    vec3 normal = texture(material.normal, TexCoord).xyz * 2.0 - 1.0;
-    normal = ConvertNormalToWorldspace(normal); //PBR calc need wordspace normal
+    vec3 tangentNormal = normalize(texture(material.normal, TexCoord).xyz * 2.0 - 1.0);
+    vec3 scaledTangentNormal = normalize(vec3(tangentNormal.xy * normalstr, 1.0f));
+    vec3 normal = ConvertNormalToWorldspace(scaledTangentNormal); //PBR calc need wordspace normal
     float metallic = texture(material.metallic, TexCoord).r;
     metallic *= intensity.mro.x;
     float roughness = texture(material.roughness, TexCoord).r;
@@ -292,17 +294,19 @@ void main()
     vec3 Kd = 1 - Ks;
     Kd *= (1.0 - metallic);
     // Sample diffuse irradiance from irradiance cube map
-    vec3 irradiance = Kd * texture(IBL.irradianceMap, N).rgb;
-    vec3 diffuse = irradiance * albedo;
+    vec3 indirectLight = Kd * texture(IBL.irradianceMap, N).rgb;
+    vec3 indirectDiffuse = indirectLight * albedo;
     vec3 prefilteredColor = textureLod(IBL.prefilterEnv, R,  roughness * MAX_REFLECTION_LOD).rgb;
     vec2 envBRDF  = texture(IBL.BRDFPrefilterMap, vec2(NdotV, roughness)).rg;
-    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
-    vec3 ambient = (diffuse + specular) * ao;
+    vec3 indirectSpecular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+    vec3 ambient = (indirectDiffuse + indirectSpecular) * ao;
 
     float shadowVal = CalcShadow(lightspaceFragpos, normalize(dirLight.direction), Normal);
     shadowVal = mix(0, shadowVal, shadow.useShadow);
-    vec3 color = ambient + Lo * (1 - shadowVal);
+    float shadowMul = 1 - shadowVal;
 
+    vec3 lighting = Lo * shadowMul;
+    vec3 color = ambient + lighting;
     // HDR to LDR
     color = color / (color + vec3(1.0));
     // Gamma correction
@@ -311,16 +315,16 @@ void main()
     vec4 finalColor = vec4(color.r, color.g, color.b, 1.0f);
 
     // debug
-    vec3 debugNormal = 0.5 * N + 0.5;
+    vec3 debugNormal = 0.5 * normal + 0.5;
     // vec3 debugNormal = 0.5 * Tangent + 0.5;
     // vec3 debugNormal = abs(vec3(normalize(TexCoord),0.0));
     finalColor = mix(finalColor, vec4(albedo,1), debug_pbr.x);
     finalColor = mix(finalColor, vec4(debugNormal,1), debug_pbr.y);
     finalColor = mix(finalColor, vec4(metallic,metallic,metallic,1), debug_pbr.z);
     finalColor = mix(finalColor, vec4(roughness,roughness,roughness,1), debug_pbr.w);
-    finalColor = mix(finalColor, vec4(irradiance, 1), debug_light.x);
-    finalColor = mix(finalColor, vec4(specular, 1), debug_light.y);
-    finalColor = mix(finalColor, vec4(1 - shadowVal, 1 - shadowVal, 1 - shadowVal, 1), debug_light.z);
+    finalColor = mix(finalColor, vec4(ambient, 1), debug_light.x);
+    finalColor = mix(finalColor, vec4(lighting, 1), debug_light.y);
+    finalColor = mix(finalColor, vec4(shadowMul, shadowMul, shadowMul, 1), debug_light.z);
     
     // finalColor = vec4(diffuse, 1.0);
     // finalColor = vec4(Lo, 1.0);

@@ -5,7 +5,6 @@ glm::mat4 Render::projectMat;
 glm::mat4 Render::viewMat;
 glm::vec3 Render::viewPos;
 
-glm::mat4 Render::sunlightSpaceMatrix;
 
 Light* Render::sunlight;
 Shader* Render::framebufferDebugShader;
@@ -56,12 +55,8 @@ void Render::ExcuteDrawOnFrameBegin()
 	// Render shadow if has sunlight
 	if (sunlight != nullptr)
 	{
-		glm::mat4 lightProject = glm::ortho(-Shadow::shadowrange, Shadow::shadowrange, -Shadow::shadowrange, Shadow::shadowrange, Shadow::nearplane, Shadow::farplane);
-		//glm::mat4 lightProject = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, Shadow::nearplane, Shadow::farplane);
-		glm::mat4 lightView = glm::lookAt(glm::normalize(sunlight->dir) * Shadow::shadowdistance, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		sunlightSpaceMatrix = lightProject * lightView;
-
-		Shadow::RenderShadowMap(sunlightSpaceMatrix, Render::ExcuteDrawlistWithMaterial);
+		Shadow::SetActiveSunlight(sunlight);
+		Shadow::RenderShadowMap(Render::ExcuteDrawlistWithMaterial);
 	}
 }
 
@@ -109,11 +104,14 @@ void Render::ExcuteMainDrawlist()
 		IDrawable* drawable = (*i).first;
 
 		Material* mtl = context.material;
-		// FOR DEBUG SHADOW
-		//glm::mat4 lightProject = glm::ortho(-Shadow::shadowdistance, Shadow::shadowdistance, -Shadow::shadowdistance, Shadow::shadowdistance, Shadow::nearplane, Shadow::farplane);
-		//glm::mat4 lightView = glm::lookAt(sunlight->dir * Shadow::shadowdistance, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		//mtl->SetParam("projection", lightProject);
-		//mtl->SetParam("view", lightView);
+		if (Shadow::debugShadowView)
+		{
+			// FOR DEBUG SHADOW
+			glm::mat4 lightProject = Shadow::GetShadowProjectionMat();
+			glm::mat4 lightView = Shadow::GetShadowViewMat();
+			mtl->SetParam("projection", lightProject);
+			mtl->SetParam("view", lightView);
+		}
 		drawable->Draw(context.material, context.modelMat);
 	}
 }
