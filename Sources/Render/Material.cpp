@@ -224,7 +224,7 @@ void Material::SetParam(const string & name, float x, float y, float z)
 	vec3Params[name] = glm::vec3(x, y, z);
 }
 
-void Material::SetParam(const string & name, glm::vec3 vec3)
+void Material::SetParam(const string & name, glm::vec3& vec3)
 {
 	vec3Params[name] = vec3;
 }
@@ -234,12 +234,12 @@ void Material::SetParam(const string & name, float x, float y, float z, float w)
 	vec4Params[name] = glm::vec4(x, y, z, w);
 }
 
-void Material::SetParam(const string & name, glm::vec4 vec4)
+void Material::SetParam(const string & name, glm::vec4& vec4)
 {
 	vec4Params[name] = vec4;
 }
 
-void Material::SetParam(const string & name, glm::mat4 mat)
+void Material::SetParam(const string & name, glm::mat4& mat)
 {
 	mat4Params[name] = mat;
 }

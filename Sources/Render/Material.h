@@ -49,10 +49,10 @@ public:
 	void SetParam(const string &name, int value);
 	void SetParam(const string &name, float value);
 	void SetParam(const string &name, float x, float y, float z);
-	void SetParam(const string &name, glm::vec3 vec3);
+	void SetParam(const string &name, glm::vec3& vec3);
 	void SetParam(const string &name, float x, float y, float z, float w);
-	void SetParam(const string &name, glm::vec4 vec4);
-	void SetParam(const string &name, glm::mat4 mat);
+	void SetParam(const string &name, glm::vec4& vec4);
+	void SetParam(const string &name, glm::mat4& mat);
 
 private:
 

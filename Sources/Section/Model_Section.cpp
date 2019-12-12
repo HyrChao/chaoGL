@@ -64,7 +64,8 @@ void Model_Section::Loop()
 	{
 		// light params change with time
 		float sunDirChangeSpeed = 0.3;
-		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), 0.5f + 0.5f * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
+		float scale = 1.0f;
+		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), 0.1f + scale + scale * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
 		sunlight->dir = currentSunDir;
 
 		Shadowmapping();
@@ -87,7 +88,7 @@ void Model_Section::Loop()
 		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
 		sunlight->dir = currentSunDir;
 
-		RockScene();
+		FireExtScene();
 	}
 
 }
@@ -140,7 +141,7 @@ void Model_Section::Shadowmapping()
 	groudModel->AddToDrawlist(mat_ground, model);
 
 	glm::mat4 model_cola = glm::mat4(1.0f);
-	model_cola = glm::translate(model_cola, glm::vec3(0.0, 0.0f, 0.0f));
+	model_cola = glm::translate(model_cola, glm::vec3(-10.0, 0.0f, 0.0f));
 	//modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
 	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
 	colaModel->AddToDrawlist(mat_cola, model_cola);
@@ -202,12 +203,12 @@ void Model_Section::ShaderBallScene()
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
 	modelMat = glm::translate(modelMat, pos);
-	model->Draw(modelMat_wood, modelMat);
+	model->Draw(modelMat_wood, modelMat); 
 
 	//model->Rotate(glm::vec3(0, timeVal, 0));
 }
 
-void Model_Section::RockScene()
+void Model_Section::FireExtScene()
 {
 	drawlist.clear();
 

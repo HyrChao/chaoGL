@@ -37,7 +37,7 @@ void Shader::setFloat(const std::string & name, float value)
 	glUniform1f(GetCachedUniformLocation(name), value);
 }
 
-void Shader::setVec2f(const std::string & name, glm::vec2 vec2)
+void Shader::setVec2f(const std::string & name, glm::vec2& vec2)
 {
 	glUniform2f(GetCachedUniformLocation(name), vec2.x, vec2.y);
 }
@@ -47,7 +47,7 @@ void Shader::setVec3f(const std::string & name, float x, float y, float z)
 	glUniform3f(GetCachedUniformLocation(name), x, y, z);
 }
 
-void Shader::setVec3f(const std::string & name, glm::vec3 vec3)
+void Shader::setVec3f(const std::string & name, glm::vec3& vec3)
 {
 	glUniform3f(GetCachedUniformLocation(name), vec3.x, vec3.y, vec3.z);
 }
@@ -57,12 +57,12 @@ void Shader::setVec4f(const std::string & name, float x, float y, float z, float
 	glUniform4f(GetCachedUniformLocation(name), x, y, z, w);
 }
 
-void Shader::setVec4f(const std::string & name, glm::vec4 vec4)
+void Shader::setVec4f(const std::string & name, glm::vec4& vec4)
 {
 	glUniform4f(GetCachedUniformLocation(name), vec4.x, vec4.y, vec4.z, vec4.w);
 }
 
-void Shader::setMat4f(const std::string & name, glm::mat4 mat)
+void Shader::setMat4f(const std::string & name, glm::mat4& mat)
 {
 	glUniformMatrix4fv(GetCachedUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat));
 }
@@ -87,7 +87,7 @@ void Shader::SetParam(const std::string & name, float x, float y, float z)
 	setVec3f(name, x, y, z);
 }
 
-void Shader::SetParam(const std::string & name, glm::vec3 vec3)
+void Shader::SetParam(const std::string & name, glm::vec3& vec3)
 {
 	setVec3f(name, vec3);
 }
@@ -97,12 +97,12 @@ void Shader::SetParam(const std::string & name, float x, float y, float z, float
 	setVec4f(name, x, y, z, w);
 }
 
-void Shader::SetParam(const std::string & name, glm::vec4 vec4)
+void Shader::SetParam(const std::string & name, glm::vec4& vec4)
 {
 	setVec4f(name, vec4);
 }
 
-void Shader::SetParam(const std::string & name, glm::mat4 mat)
+void Shader::SetParam(const std::string & name, glm::mat4& mat)
 {
 	setMat4f(name, mat);;
 }

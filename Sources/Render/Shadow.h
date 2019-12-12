@@ -18,6 +18,8 @@ public:
 
 	static float nearplane;
 	static float farplane;
+	static float shadowdistance;
+	static float shadowrange;
 
 	//static unsigned int shadowMap;
 	static Texture shadowMap;

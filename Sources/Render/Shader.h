@@ -54,22 +54,22 @@ public:
 	void setBool(const std::string &name, bool value);
 	void setInt(const std::string &name, int value);
 	void setFloat(const std::string &name, float value);
-	void setVec2f(const std::string &name, glm::vec2 vec2);
+	void setVec2f(const std::string &name, glm::vec2& vec2);
 	void setVec3f(const std::string &name, float x, float y, float z);
-	void setVec3f(const std::string &name, glm::vec3 vec3);
+	void setVec3f(const std::string &name, glm::vec3& vec3);
 	void setVec4f(const std::string &name, float x, float y, float z, float w);
-	void setVec4f(const std::string &name, glm::vec4 vec4);
-	void setMat4f(const std::string &name, glm::mat4 mat);
+	void setVec4f(const std::string &name, glm::vec4& vec4);
+	void setMat4f(const std::string &name, glm::mat4& mat);
 
 
 	void SetParam(const std::string &name, bool value);
 	void SetParam(const std::string &name, int value);
 	void SetParam(const std::string &name, float value);
 	void SetParam(const std::string &name, float x, float y, float z);
-	void SetParam(const std::string &name, glm::vec3 vec3);
+	void SetParam(const std::string &name, glm::vec3& vec3);
 	void SetParam(const std::string &name, float x, float y, float z, float w);
-	void SetParam(const std::string &name, glm::vec4 vec4);
-	void SetParam(const std::string &name, glm::mat4 mat);
+	void SetParam(const std::string &name, glm::vec4& vec4);
+	void SetParam(const std::string &name, glm::mat4& mat);
 
 	bool isProp = false;
 

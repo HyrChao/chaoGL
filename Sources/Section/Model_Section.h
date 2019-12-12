@@ -30,7 +30,7 @@ private:
 
 	void Shadowmapping();
 	void ShaderBallScene();
-	void RockScene();
+	void FireExtScene();
 
 private:
 

@@ -11,8 +11,10 @@ Texture Shadow::shadowMap;
 unsigned int Shadow::shadowFBO;
 
 //float Shadow::farplane = 7.5f;
-float Shadow::farplane = 10.0f;
+float Shadow::farplane = 100.0f;
 float Shadow::nearplane = 1.0f;
+float Shadow::shadowdistance = 50.0f;
+float Shadow::shadowrange = 20.0f;
 
 void Shadow::RenderShadowMap(glm::mat4& sunlightSpaceMat, void (*drawfunc)(Material*))
 {
@@ -34,6 +36,7 @@ void Shadow::RenderShadowMap(glm::mat4& sunlightSpaceMat, void (*drawfunc)(Mater
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	RenderDevice::ResetViewport();
 }
+
 
 void Shadow::InitShadow()
 {
