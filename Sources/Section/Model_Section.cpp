@@ -120,6 +120,12 @@ void Model_Section::Shadowmapping()
 			colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
 		//colaModel = new Model("/Assets/Model/pbr/rock/sharprockfree.obj", false, pos, rotation, scale);
 
+		if (shaderballModel_spec == nullptr)
+			shaderballModel_spec = new Model("/Assets/Model/pbr/shaderBall/shaderBall.fbx", false, pos, rotation, scale);
+
+		if (mat_shaderball_spec == nullptr)
+			mat_shaderball_spec = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/shaderBall");
+
 		if (mat_cola == nullptr)
 			mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
@@ -146,6 +152,9 @@ void Model_Section::Shadowmapping()
 	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
 	colaModel->AddToDrawlist(mat_cola, model_cola);
 
+	glm::mat4 model_sb = glm::mat4(1.0f);
+	model_sb = glm::translate(model_sb, glm::vec3(10.0, 0.0f, 10.0f));
+	shaderballModel_spec->AddToDrawlist(mat_shaderball_spec, model_sb);
 	//glm::mat4 model_cola2 = glm::mat4(1.0f);
 	//model_cola = glm::translate(model_cola2, glm::vec3(-10.0, 30.0f, 0.0f));
 	//colaModel->AddToDrawlist(mat_cola, model_cola2);

@@ -47,6 +47,8 @@ private:
 	Material* rockMat = nullptr;
 
 	Model* colaModel = nullptr;
+	Model* shaderballModel_spec = nullptr;
+	Material* mat_shaderball_spec = nullptr;
 	Material* mat_cola = nullptr;
 	Model* groudModel = nullptr;
 	Material* mat_ground = nullptr;
