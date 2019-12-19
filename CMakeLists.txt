@@ -53,6 +53,7 @@ include_directories(./Includes/
 ./3rdparty/glad/include/
 ./3rdparty/glfw/include/
 ./3rdparty/glm/
+./3rdparty/imgui/
 ./3rdparty/stb/
 ./Sources/
 )
@@ -67,7 +68,7 @@ Readme.md
 .gitignore
 .gitmodules)
 file(GLOB_RECURSE VENDORS_HEADERS ./3rdparty/*.h
-./3rdparty/*.hpp)
+./3rdparty/*.hpp ./3rdparty/imgui/*.cpp)
 file(GLOB_RECURSE PROJECT_SOURCES ./Sources/*.cpp
 ./Sources/*.h)
 

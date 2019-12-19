@@ -14,12 +14,16 @@ public:
 	static float xoffset;
 	static float yoffset;
 
+	static void CursorOn(bool ison = true);
+	static void CursorToggle();
+	static bool GetCursorState();
+
 private:
 
 	static float lastX, lastY;
 	static float sensitivity;
 	static bool firstMouse;
-
+	static bool cursorToggle;
 };
 
 

@@ -50,6 +50,11 @@ private:
     static void UpdateKeys();
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+	static void InitGUI();
+	static void PrepareGUIOnFrameBegin();
+	static void DrawGUI();
+	static void ReleaseGUI();
+	static void DrawSystemGUI(bool showsystemgui = true);
 
 private:
 
