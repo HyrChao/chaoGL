@@ -62,6 +62,7 @@ private:
 	static Sections* section;
 
 	//toggle
+	static bool showSystemGUI;
 	static bool wireframeMode;
 
 

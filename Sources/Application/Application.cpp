@@ -25,6 +25,7 @@ Application* Application::app;
 Sections* Application::section;
 
 bool Application::wireframeMode;
+bool Application::showSystemGUI = true;
 
 Application::Application()
 {
@@ -159,7 +160,7 @@ void Application::Update()
 
     Render::ExcuteDrawOnFrameEnd();
 
-	DrawSystemGUI();
+	DrawSystemGUI(showSystemGUI);
 
 	DrawGUI();
 
@@ -199,9 +200,20 @@ void Application::ProcessInput()
 		coldtime_cursortoggle = 0.0f;
 	}
 	coldtime_cursortoggle += Time::deltaTime;
+	
+	if (Input::GetKeyOnce(GLFW_KEY_ESCAPE))
+	{
+		if(Input::GetKey(GLFW_KEY_LEFT_SHIFT))
+			glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+		if (showSystemGUI)
+			showSystemGUI = false;
+		else
+			showSystemGUI = true;
+	}
+
+	
+
 	// wireframe mode
 	//if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && Input::GetKeyOnce(GLFW_KEY_W))
 	if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && Input::GetKeyOnce(GLFW_KEY_W))
@@ -296,31 +308,53 @@ void Application::ReleaseGUI()
 
 void Application::DrawSystemGUI(bool showsystemgui)
 {
+
+	static bool show_demo_window = true;
+	static bool show_another_window = false;
+	static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+
+
 	if (showsystemgui)
 	{
-		bool show_demo_window = true;
-		bool show_another_window = false;
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 		static float f = 0.0f;
 		static int counter = 0;
 
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Sysyem Menu");
 
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &show_another_window);
+		ImGui::Text("chaoGL");
 
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
 		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
+		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			glfwSetWindowShouldClose(window, true);
 
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("%.3f ms/frame (%.1f FPS)", Time::deltaTime * 1000.0f, 1.0f/Time::deltaTime);
 		ImGui::End();
+
+
+
+		//static float f = 0.0f;
+		//static int counter = 0;
+
+		//ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+		//ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+		//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		//ImGui::Checkbox("Another Window", &show_another_window);
+
+		//ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		//ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		//if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+		//	counter++;
+		//ImGui::SameLine();
+		//ImGui::Text("counter = %d", counter);
+
+		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		//ImGui::End();
+
 	}
 }
 
