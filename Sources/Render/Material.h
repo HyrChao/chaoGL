@@ -39,10 +39,8 @@ public:
 	void ReplaceTexture(Texture& pre_texture, Texture& texture);
 	void use();
 
-	void ChangeShader(Shader* shader)
-	{
-		this->shader = shader;
-	}
+	void ChangeShader(Shader* shader);
+	Shader* GetShader();
 
 	// set uniform values
 	void SetParam(const string &name, bool value);

@@ -36,7 +36,7 @@ public:
 	static void SetVertexShaderParams(Shader *shader, glm::mat4 model = glm::mat4(1.0));
 
 
-    static void SetShaderLightParams(Shader* shader);
+
 	static void SetClearColor(glm::vec4 color);
 	static void WireframeMode(bool on = false);
 

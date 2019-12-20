@@ -1,14 +1,10 @@
-#include <Section/Model_Section.h>
+#include <Level/LV_Model.h>
 
 
-void Model_Section::LoadLevelResource()
+void LV_Model::Initialize()
 {
+	LV_Basic_PBR::Initialize();
 
-
-}
-
-void Model_Section::Initialize()
-{
 	if (sunlight)
 	{
 		Light::LightParam dirlightp1;
@@ -21,12 +17,13 @@ void Model_Section::Initialize()
 
 
 	RegisterPBRShader(CommonAssets::instance->standardPBRShader);
-	InitPBR();
+	SetPBRShaderParams();
 }
 
-void Model_Section::Loop()
+
+void LV_Model::Loop()
 {
-	PBR_Basic::Loop();
+	LV_Basic_PBR::Loop();
 
 	glm::vec4 clearColor = glm::vec4(0.07f);
 	clearColor.a = 1.0f;
@@ -53,12 +50,6 @@ void Model_Section::Loop()
 		if (currentModelScene > (LastScene - 1))
 			currentModelScene = 0;
 	}
-
-
-
-	CommonAssets::instance->standardPBRShader->use();
-	CommonAssets::instance->standardPBRShader->SetParam("debug_pbr", pbrDebugParam);
-	CommonAssets::instance->standardPBRShader->SetParam("debug_light", lightDebugParam);
 
 	if (currentModelScene == ShadowScene)
 	{
@@ -93,7 +84,12 @@ void Model_Section::Loop()
 
 }
 
-void Model_Section::Shadowmapping()
+void LV_Model::OnGui()
+{
+	LV_Basic_PBR::OnGui();
+}
+
+void LV_Model::Shadowmapping()
 {
 
 
@@ -104,30 +100,30 @@ void Model_Section::Shadowmapping()
 		glm::vec3 rotation = glm::vec3(0.0f);
 		glm::vec3 scale = glm::vec3(1.0f);
 
-		if (groudModel == nullptr)
-			groudModel = new Model("/Assets/Model/common/groundbox.fbx", false, pos, rotation, scale);
+		if (m_groudModel == nullptr)
+			m_groudModel = make_unique<Model>("/Assets/Model/common/groundbox.fbx", false, pos, rotation, scale);
 
-		if (mat_ground == nullptr)
-			if (modelMat_wood == nullptr)
+		if (m_mat_ground == nullptr)
+			if (m_modelMat_wood == nullptr)
 			{
-				modelMat_wood = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
-				mat_ground = modelMat_wood;
+				m_modelMat_wood = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
+				m_mat_ground = m_modelMat_wood.get();
 			}
 			else
-				mat_ground = modelMat_wood;
+				m_mat_ground = m_modelMat_wood.get();
 
-		if (colaModel == nullptr)
-			colaModel = new Model("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
+		if (m_colaModel == nullptr)
+			m_colaModel = make_unique<Model>("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
 		//colaModel = new Model("/Assets/Model/pbr/rock/sharprockfree.obj", false, pos, rotation, scale);
 
-		if (shaderballModel_spec == nullptr)
-			shaderballModel_spec = new Model("/Assets/Model/pbr/shaderBall/shaderBall.fbx", false, pos, rotation, scale);
+		if (m_shaderballModel_spec == nullptr)
+			m_shaderballModel_spec = make_unique<Model>("/Assets/Model/pbr/shaderBall/shaderBall.fbx", false, pos, rotation, scale);
 
-		if (mat_shaderball_spec == nullptr)
-			mat_shaderball_spec = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/shaderBall");
+		if (m_mat_shaderball_spec == nullptr)
+			m_mat_shaderball_spec = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/shaderBall");
 
-		if (mat_cola == nullptr)
-			mat_cola = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
+		if (m_mat_cola == nullptr)
+			m_mat_cola = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
 
 		shadowSceneInitialized = true;
@@ -144,23 +140,23 @@ void Model_Section::Shadowmapping()
 	float pi = glm::pi<float>();
 	//modelMat = glm::rotate(modelMat,pi/2, glm::vec3(1.0f, 0.0f, 0.0f));
 	model = glm::translate(model, glm::vec3(0.0, 0.0f, 0.0f));
-	groudModel->AddToDrawlist(mat_ground, model);
+	m_groudModel->AddToDrawlist(m_mat_ground, model);
 
 	glm::mat4 model_cola = glm::mat4(1.0f);
 	model_cola = glm::translate(model_cola, glm::vec3(-10.0, 0.0f, 0.0f));
 	//modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
 	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
-	colaModel->AddToDrawlist(mat_cola, model_cola);
+	m_colaModel->AddToDrawlist(m_mat_cola.get(), model_cola);
 
 	glm::mat4 model_sb = glm::mat4(1.0f);
 	model_sb = glm::translate(model_sb, glm::vec3(10.0, 0.0f, 10.0f));
-	shaderballModel_spec->AddToDrawlist(mat_shaderball_spec, model_sb);
+	m_shaderballModel_spec->AddToDrawlist(m_mat_shaderball_spec.get(), model_sb);
 	//glm::mat4 model_cola2 = glm::mat4(1.0f);
 	//model_cola = glm::translate(model_cola2, glm::vec3(-10.0, 30.0f, 0.0f));
 	//colaModel->AddToDrawlist(mat_cola, model_cola2);
 }
 
-void Model_Section::ShaderBallScene() 
+void LV_Model::ShaderBallScene() 
 {
 	drawlist.clear();
 
@@ -172,26 +168,24 @@ void Model_Section::ShaderBallScene()
 
 	if (!shaderballSceneInitialized)
 	{
-		if (model == nullptr)
+		if (m_model == nullptr)
 		{
-			//model = new Model("/Assets/Model/pbr/shaderBall.fbx", false, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(0.01));
-
-			model = new Model("/Assets/Model/pbr/shaderBall.fbx", false, pos, rotation, scale);
+			m_model = make_unique<Model>("/Assets/Model/pbr/shaderBall.fbx", false, pos, rotation, scale);
 		}
 
-		if (modelMat_gold == nullptr)
+		if (m_modelMat_gold == nullptr)
 		{
-			modelMat_gold = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_gold");
+			m_modelMat_gold = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_gold");
 		}
 
-		if (modelMat_grass == nullptr)
+		if (m_modelMat_grass == nullptr)
 		{
-			modelMat_grass = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
+			m_modelMat_grass = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_grass");
 		}
 
-		if (modelMat_wood == nullptr)
+		if (m_modelMat_wood == nullptr)
 		{
-			modelMat_wood = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
+			m_modelMat_wood = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
 		}
 
 		shaderballSceneInitialized = true;
@@ -208,20 +202,20 @@ void Model_Section::ShaderBallScene()
 
 	pos = glm::vec3(-10.0f, 0.0f, 0.0f);
 	modelMat = glm::translate(modelMat, pos);
-	model->Draw(modelMat_grass, modelMat);
+	m_model->Draw(m_modelMat_grass.get(), modelMat);
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
 	modelMat = glm::translate(modelMat, pos);
-	model->Draw(modelMat_gold, modelMat);
+	m_model->Draw(m_modelMat_gold.get(), modelMat);
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
 	modelMat = glm::translate(modelMat, pos);
-	model->Draw(modelMat_wood, modelMat); 
+	m_model->Draw(m_modelMat_wood.get(), modelMat); 
 
 	//model->Rotate(glm::vec3(0, timeVal, 0));
 }
 
-void Model_Section::FireExtScene()
+void LV_Model::FireExtScene()
 {
 	drawlist.clear();
 
@@ -233,18 +227,18 @@ void Model_Section::FireExtScene()
 
 	if (!rockSceneInitialized)
 	{
-		if(rockModel == nullptr)
-			rockModel = new Model("/Assets/Model/pbr/Temp/fireext/FireExt.fbx", false, pos, rotation, scale);
+		if (m_rockModel == nullptr)
+			m_rockModel = make_unique<Model>("/Assets/Model/pbr/Temp/fireext/FireExt.fbx", false, pos, rotation, scale);
 
-		if (rockMat == nullptr)
-			rockMat = new Material(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/fireext");
+		if(m_rockMat == nullptr)
+			m_rockMat = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/fireext");
 
 		rockSceneInitialized = true;
 	}
 
 	modelMat = glm::scale(modelMat, scale);
 
-	rockModel->Draw(rockMat, modelMat);
+	m_rockModel->Draw(m_rockMat.get(), modelMat);
 
 }
 

@@ -1,59 +1,71 @@
-#include<Section/Hello.h>
+#include<Level/LV_Hello.h>
 
-Hello::Hello()
+LV_Hello::LV_Hello()
 {
-	if (!isDataInitialized)
+}
+
+LV_Hello::~LV_Hello()
+{
+
+}
+
+void LV_Hello::Loop()
+{
+	Level::Loop();
+
+	if (Input::GetKeyOnce(GLFW_KEY_TAB))
 	{
-		//----------------------------------
-		//Shader
-		//Shader shader("./Shader/Vertex/HelloTriangle.vs", "./Shader/Fragment/HelloTriangle.fs");
-		helloTriShader = new Shader("/Shaders/Vertex/HelloTriangle.vs", "/Shaders/Fragment/HelloTriangle.fs");
-		helloTexShader = new Shader("/Shaders/Vertex/HelloTexture.vs", "/Shaders/Fragment/HelloTexture.fs");
-		helloProjShader = new Shader("/Shaders/Vertex/HelloProjection.vs", "/Shaders/Fragment/HelloProjection.fs");
+		currentHelloScene++;
 
-
-		// load tecture
-		LoadTexture();
+		if (currentHelloScene > (LastScene - 1))
+			currentHelloScene = 0;
 	}
 
-	isDataInitialized = true;
+	switch (currentHelloScene)
+	{
+	default:
+		break;
+	case S_HelloLight:
+		HelloLight();
+		break;
+	case S_HelloTriangle:
+		HelloTriangle();
+		break;
+	case S_HelloTransform:
+		HelloTransform();
+		break;
+	case S_HelloProjection:
+		HelloProjection();
+		break;
+	case S_HelloBox:
+		HelloBox();
+		break;
+	case S_HelloCamera:
+		HelloCamera();
+		break;
+	}
 }
 
-Hello::~Hello()
+void LV_Hello::OnGui()
 {
-
+	Level::OnGui();
 }
 
-void Hello::SetupLight_Old()
+void LV_Hello::Initialize()
 {
-//    pointLight1 = new Light(glm::vec3(0.0f,3.0f,0.0f),LightType::Point);
-//	pointLight1->color = glm::vec3(0.6f, 0.2f, 0.2f);
-//    pointLight1->constant = 1.0f;
-//    pointLight1->linear = 0.09f;
-//    pointLight1->quadratic = 0.032f;
-//
-//    pointLight2 = new Light(glm::vec3(-5.0f,-3.0f,-5.0f),LightType::Point);
-//    pointLight2->color = glm::vec3(0.1f, 0.8f, 0.1f);
-//    pointLight2->constant = 1.0f;
-//    pointLight2->linear = 0.7f;
-//    pointLight2->quadratic = 1.8f;
-//    
-//    dirLight = new Light(glm::vec3(0),LightType::Directional);
-//    dirLight->color = glm::vec3(1.0f, 1.0f, 1.0f);
-//    dirLight->dir = glm::vec3(-1,-1,-1);
-//    
-//    spotLight = new Light(glm::vec3(-3.0f,-1.0f,-8.0f),LightType::Spot);
-////    spotLight->color = glm::vec3(0.7f, 0.5f, 0.2f);
-//    spotLight->color = glm::vec3(1.0f, 1.0f, 0.1f);
-//    spotLight->dir = glm::vec3(3.0f, 1.0f, 8.0f);
-//    spotLight->SetCutOff(12.5f);
-//    spotLight->SetOuterCutOff(17.5f);
-////    spotLight->cutOff = 0.0347f;
-////    spotLight->outerCutOff = 0.0486f;
-    
+	Level::Initialize();
+	//----------------------------------
+	//Shader
+	helloTriShader = make_unique<Shader>("/Shaders/Vertex/HelloTriangle.vs", "/Shaders/Fragment/HelloTriangle.fs");
+	helloTexShader = make_unique<Shader>("/Shaders/Vertex/HelloTexture.vs", "/Shaders/Fragment/HelloTexture.fs");
+	helloProjShader = make_unique<Shader>("/Shaders/Vertex/HelloProjection.vs", "/Shaders/Fragment/HelloProjection.fs");
+
+	// load tecture
+	LoadTexture();
 }
 
-void Hello::HelloTriangle()
+
+void LV_Hello::HelloTriangle()
 {
 	// Use shader program
 	// Update color with time
@@ -72,7 +84,7 @@ void Hello::HelloTriangle()
 	glBindVertexArray(0);
 }
 
-void Hello::HelloTransform()
+void LV_Hello::HelloTransform()
 {
 	helloTexShader->use();
 	//glBindTexture(GL_TEXTURE_2D, texture);
@@ -82,20 +94,20 @@ void Hello::HelloTransform()
 	glBindTexture(GL_TEXTURE_2D, diffuseTex_2);
 
 	glBindVertexArray(CommonAssets::instance->recVAO);
-	Transform(helloTexShader,glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.5, 0.5, 0.5));
+	Transform(helloTexShader.get(),glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.5, 0.5, 0.5));
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	Transform(helloTexShader,glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	Transform(helloTexShader.get(),glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	Transform(helloTexShader,glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	Transform(helloTexShader.get(),glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	Transform(helloTexShader,glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
+	Transform(helloTexShader.get(),glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.5, 0.5, 0.5));
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
 
 }
 
-void Hello::HelloProjection()
+void LV_Hello::HelloProjection()
 {
 	helloProjShader->use();
 	// ortho matrix
@@ -113,7 +125,7 @@ void Hello::HelloProjection()
 	helloProjShader->setMat4f("model", model);
 	helloProjShader->setMat4f("view", view);
 	helloProjShader->setMat4f("projection", projection);
-	Transform(helloProjShader,glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.5, 1.5, 1.5));
+	Transform(helloProjShader.get(),glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.5, 1.5, 1.5));
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseTex_1);
 	glActiveTexture(GL_TEXTURE1);
@@ -124,7 +136,7 @@ void Hello::HelloProjection()
 
 }
 
-void Hello::HelloBox()
+void LV_Hello::HelloBox()
 {
 	helloProjShader->use();
 	// ortho matrix
@@ -160,21 +172,21 @@ void Hello::HelloBox()
 	glBindVertexArray(0);
 }
 
-void Hello::HelloCamera()
+void LV_Hello::HelloCamera()
 {
 	Camera::main->CameraAutoSpan();
 
 	HelloBox();
 }
 
-void Hello::HelloLight()
+void LV_Hello::HelloLight()
 {
 
     if (!helloLightInitialized)
     {
 		Light::ClearAllLight();
 
-		helloLightShader = new Shader("/Shaders/Vertex/HelloLight.vs", "/Shaders/Fragment/HelloLight.fs");
+		helloLightShader = make_unique<Shader>("/Shaders/Vertex/HelloLight.vs", "/Shaders/Fragment/HelloLight.fs");
 
 		helloLightShader->use(); // set uniform！for texture
 		helloLightShader->setInt("material.diffuse_1", 0);
@@ -231,7 +243,7 @@ void Hello::HelloLight()
   
 	helloLightShader->use();
 
-	Render::SetShaderLightParams(helloLightShader);
+	SetShaderLightParams(helloLightShader.get());
 	// ortho matrix
 	//glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
 	//glm::mat4 model;
@@ -271,7 +283,9 @@ void Hello::HelloLight()
 
 }
 
-void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
+
+
+void LV_Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale)
 {
 	glm::mat4 trans;
 	trans = glm::translate(trans, translate);
@@ -282,12 +296,12 @@ void Hello::Transform(Shader* shader,glm::vec3 translate, glm::vec3 rotate, glm:
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 }
 
-void Hello::InitData()
+void LV_Hello::InitData()
 {
 
 }
 
-void Hello::glmTest()
+void LV_Hello::glmTest()
 {
 	glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
 	// if you are using 0.9.9 above
@@ -299,7 +313,7 @@ void Hello::glmTest()
 	std::cout << vec.x << vec.y << vec.z << std::endl;
 }
 
-void Hello::LoadTexture()
+void LV_Hello::LoadTexture()
 {
 	// diffuse texture 1
 	// create a texture object 
@@ -384,7 +398,59 @@ void Hello::LoadTexture()
 
 }
 
-void Hello::HelloLightInit()
+void LV_Hello::SetShaderLightParams(Shader *shader)
+{
+	shader->setFloat("material.shininess", 32.0f);
+	list<Light*>::iterator i = Light::lights.begin();
+	int pointLightNum = 0;
+	while (i != Light::lights.end())
+	{
+		Light *light = *i;
+		if (light->type == Light::LightType::Directional)
+		{
+			shader->setVec3f("dirLight.direction", light->dir);
+			shader->setVec3f("dirLight.ambient", 0.02f * light->color);
+			shader->setVec3f("dirLight.diffuse", 0.5f * light->color);
+			shader->setVec3f("dirLight.specular", 1.0f * light->color);
+			shader->setVec3f("dirLight.irradiance", 5.0f * light->color);
+		}
+		else if (light->type == Light::LightType::Point && pointLightNum < Light::maxPointLight)
+		{
+			std::string num = std::to_string(pointLightNum);
+			shader->setVec3f("pointLights[" + num + "].position", light->GetPos());
+			shader->setFloat("pointLights[" + num + "].constant", light->constant);
+			shader->setFloat("pointLights[" + num + "].linear", light->linear);
+			shader->setFloat("pointLights[" + num + "].quadratic", light->quadratic);
+			shader->setVec3f("pointLights[" + num + "].ambient", 0.01f * light->color);
+			shader->setVec3f("pointLights[" + num + "].diffuse", 0.5f * light->color);
+			shader->setVec3f("pointLights[" + num + "].specular", 0.8f * light->color);
+			shader->setVec3f("pointLights[" + num + "].irradiance", 5.0f * light->color);
+
+			pointLightNum++;
+		}
+		else if (light->type == Light::LightType::Spot)
+		{
+			shader->setVec3f("spotLight.position", light->GetPos());
+			shader->setVec3f("spotLight.direction", light->dir);
+			shader->setFloat("spotLight.cutOff", light->cutOff);  // cutoff is cosine of angle
+			shader->setFloat("spotLight.outerCutOff", light->outerCutOff);
+			shader->setVec3f("spotLight.ambient", 0.01f * light->color);
+			shader->setVec3f("spotLight.diffuse", 0.8f * light->color);
+			shader->setVec3f("spotLight.specular", 0.5f * light->color);
+			shader->setVec3f("spotLight.irradiance", 5.0f * light->color);
+
+		}
+		else
+		{
+
+		}
+
+		i++;
+
+	}
+}
+
+void LV_Hello::HelloLightInit()
 {
 	////helloLightShader->setVec3f("lightColor", light1->lightColor);
 	//helloLightShader->setVec3f("dirLight.direction", dirLight->dir);

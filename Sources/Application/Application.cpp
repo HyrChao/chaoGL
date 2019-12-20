@@ -22,7 +22,6 @@ char const * FileSystem::app_root;
 
 GLFWwindow* Application::window;
 Application* Application::app;
-Sections* Application::section;
 
 bool Application::wireframeMode;
 bool Application::showSystemGUI = true;
@@ -109,8 +108,6 @@ Application::Application()
 Application::~Application()
 {
 	ReleaseGUI();
-	//delete app;
-	delete section;
 }
 
 void Application::InitApplication()
@@ -134,7 +131,7 @@ void Application::InitApplication()
 
 	CommonAssets::instance = new CommonAssets();
 
-    section = new Sections();
+	LevelManager::LoadMainLevel();
 
 }
 
@@ -147,7 +144,7 @@ void Application::Update()
 	Render::ExcuteDrawOnFrameBegin();
 
 
-	section->SwitchSections();
+	LevelManager::SceneLoop();
 
 	Render::ExcuteDraw();
 
@@ -161,6 +158,8 @@ void Application::Update()
     Render::ExcuteDrawOnFrameEnd();
 
 	DrawSystemGUI(showSystemGUI);
+	LevelManager::SceneGui();
+
 
 	DrawGUI();
 
@@ -234,12 +233,7 @@ void Application::ProcessInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		Camera::main->MoveRight(cameraSpeed);
     
-    if (Input::GetKeyOnce(GLFW_KEY_1))
-        section->SetSection(SectionEnum::BlinnPhong);
-    else if (Input::GetKeyOnce(GLFW_KEY_2))
-        section->SetSection(SectionEnum::LoadModel);
-    else if (Input::GetKeyOnce(GLFW_KEY_3))
-        section->SetSection(SectionEnum::PBR);
+
 
 
 
@@ -323,8 +317,14 @@ void Application::DrawSystemGUI(bool showsystemgui)
 
 		ImGui::Begin("Sysyem Menu");
 
-		ImGui::Text("chaoGL");
+		ImGui::Text("Select Scene");
 
+		if (ImGui::Button("BlinnPhong"))
+			LevelManager::LoadLevel(LevelName::BlinnPhong);
+		if (ImGui::Button("LoadModel"))
+			LevelManager::LoadLevel(LevelName::LoadModel);
+		if (ImGui::Button("PBR"))
+			LevelManager::LoadLevel(LevelName::PBR);
 
 		ImGui::SameLine();
 		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)

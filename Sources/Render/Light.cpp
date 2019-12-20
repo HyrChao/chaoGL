@@ -150,6 +150,13 @@ void Light::DelLight(Light * light)
 
 void Light::ClearAllLight()
 {
+	list<Light*>::iterator i = lights.begin();
+
+	while (i != lights.end())
+	{
+		i = lights.erase(i);
+	}
+
 	lights.clear();
 }
 

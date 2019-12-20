@@ -1,45 +1,45 @@
 
-#include <Section/PBR_Basic.h>
+#include <Level/LV_Basic_PBR.h>
 
-PBR_Basic::PBR_Basic() : Level()
-{
-	Capture::CaptureIrradianceCubemap(envCubemap, irradianceCubemap);
-	Capture::CaptureSpecularPrefilterMap(envCubemap, prefilterEnvironmentMap);
-}
-
-PBR_Basic::PBR_Basic(string skyHDRPath) : Level(skyHDRPath)
+LV_Basic_PBR::LV_Basic_PBR() : Level()
 {
 
-	Capture::CaptureIrradianceCubemap(envCubemap, irradianceCubemap);
-	Capture::CaptureSpecularPrefilterMap(envCubemap, prefilterEnvironmentMap);
 }
 
-PBR_Basic::~PBR_Basic()
+LV_Basic_PBR::LV_Basic_PBR(string skyHDRPath) : Level(skyHDRPath)
+{
+
+}
+
+LV_Basic_PBR::~LV_Basic_PBR()
 {
 
 }
 
 
-void PBR_Basic::Loop()
+void LV_Basic_PBR::Loop()
 {
 	Level::Loop();
-
-	if (Input::GetKeyOnce(GLFW_KEY_TAB))
-	{
-		pbrDebugParam = glm::vec4(0);
-		lightDebugParam = glm::vec4(0);
-	}
 
 	PBRMaterialDebug();
 	BindPBRTextures();
 }
 
-void PBR_Basic::Initialize()
+void LV_Basic_PBR::OnGui()
 {
-
+	Level::OnGui();
 }
 
-void PBR_Basic::RegisterPBRShader(Shader * shader)
+void LV_Basic_PBR::Initialize()
+{
+	Capture::PrefilterBRDF(prefilterBRDFLUT);
+	Capture::CaptureIrradianceCubemap(envCubemap, irradianceCubemap);
+	Capture::CaptureSpecularPrefilterMap(envCubemap, prefilterEnvironmentMap);
+	SetPBRShaderParams();
+}
+
+// Make sure use this funcction in RegisterPBRShaders()
+void LV_Basic_PBR::RegisterPBRShader(Shader * shader)
 {
 	for (vector<Shader*>::iterator it = pbrShaders.begin(); it != pbrShaders.end(); it++)
 	{
@@ -49,16 +49,15 @@ void PBR_Basic::RegisterPBRShader(Shader * shader)
 	pbrShaders.push_back(shader);
 }
 
-void PBR_Basic::DeregisterPBRShader(Shader * shader)
+void LV_Basic_PBR::DeregisterPBRShader(Shader * shader)
 {
 	for (vector<Shader*>::iterator it = pbrShaders.begin(); it != pbrShaders.end(); it++)
 		if ((*it) == shader)
 			pbrShaders.erase(it);
 }
 
-// Call after shader registered 
-
-void PBR_Basic::InitPBR()
+// Call after shaderregistered 
+void LV_Basic_PBR::SetPBRShaderParams()
 {
 	for (auto it = pbrShaders.begin(); it != pbrShaders.end(); it++)
 	{
@@ -71,26 +70,37 @@ void PBR_Basic::InitPBR()
 		glm::vec3 basicMRO = glm::vec3(1.0f);
 		shader->setVec3f("intensity.tint", basicColor);
 		shader->setVec3f("intensity.mro", basicMRO);
+		shader->SetParam("debug_pbr", pbrDebugParam);
+		shader->SetParam("debug_light", lightDebugParam);
+		shader->SetParam("intensity.tint", basicColor);
+
 	}
 }
 
-void PBR_Basic::BindPBRTextures()
+void LV_Basic_PBR::BindPBRTextures()
 {
 	glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_BRDF);
 	glBindTexture(GL_TEXTURE_2D, prefilterBRDFLUT.id);
 	glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_Irridiance);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceCubemap.id);             
 	glActiveTexture(GL_TEXTURE0 + TextureSlot::PBR_Prefilter);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterEnvironmentMap.id);
 }
 
-void PBR_Basic::DeregisterAllPBRShader()
+void LV_Basic_PBR::DeregisterAllPBRShader()
 {
 	pbrShaders.clear();
 }
 
-void PBR_Basic::PBRMaterialDebug()
+void LV_Basic_PBR::PBRMaterialDebug()
 {
+
+	if (Input::GetKeyOnce(GLFW_KEY_TAB))
+	{
+		pbrDebugParam = glm::vec4(0);
+		lightDebugParam = glm::vec4(0);
+	}
+
 	if (Input::GetKeyOnce(GLFW_KEY_F1))
 	{
 		pbrDebugParam = glm::vec4(0);

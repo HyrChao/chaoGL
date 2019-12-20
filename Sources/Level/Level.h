@@ -17,29 +17,26 @@ public:
 
 	virtual ~Level();
 
-	void Reset();
-
 	void SetSunLight(Light* sunlight);
 
 	Light* GetSunLight();
 
 
 	virtual void Loop();
+	virtual void OnGui();
 
 protected:
 
-	virtual void ChangeEnvironment(Texture& envCubemap);
+	virtual void Initialize();
 
-	virtual void LoadLevelResource() = 0;
-
-	virtual void Initialize()= 0;
+	virtual void SetupDefaultLight();
 
 private:
 
 
+	void Preload();
 
 	void GlobalInitialize();
-
 
 	void LoadEquirectangularSkydomeTexture();
 
@@ -50,7 +47,8 @@ private:
 
 public:
 
-	static Level* currentLevel;
+	string name;
+
 
 protected:
 
@@ -62,10 +60,6 @@ protected:
 	Light* sunlight = nullptr;
 
 	Material* skydomMaterial = nullptr;
-
-	bool resourceLoaded = false;
-	bool initialized = false;
-	bool resourceInitialized = false;
 
 	Texture envCubemap;
 	Texture irradianceCubemap;

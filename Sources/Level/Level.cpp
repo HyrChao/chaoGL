@@ -1,28 +1,24 @@
 
 #include <Level/Level.h>
+#include "Level/LevelManager.h"
 
 Shader* Level::skydomeShader;
 bool Level::globalInitialized;
 Texture Level::prefilterBRDFLUT;
-Level* Level::currentLevel = nullptr;
 
 Level::Level()
 {
-	GlobalInitialize();
-	LoadEquirectangularSkydomeTexture();
-	Capture::CaptureEnvironmentCubemap(equirectangularSkyTex, envCubemap);
-	skydomMaterial = new Material(skydomeShader);
-	skydomMaterial->AddTexture(envCubemap);
+	Preload();
+	Initialize();
+	SetupDefaultLight();
 }
 
 Level::Level(string skyHDRTexture_path)
 {
-	GlobalInitialize();
 	equirectangularSkyTex.path = skyHDRTexture_path;
-	LoadEquirectangularSkydomeTexture();
-	Capture::CaptureEnvironmentCubemap(equirectangularSkyTex, envCubemap);
-	skydomMaterial = new Material(skydomeShader);
-	skydomMaterial->AddTexture(envCubemap);
+	Preload();
+	Initialize();
+	SetupDefaultLight();
 }
 
 Level::~Level()
@@ -30,81 +26,60 @@ Level::~Level()
 
 }
 
-void Level::Reset()
+void Level::Preload()
 {
-	initialized = false;
+	LevelManager::SetCurrentLevel(this);
+
+	GlobalInitialize();
+	LoadEquirectangularSkydomeTexture();
+	Capture::CaptureEnvironmentCubemap(equirectangularSkyTex, envCubemap);
+	skydomMaterial = new Material(skydomeShader);
+	skydomMaterial->AddTexture(envCubemap);
+
+	SetSkyDome();
+	DrawSkydome();
+
+	drawlist.clear();
+	Render::BindCurrentDrawableList(drawlist);
 }
 
-void Level::SetSunLight(Light * sunlight)
+void Level::SetupDefaultLight()
 {
-	this->sunlight = sunlight;
+	Light::ClearAllLight();
+
+	Light::LightParam sunlightParam;
+	sunlightParam.type = Light::LightType::Directional;
+	sunlightParam.pos = glm::vec3(10.f, 10.f, 10.f);
+	sunlightParam.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	sunlightParam.dir = glm::vec3(-1, -1, -1);;
+	Light* dirLight = new Light(sunlightParam);
+
+	sunlight = dirLight;
+	Render::sunlight = sunlight;
 }
 
-Light* Level::GetSunLight()
+void Level::Initialize()
 {
-	return this->sunlight;
+
 }
+
 
 void Level::Loop()
 {
 	DrawSkydome();
-
-	if (!resourceInitialized)
-	{
-		currentLevel = this;
-
-		LoadLevelResource();
-
-		SetSkyDome();
-
-		resourceInitialized = true;
-	}
-
-	if (!initialized)
-	{
-
-		Initialize();
-
-		drawlist.clear();
-		Render::BindCurrentDrawableList(drawlist);
-
-		Light::ClearAllLight();
-
-		Light::LightParam sunlightParam;
-		sunlightParam.type = Light::LightType::Directional;
-		sunlightParam.pos = glm::vec3(10.f, 10.f, 10.f);
-		sunlightParam.color = glm::vec3(1.0f, 1.0f, 1.0f);
-		sunlightParam.dir = glm::vec3(-1, -1, -1);;
-		Light* dirLight = new Light(sunlightParam);
-
-		sunlight = dirLight;
-		Render::sunlight = sunlight;
-
-		initialized = true;
-	}
-
 }
 
-void Level::ChangeEnvironment(Texture & envCubemap)
+void Level::OnGui()
 {
-	skydomMaterial->ClearTextrues();
-	skydomMaterial->AddTexture(envCubemap);
 }
-
 
 void Level::GlobalInitialize()
 {
 	if (!globalInitialized)
 	{
 		skydomeShader = new Shader("/Shaders/Common/Cube_Skydome.vs", "/Shaders/Common/Cube_Skydome.fs");
-		Capture::PrefilterBRDF(prefilterBRDFLUT);
 		globalInitialized = true;
 	}
-}
-
-void Level::Initialize()
-{
-
 }
 
 void Level::LoadEquirectangularSkydomeTexture()
@@ -131,3 +106,12 @@ void Level::DrawSkydome()
 	CommonAssets::DrawCube();
 }
 
+void Level::SetSunLight(Light * sunlight)
+{
+	this->sunlight = sunlight;
+}
+
+Light* Level::GetSunLight()
+{
+	return this->sunlight;
+}

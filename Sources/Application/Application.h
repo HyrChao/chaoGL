@@ -4,7 +4,7 @@
 
 #include <Render/Render.h>
 #include <Application/Time.h>
-#include <Section/Sections.h>
+#include <Level/LevelManager.h>
 #include <Input/Mouse.h>
 #include<Render/Camera.h>
 
@@ -59,7 +59,6 @@ private:
 private:
 
 	static Application* app;
-	static Sections* section;
 
 	//toggle
 	static bool showSystemGUI;

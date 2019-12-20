@@ -223,58 +223,6 @@ void Render::SetVertexShaderParams(Shader * shader, glm::mat4 model)
 }
 
 
-void Render::SetShaderLightParams(Shader *shader)
-{
-	shader->setFloat("material.shininess", 32.0f);
-    list<Light*>::iterator i = Light::lights.begin();
-	int pointLightNum = 0;
-    while (i != Light::lights.end())
-    {
-        Light *light = *i;
-        if (light->type == Light::LightType::Directional)
-        {
-            shader->setVec3f("dirLight.direction", light->dir);
-            shader->setVec3f("dirLight.ambient", 0.02f * light->color);
-            shader->setVec3f("dirLight.diffuse", 0.5f * light->color);
-			shader->setVec3f("dirLight.specular", 1.0f * light->color);
-			shader->setVec3f("dirLight.irradiance", 5.0f * light->color);
-        }
-        else if (light->type == Light::LightType::Point && pointLightNum < Light::maxPointLight)
-        {
-            std::string num = std::to_string(pointLightNum);
-            shader->setVec3f("pointLights[" + num + "].position", light->GetPos());
-            shader->setFloat("pointLights[" + num + "].constant", light->constant);
-            shader->setFloat("pointLights[" + num + "].linear", light->linear);
-            shader->setFloat("pointLights[" + num + "].quadratic", light->quadratic);
-            shader->setVec3f("pointLights[" + num + "].ambient", 0.01f * light->color);
-            shader->setVec3f("pointLights[" + num + "].diffuse", 0.5f * light->color);
-            shader->setVec3f("pointLights[" + num + "].specular", 0.8f * light->color);
-			shader->setVec3f("pointLights[" + num + "].irradiance", 5.0f * light->color);
-
-            pointLightNum++;
-        }
-        else if (light->type == Light::LightType::Spot)
-        {
-            shader->setVec3f("spotLight.position", light->GetPos());
-            shader->setVec3f("spotLight.direction", light->dir);
-            shader->setFloat("spotLight.cutOff", light->cutOff);  // cutoff is cosine of angle
-            shader->setFloat("spotLight.outerCutOff", light->outerCutOff);
-            shader->setVec3f("spotLight.ambient", 0.01f * light->color);
-            shader->setVec3f("spotLight.diffuse", 0.8f * light->color);
-            shader->setVec3f("spotLight.specular", 0.5f * light->color);
-			shader->setVec3f("spotLight.irradiance", 5.0f * light->color);
-
-        }
-        else
-        {
-            
-        }
-
-		i++;
-
-    }
-}
-
 void Render::SetClearColor(glm::vec4 color)
 {
 	clearColor = color;
@@ -296,7 +244,6 @@ void Render::DrawGeo(unsigned int geoVAO, Shader * shader, glm::mat4 & model)
 {
 	shader->use();
 	Render::SetVertexShaderParams(shader, model);
-	Render::SetShaderLightParams(shader);
 	glBindVertexArray(geoVAO);
 	glDrawElements(GL_TRIANGLE_STRIP, geoVAO, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -307,7 +254,6 @@ void Render::DrawCube(Shader * shader, glm::mat4 & model)
 	shader->use();
 	glBindVertexArray(CommonAssets::instance->cubeVAO);
 	Render::SetVertexShaderParams(shader, model);
-	Render::SetShaderLightParams(shader);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }
@@ -316,7 +262,6 @@ void Render::DrawSphere(Shader * shader, glm::mat4 & model)
 {
 	shader->use();
 	Render::SetVertexShaderParams(shader, model);
-	Render::SetShaderLightParams(shader);
 	glBindVertexArray(CommonAssets::instance->sphereVAO);
 	glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);

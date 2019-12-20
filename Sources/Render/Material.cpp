@@ -95,7 +95,6 @@ Material::Material(string vsPath, string fsPath)
 {
 	this->shader_unique = make_unique<Shader>(vsPath, fsPath);
 	this->shader = shader_unique.get();
-	//this->shader = dynamic_cast<Shader*>(this);
 	isShaderInstance = false;
 }
 
@@ -201,6 +200,16 @@ void Material::use()
 	this->shader->use();
 	UpdateParams();
 	BindTextures();
+}
+
+void Material::ChangeShader(Shader * shader)
+{
+	this->shader = shader;
+}
+
+Shader * Material::GetShader()
+{
+	return shader;
 }
 
 void Material::SetParam(const string & name, bool value)

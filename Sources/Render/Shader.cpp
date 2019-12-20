@@ -192,6 +192,8 @@ void Shader::CreateShaderProgram()
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
+	std::cout << "Load shader" << vsPath << " " << fsPath << " succuss!"<<std::endl;
+
 }
 
 void Shader::ChangeErrorShader(Shader * errShader)

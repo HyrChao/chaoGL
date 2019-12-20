@@ -1,9 +1,11 @@
-#include <Section/PBR_Section.h>
+#include <Level/LV_PBR.h>
 
 
 
-void PBR_Section::Initialize()
+void LV_PBR::Initialize()
 {
+	LV_Basic_PBR::Initialize();
+
 	Light::LightParam pointLightp1;
 	pointLightp1.type = Light::LightType::Point;
 	pointLightp1.pos = glm::vec3(1.0f, 3.0f, 1.0f);
@@ -12,7 +14,7 @@ void PBR_Section::Initialize()
 	pointLightp1.linear = 0.09f;
 	pointLightp1.quadratic = 0.032f;
 	Light* pointLight1 = new Light(pointLightp1);
-	pbrPointlight1 = pointLight1;
+	m_pbrPointlight1 = pointLight1;
 
 	Light::LightParam pointLightp2;
 	pointLightp2.type = Light::LightType::Point;
@@ -53,13 +55,11 @@ void PBR_Section::Initialize()
 	spotlightp1.cutOffAngle = 32.5f;
 	spotlightp1.outerCutoffAngle = 47.5f;
 	Light* spotlight = new Light(spotlightp1);
-	pbrSpotlight = spotlight;
-	
+	m_pbrSpotlight = spotlight;
 
-}
 
-void PBR_Section::LoadLevelResource()
-{
+	// Load assets
+
 	albedo.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_basecolor.png");
 	albedo.SetType(Texture::TextureType::Albedo);
 	normal.id = AssetsManager::TextureFromFile("/Assets/Texture/HelloPBR/rustediron2_normal.png");
@@ -71,13 +71,47 @@ void PBR_Section::LoadLevelResource()
 	//ao = AssetsManager::TextureFromFile(FileSystem::getPath("/Assets/Texture/white.png").c_str());
 	ao.id = CommonAssets::instance->whiteTex;
 	ao.SetType(Texture::TextureType::AO);
+	
+	if (m_helloPBRShader == nullptr)
+	{
+		m_helloPBRShader = make_unique<Shader>("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs", true);
+
+		m_helloPBRMaterial = make_unique<Material>(m_helloPBRShader.get());
+		m_helloPBRMaterial_Fill = make_unique<Material>(m_helloPBRShader.get());
+
+		RegisterPBRShader(m_helloPBRShader.get());
+		SetPBRShaderParams();
+	}
+
+	InitBallsScene();
 }
 
 
-void PBR_Section::InitBallsScene()
+inline void LV_PBR::SwitchPBRScene(int sceneID)
 {
+	switch (sceneID)
+	{
+	default:
+		break;
+	case RustMetalBalls:
+		basicColor = glm::vec3(1.0f);
+		m_currentPBRMaterial = m_helloPBRMaterial.get();
+		BallsScene();
+		break;
+	case FlatColorBalls:
+		basicColor = glm::vec3(0.5f);
+		m_currentPBRMaterial = m_helloPBRMaterial_Fill.get();
+		BallsScene();
+		break;
+	case MaterialBalls:
+		break;
 
+	}
 
+}
+
+void LV_PBR::InitBallsScene()
+{
 	albedo_Fill.id = CommonAssets::instance->whiteTex;
 	albedo_Fill.SetType(Texture::TextureType::Albedo);
 	normal_Fill.id = CommonAssets::instance->flatNormal;
@@ -89,39 +123,28 @@ void PBR_Section::InitBallsScene()
 	ao_Fill.id = CommonAssets::instance->whiteTex;
 	ao_Fill.SetType(Texture::TextureType::AO);
 
-	if (helloPBRShader == nullptr)
-	{
-		helloPBRShader = new Shader("/Shaders/Vertex/HelloPBR.vs", "/Shaders/Fragment/HelloPBR.fs", true);
+	m_helloPBRMaterial->AddTexture(albedo);
+	m_helloPBRMaterial->AddTexture(normal);
+	m_helloPBRMaterial->AddTexture(metallic);
+	m_helloPBRMaterial->AddTexture(roughness);
+	m_helloPBRMaterial->AddTexture(ao);
 
-		helloPBRMaterial = new Material(helloPBRShader);
-		helloPBRMaterial_Fill = new Material(helloPBRShader);
-	
-		RegisterPBRShader(helloPBRShader);
-		InitPBR();
-	}
+	m_helloPBRMaterial_Fill->AddTexture(albedo_Fill);
+	m_helloPBRMaterial_Fill->AddTexture(normal_Fill);
+	m_helloPBRMaterial_Fill->AddTexture(metallic_Fill);
+	m_helloPBRMaterial_Fill->AddTexture(roughness_Fill);
+	m_helloPBRMaterial_Fill->AddTexture(ao_Fill);
 
-	helloPBRMaterial->AddTexture(albedo);
-	helloPBRMaterial->AddTexture(normal);
-	helloPBRMaterial->AddTexture(metallic);
-	helloPBRMaterial->AddTexture(roughness);
-	helloPBRMaterial->AddTexture(ao);
-
-	helloPBRMaterial_Fill->AddTexture(albedo_Fill);
-	helloPBRMaterial_Fill->AddTexture(normal_Fill);
-	helloPBRMaterial_Fill->AddTexture(metallic_Fill);
-	helloPBRMaterial_Fill->AddTexture(roughness_Fill);
-	helloPBRMaterial_Fill->AddTexture(ao_Fill);
-
-	currentPBRMaterial = helloPBRMaterial;
+	m_currentPBRMaterial = m_helloPBRMaterial.get();
 
 	ballsSceneInitialized = true;
 }
 
 // Main loop
-void PBR_Section::Loop()
+void LV_PBR::Loop()
 {
 	PrefilterEnvDebug();
-	PBR_Basic::Loop();
+	LV_Basic_PBR::Loop();
 
 	FrameBufferDebug();
 
@@ -141,23 +164,24 @@ void PBR_Section::Loop()
 
 	float spotDirChangeSpeed = 1;
 	glm::vec3 currentSpotDir = glm::vec3(cos((float)glfwGetTime() * spotDirChangeSpeed), 0.0f, sin((float)glfwGetTime() * spotDirChangeSpeed));
-	pbrSpotlight->dir = currentSpotDir;
+	m_pbrSpotlight->dir = currentSpotDir;
 
 	float pointIntensityChangeSpeed = 2;
 	float pointIntensityMutiplier = 1 + sin((float)glfwGetTime() * pointIntensityChangeSpeed);
 	glm::vec3 currentPointColor = glm::vec3(pointIntensityMutiplier, 0.2 * pointIntensityMutiplier, 0.1 * pointIntensityMutiplier);
-	pbrPointlight1->color = currentPointColor;
+	m_pbrPointlight1->color = currentPointColor;
 
 
 	SwitchPBRScene(currentPBRScene);
 
 }
 
-void PBR_Section::BallsScene()
+void LV_PBR::OnGui()
 {
-	if (!ballsSceneInitialized)
-		InitBallsScene();
+}
 
+void LV_PBR::BallsScene()
+{
 	glm::mat4 model = glm::mat4(1.0f);
 
 	int nrRows = 7;
@@ -168,10 +192,7 @@ void PBR_Section::BallsScene()
 
 	mroVar.z = 1;
 
-	currentPBRMaterial->BindTextures();
-	currentPBRMaterial->SetParam("debug_pbr", pbrDebugParam);
-	currentPBRMaterial->SetParam("debug_light", lightDebugParam);
-	currentPBRMaterial->SetParam("intensity.tint", basicColor);
+	m_currentPBRMaterial->BindTextures();
 
 	for (int row = 0; row < nrRows; ++row)
 	{
@@ -187,20 +208,20 @@ void PBR_Section::BallsScene()
 			mroVar.x = float(nrRows - row) / float(nrRows);
 			mroVar.y = float(col + 1) / float(nrColumns);
 
-			currentPBRMaterial->SetParam("intensity.mro", mroVar);
-			currentPBRMaterial->SetModelMat(model);
-			currentPBRMaterial->use();
+			m_currentPBRMaterial->SetParam("intensity.mro", mroVar);
+			m_currentPBRMaterial->SetModelMat(model);
+			m_currentPBRMaterial->use();
 			CommonAssets::DrawSphere();
 		}
 	}
 }
 
-void PBR_Section::MaterialBallsScene()
+void LV_PBR::MaterialBallsScene()
 {
 
 }
 
-void PBR_Section::PrefilterEnvDebug()
+void LV_PBR::PrefilterEnvDebug()
 {
 	float maxColodtime = 3.0;
 	float prefilterFadeSpeed = 0.5;
@@ -246,7 +267,7 @@ void PBR_Section::PrefilterEnvDebug()
 	}
 }
 
-void PBR_Section::FrameBufferDebug()
+void LV_PBR::FrameBufferDebug()
 {
 	if (Input::GetKeyOnce(GLFW_KEY_CAPS_LOCK))
 		if (frameBufferDebug)
