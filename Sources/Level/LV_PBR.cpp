@@ -84,6 +84,9 @@ void LV_PBR::Initialize()
 	}
 
 	InitBallsScene();
+
+	RegisterPBRShader(m_helloPBRShader.get());
+	SetPBRShaderParams();
 }
 
 
@@ -143,8 +146,9 @@ void LV_PBR::InitBallsScene()
 // Main loop
 void LV_PBR::Loop()
 {
-	PrefilterEnvDebug();
 	LV_Basic_PBR::Loop();
+
+	PrefilterEnvDebug();
 
 	FrameBufferDebug();
 
@@ -178,6 +182,7 @@ void LV_PBR::Loop()
 
 void LV_PBR::OnGui()
 {
+	LV_Basic_PBR::OnGui();
 }
 
 void LV_PBR::BallsScene()

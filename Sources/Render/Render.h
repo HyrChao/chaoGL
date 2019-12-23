@@ -25,6 +25,7 @@ public:
 	static void AddToCurrentDrawableList(IDrawable * drawable, Material * material, glm::mat4 modelMat);
 
 	static void BindCurrentDrawableList(DrawableList& list);
+	static void UnbindCurrentDrawableList();
 
 
 	static void UpdateShaderLightParams();

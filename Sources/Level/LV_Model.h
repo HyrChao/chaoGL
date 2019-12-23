@@ -43,26 +43,20 @@ private:
 	unique_ptr<Material> m_modelMat_wood = nullptr;
 
 	unique_ptr<Material> m_rockMat = nullptr;
-	unique_ptr<Material> m_mat_shaderball_spec = nullptr;
-	unique_ptr<Material> m_mat_cola = nullptr;
+
 
 	// Pointers that not hold resource
-	Material* m_mat_ground = nullptr;
 
 	unique_ptr<Model> m_model = nullptr;
 	unique_ptr<Model> m_rockModel = nullptr;
-	unique_ptr<Model> m_colaModel = nullptr;
-	unique_ptr<Model> m_shaderballModel_spec = nullptr;
-	unique_ptr<Model> m_groudModel = nullptr;
 	enum Model_Scene
 	{
-		ShadowScene,
 		ShaderBalls,
 		Rock,
 		LastScene
 	};
 
-	unsigned int currentModelScene = ShadowScene;
+	unsigned int currentModelScene = ShaderBalls;
 
 };
 

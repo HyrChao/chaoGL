@@ -88,6 +88,11 @@ void Render::BindCurrentDrawableList(DrawableList & list)
 	currentDrawablelist = &list;
 }
 
+void Render::UnbindCurrentDrawableList()
+{
+	currentDrawablelist = nullptr;
+}
+
 void Render::ExcuteMainDrawlist()
 {
 	if (!currentDrawablelist)

@@ -70,7 +70,7 @@ public:
 	float GetOuterCutOffAngle() const;
 	static void AddLight(Light* light);
 	static void DelLight(Light* light);
-	static void ClearAllLight();
+	static void ClearAllLights();
 
     
 private:

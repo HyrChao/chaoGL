@@ -17,7 +17,7 @@ CommonAssets::CommonAssets()
 void CommonAssets::LoadShaders()
 {
 	standardPBRShader = new Shader("/Shaders/Prop/StandardPBR.vs", "/Shaders/Prop/StandardPBR.fs", true);
-	defaltErrorShader = new Shader("/Shaders/Debug/Debug_ErrorShader.vs", "/Shaders/Debug/Debug_ErrorShader.fs");
+	defaltErrorShader = new Shader("/Shaders/Debug/Debug_ErrorShader.vs", "/Shaders/Debug/Debug_ErrorShader.fs", true);
 }
 
 void CommonAssets::LoadCommonTextures()

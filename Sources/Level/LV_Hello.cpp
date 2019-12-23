@@ -184,7 +184,7 @@ void LV_Hello::HelloLight()
 
     if (!helloLightInitialized)
     {
-		Light::ClearAllLight();
+		Light::ClearAllLights();
 
 		helloLightShader = make_unique<Shader>("/Shaders/Vertex/HelloLight.vs", "/Shaders/Fragment/HelloLight.fs");
 

@@ -21,6 +21,8 @@ protected:
 
 	virtual void Initialize() override;
 
+	virtual void CaptureEnvironment() override;
+
 	glm::vec4 pbrDebugParam = glm::vec4(0);
 	glm::vec4 lightDebugParam = glm::vec4(0);
 
@@ -35,6 +37,7 @@ protected:
 
 	// Call after shader registered 
 	void SetPBRShaderParams();
+	void SetPBRShaderDebugParams();
 
 private:
 

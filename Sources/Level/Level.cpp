@@ -6,67 +6,60 @@ Shader* Level::skydomeShader;
 bool Level::globalInitialized;
 Texture Level::prefilterBRDFLUT;
 
-Level::Level()
+Level::Level() 
 {
-	Preload();
-	Initialize();
-	SetupDefaultLight();
 }
 
 Level::Level(string skyHDRTexture_path)
 {
 	equirectangularSkyTex.path = skyHDRTexture_path;
-	Preload();
-	Initialize();
-	SetupDefaultLight();
+	drawSkydome = true;
+	reloadSkydome = true;
 }
 
 Level::~Level()
 {
+	Render::UnbindCurrentDrawableList();
+	Light::ClearAllLights();
+}
 
+void Level::Initialize()
+{
 }
 
 void Level::Preload()
 {
 	LevelManager::SetCurrentLevel(this);
-
 	GlobalInitialize();
-	LoadEquirectangularSkydomeTexture();
-	Capture::CaptureEnvironmentCubemap(equirectangularSkyTex, envCubemap);
-	skydomMaterial = new Material(skydomeShader);
-	skydomMaterial->AddTexture(envCubemap);
 
-	SetSkyDome();
+	CaptureEnvironment();
+	// draw once for later environment capture
 	DrawSkydome();
 
 	drawlist.clear();
 	Render::BindCurrentDrawableList(drawlist);
 }
 
-void Level::SetupDefaultLight()
+void Level::CaptureEnvironment()
 {
-	Light::ClearAllLight();
-
-	Light::LightParam sunlightParam;
-	sunlightParam.type = Light::LightType::Directional;
-	sunlightParam.pos = glm::vec3(10.f, 10.f, 10.f);
-	sunlightParam.color = glm::vec3(1.0f, 1.0f, 1.0f);
-	sunlightParam.dir = glm::vec3(-1, -1, -1);;
-	Light* dirLight = new Light(sunlightParam);
-
-	sunlight = dirLight;
-	Render::sunlight = sunlight;
+	LoadEquirectangularSkydomeTexture();
+	Capture::CaptureEnvironmentCubemap(equirectangularSkyTex, envCubemap);
+	skydomMaterial = new Material(skydomeShader);
+	skydomMaterial->AddTexture(envCubemap);
 }
-
-void Level::Initialize()
-{
-
-}
-
 
 void Level::Loop()
 {
-	DrawSkydome();
+	if (!initialized)
+	{
+		Preload();
+		Initialize();
+		SetupDefaultLight();
+		initialized = true;
+	}
+
+	if(drawSkydome)
+		DrawSkydome();
 }
 
 void Level::OnGui()
@@ -92,10 +85,6 @@ void Level::LoadEquirectangularSkydomeTexture()
 	}
 }
 
-void Level::SetSkyDome()
-{
-
-}
 
 void Level::DrawSkydome()
 {
@@ -114,4 +103,19 @@ void Level::SetSunLight(Light * sunlight)
 Light* Level::GetSunLight()
 {
 	return this->sunlight;
+}
+
+void Level::SetupDefaultLight()
+{
+	Light::ClearAllLights();
+
+	Light::LightParam sunlightParam;
+	sunlightParam.type = Light::LightType::Directional;
+	sunlightParam.pos = glm::vec3(10.f, 10.f, 10.f);
+	sunlightParam.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	sunlightParam.dir = glm::vec3(-1, -1, -1);;
+	Light* dirLight = new Light(sunlightParam);
+
+	sunlight = dirLight;
+	Render::sunlight = sunlight;
 }

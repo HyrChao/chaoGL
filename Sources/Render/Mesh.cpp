@@ -55,7 +55,7 @@ void Mesh::Draw(Material* material, glm::mat4& modelMat) const
 
 	// draw mesh
 	GLCall(glBindVertexArray(VAO));
-	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, &indices[0]));
+	GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
 	GLCall(glBindVertexArray(0));
 }
 

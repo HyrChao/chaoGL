@@ -192,6 +192,12 @@ void Shader::CreateShaderProgram()
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
+	if (!success)
+	{
+		std::cout << "ERROR::SHADER::PROGRAM::CREATE_SHADER_PROGRAM_FAILD\n" << infoLog << std::endl;
+		return;
+	}
+
 	std::cout << "Load shader" << vsPath << " " << fsPath << " succuss!"<<std::endl;
 
 }

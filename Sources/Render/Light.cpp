@@ -148,7 +148,7 @@ void Light::DelLight(Light * light)
 	}
 }
 
-void Light::ClearAllLight()
+void Light::ClearAllLights()
 {
 	list<Light*>::iterator i = lights.begin();
 

@@ -32,10 +32,17 @@ void LV_Basic_PBR::OnGui()
 
 void LV_Basic_PBR::Initialize()
 {
+	Level::Initialize();
+	RegisterPBRShader(CommonAssets::instance->standardPBRShader);
+	SetPBRShaderParams();
+}
+
+void LV_Basic_PBR::CaptureEnvironment()
+{
+	Level::CaptureEnvironment();
 	Capture::PrefilterBRDF(prefilterBRDFLUT);
 	Capture::CaptureIrradianceCubemap(envCubemap, irradianceCubemap);
 	Capture::CaptureSpecularPrefilterMap(envCubemap, prefilterEnvironmentMap);
-	SetPBRShaderParams();
 }
 
 // Make sure use this funcction in RegisterPBRShaders()
@@ -70,10 +77,18 @@ void LV_Basic_PBR::SetPBRShaderParams()
 		glm::vec3 basicMRO = glm::vec3(1.0f);
 		shader->setVec3f("intensity.tint", basicColor);
 		shader->setVec3f("intensity.mro", basicMRO);
+		shader->SetParam("intensity.tint", basicColor);
+	}
+}
+
+void LV_Basic_PBR::SetPBRShaderDebugParams()
+{
+	for (auto it = pbrShaders.begin(); it != pbrShaders.end(); it++)
+	{
+		Shader* shader = *it;
+		shader->use();
 		shader->SetParam("debug_pbr", pbrDebugParam);
 		shader->SetParam("debug_light", lightDebugParam);
-		shader->SetParam("intensity.tint", basicColor);
-
 	}
 }
 
@@ -99,6 +114,7 @@ void LV_Basic_PBR::PBRMaterialDebug()
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
+		SetPBRShaderDebugParams();
 	}
 
 	if (Input::GetKeyOnce(GLFW_KEY_F1))
@@ -106,42 +122,49 @@ void LV_Basic_PBR::PBRMaterialDebug()
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.x = 1;
+		SetPBRShaderDebugParams();
 	}
 	else if (Input::GetKeyOnce(GLFW_KEY_F2))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.y = 1;
+		SetPBRShaderDebugParams();
 	}
 	else if (Input::GetKeyOnce(GLFW_KEY_F3))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.z = 1;
+		SetPBRShaderDebugParams();
 	}
 	else if (Input::GetKeyOnce(GLFW_KEY_F4))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		pbrDebugParam.w = 1;
+		SetPBRShaderDebugParams();
 	}
 	if (Input::GetKeyOnce(GLFW_KEY_F5))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		lightDebugParam.x = 1;
+		SetPBRShaderDebugParams();
 	}
 	if (Input::GetKeyOnce(GLFW_KEY_F6))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		lightDebugParam.y = 1;
+		SetPBRShaderDebugParams();
 	}
 	if (Input::GetKeyOnce(GLFW_KEY_F7))
 	{
 		pbrDebugParam = glm::vec4(0);
 		lightDebugParam = glm::vec4(0);
 		lightDebugParam.z = 1;
+		SetPBRShaderDebugParams();
 	}
 }
 

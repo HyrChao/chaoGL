@@ -2,6 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include<Application/Application.h>
+#include<Input/Input.h>
 
 #ifdef __APPLE__
 #include <mach-o/dyld.h>
@@ -316,6 +317,8 @@ void Application::DrawSystemGUI(bool showsystemgui)
 		static int counter = 0;
 
 		ImGui::Begin("Sysyem Menu");
+		ImGui::SameLine();
+		ImGui::Text("%.3f ms/frame (%.1f FPS)", Time::deltaTime * 1000.0f, 1.0f/Time::deltaTime);
 
 		ImGui::Text("Select Scene");
 
@@ -325,12 +328,12 @@ void Application::DrawSystemGUI(bool showsystemgui)
 			LevelManager::LoadLevel(LevelName::LoadModel);
 		if (ImGui::Button("PBR"))
 			LevelManager::LoadLevel(LevelName::PBR);
+		if (ImGui::Button("Shadow"))
+			LevelManager::LoadLevel(LevelName::Shadow);
 
-		ImGui::SameLine();
 		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 			glfwSetWindowShouldClose(window, true);
 
-		ImGui::Text("%.3f ms/frame (%.1f FPS)", Time::deltaTime * 1000.0f, 1.0f/Time::deltaTime);
 		ImGui::End();
 
 

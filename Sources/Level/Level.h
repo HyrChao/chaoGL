@@ -31,6 +31,8 @@ protected:
 
 	virtual void SetupDefaultLight();
 
+	virtual void CaptureEnvironment();
+
 private:
 
 
@@ -40,7 +42,6 @@ private:
 
 	void LoadEquirectangularSkydomeTexture();
 
-	void SetSkyDome();
 
 	void DrawSkydome();
 
@@ -69,6 +70,10 @@ protected:
 	DrawableList drawlist;
 
 private:
+
+	bool initialized = false;
+	bool drawSkydome = false;
+	bool reloadSkydome = false;
 
 	static Shader* skydomeShader;
 	static bool globalInitialized;

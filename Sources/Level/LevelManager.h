@@ -1,16 +1,15 @@
 #ifndef LevelManager_H
 #define LevelManager_H
 
-#include <Level/LV_Hello.h>
-#include <Level/LV_PBR.h>
-#include <Level/LV_Model.h>
+#include<Level/Level.h>
 
 enum LevelName
 {
 	Main,
 	BlinnPhong,
 	LoadModel,
-	PBR
+	PBR,
+	Shadow
 };
 
 class LevelManager

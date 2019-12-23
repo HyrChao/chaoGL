@@ -47,7 +47,7 @@ private:
 private:
 
 	static Material* shadowMapingMaterial;
-	static bool shadowMapShaderLoaded;
+	static bool shadowInitialized;
 
 	static unsigned int shadowFBO;
 	static unsigned int shadowRes;

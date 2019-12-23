@@ -8,7 +8,7 @@ class LV_PBR : public LV_Basic_PBR
 {
 public:
 
-	LV_PBR() : LV_Basic_PBR()
+	LV_PBR() : LV_Basic_PBR("/Assets/Texture/HDR/Ridgecrest_Road_Ref.hdr")
 	{
 
 	}

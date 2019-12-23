@@ -3,7 +3,7 @@
 #include <Render/Light.h>
 
 Material* Shadow::shadowMapingMaterial;
-bool Shadow::shadowMapShaderLoaded = false;
+bool Shadow::shadowInitialized = false;
 glm::mat4 Shadow::lightspaceMat;
 
 unsigned int Shadow::shadowRes = 10;
@@ -26,10 +26,6 @@ Light* Shadow::activeSunlight = nullptr;
 
 void Shadow::RenderShadowMap(void (*drawfunc)(Material*))
 {
-	if (!shadowMapShaderLoaded)
-	{
-		shadowMapingMaterial = new Material("/Shaders/Common/ShadowDepthWrite.vs", "/Shaders/Common/ShadowDepthWrite.fs");
-	}
 
 	projectionMat = glm::ortho(-shadowrange, shadowrange, -shadowrange, shadowrange, nearplane, farplane);
 	viewMat = glm::lookAt(glm::normalize(-activeSunlight->dir) * shadowdistance, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -51,32 +47,40 @@ void Shadow::RenderShadowMap(void (*drawfunc)(Material*))
 
 void Shadow::InitShadow()
 {
-	unsigned int shadowmapRes = glm::pow(2, shadowRes);
-	glGenFramebuffers(1, &shadowFBO);
+	if (!shadowInitialized)
+	{
+		shadowMapingMaterial = new Material("/Shaders/Common/ShadowDepthWrite.vs", "/Shaders/Common/ShadowDepthWrite.fs");
 
-	glGenTextures(1, &shadowMap.id);
-	glBindTexture(GL_TEXTURE_2D, shadowMap.id);
+		unsigned int shadowmapRes = glm::pow(2, shadowRes);
+		glGenFramebuffers(1, &shadowFBO);
 
-	// Generate texture buffer
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowmapRes, shadowmapRes, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	float bordercolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bordercolor);
+		glGenTextures(1, &shadowMap.id);
+		glBindTexture(GL_TEXTURE_2D, shadowMap.id);
+
+		// Generate texture buffer
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowmapRes, shadowmapRes, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		float bordercolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bordercolor);
 
 
-	// Use generated buffer as framebuffer's texture buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap.id, 0);
-	// Tell opengl we don't need any color buffer in this framebuffer
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
+		// Use generated buffer as framebuffer's texture buffer
+		glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap.id, 0);
+		// Tell opengl we don't need any color buffer in this framebuffer
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glActiveTexture(0);
+		glActiveTexture(0);
+
+		shadowInitialized = true;
+	}
+
 }
 
 void Shadow::SetActiveSunlight(Light * sunlight)
