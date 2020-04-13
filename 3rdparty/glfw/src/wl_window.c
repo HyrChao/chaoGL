@@ -23,6 +23,8 @@
 //    distribution.
 //
 //========================================================================
+// It is fine to use C99 in this file because it will not be built with VS
+//========================================================================
 
 #define _GNU_SOURCE
 
@@ -132,7 +134,7 @@ static int createTmpfileCloexec(char* tmpname)
  * SCM_RIGHTS methods.
  *
  * posix_fallocate() is used to guarantee that disk space is available
- * for the file at the given size. If disk space is insufficent, errno
+ * for the file at the given size. If disk space is insufficient, errno
  * is set to ENOSPC. If posix_fallocate() is not supported, program may
  * receive SIGBUS on accessing mmap()'ed file contents instead.
  */
@@ -902,7 +904,7 @@ static char *translateCursorShape(int shape)
         case GLFW_CROSSHAIR_CURSOR:
             return "crosshair";
         case GLFW_HAND_CURSOR:
-            return "grabbing";
+            return "hand2";
         case GLFW_HRESIZE_CURSOR:
             return "sb_h_double_arrow";
         case GLFW_VRESIZE_CURSOR:
@@ -1318,6 +1320,16 @@ void _glfwPlatformSetWindowOpacity(_GLFWwindow* window, float opacity)
 {
 }
 
+void _glfwPlatformSetRawMouseMotion(_GLFWwindow *window, GLFWbool enabled)
+{
+    // This is handled in relativePointerHandleRelativeMotion
+}
+
+GLFWbool _glfwPlatformRawMouseMotionSupported(void)
+{
+    return GLFW_TRUE;
+}
+
 void _glfwPlatformPollEvents(void)
 {
     handleEvents(0);
@@ -1437,13 +1449,24 @@ static void relativePointerHandleRelativeMotion(void* data,
                                                 wl_fixed_t dyUnaccel)
 {
     _GLFWwindow* window = data;
+    double xpos = window->virtualCursorPosX;
+    double ypos = window->virtualCursorPosY;
 
     if (window->cursorMode != GLFW_CURSOR_DISABLED)
         return;
 
-    _glfwInputCursorPos(window,
-                        window->virtualCursorPosX + wl_fixed_to_double(dxUnaccel),
-                        window->virtualCursorPosY + wl_fixed_to_double(dyUnaccel));
+    if (window->rawMouseMotion)
+    {
+        xpos += wl_fixed_to_double(dxUnaccel);
+        ypos += wl_fixed_to_double(dyUnaccel);
+    }
+    else
+    {
+        xpos += wl_fixed_to_double(dx);
+        ypos += wl_fixed_to_double(dy);
+    }
+
+    _glfwInputCursorPos(window, xpos, ypos);
 }
 
 static const struct zwp_relative_pointer_v1_listener relativePointerListener = {

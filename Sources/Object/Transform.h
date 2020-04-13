@@ -16,67 +16,94 @@
 class Transform
 {
 public:
-    Transform();
+	Transform();
     Transform(glm::vec3 pos, glm::vec3 rotation = glm::vec3(0,0,0), glm::vec3 scale = glm::vec3(0,0,0));
     ~Transform();
 
 public:
 
-	glm::vec3 pos;
-	glm::vec3 scale;
-	glm::vec3 rotation;
-	//    glm::vec3 GetPos() const {return m_pos;}
-	//    glm::vec3 GetRotation() const {return m_rotation;}
-	//    glm::vec3 GetScale() const {return m_scale;}
-
-	virtual glm::mat4 GetModelMat()
-	{
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, pos);
-		model = glm::rotate(model, rotation.x, glm::vec3(1.0, 0.0, 0.0));
-		model = glm::rotate(model, rotation.y, glm::vec3(0.0, 1.0, 0.0));
-		model = glm::rotate(model, rotation.z, glm::vec3(0.0, 0.0, 1.0));
-		model = glm::scale(model, scale);
-		return model;
-	}
-	virtual void SetPos(glm::vec3 pos)
+	virtual void Move(glm::vec3 pos)
 	{
 		this->pos = pos;
 	}
-	virtual void SetRotation(glm::vec3 rotation)
+	virtual void Move(float x, float y, float z)
 	{
-		this->rotation = rotation;
-	}
-	virtual void SetScale(glm::vec3 scale)
-	{
-		this->scale = scale;
+		this->pos.x = x;
+		this->pos.y = y;
+		this->pos.z = z;
 	}
 	virtual void Translate(glm::vec3 translate)
 	{
 		this->pos += translate;
 	}
-
-	virtual glm::vec3 GetPos() { return pos; }
-	virtual glm::vec3 GetRotate() { return rotation; }
-	virtual glm::vec3 GetScale() { return scale; }
-
+	virtual void Translate(float x, float y, float z)
+	{
+		this->pos.x += x;
+		this->pos.y += y;
+		this->pos.z += z;
+	}
+	virtual void SetRotation(glm::vec3 rotation)
+	{
+		this->rotation = rotation;
+	}
+	virtual void SetRotation(float x, float y, float z)
+	{
+		this->rotation.x = x;
+		this->rotation.y = y;
+		this->rotation.z = z;
+	}
 	virtual void Rotate(glm::vec3 rotate)
 	{
 		this->rotation.x += rotate.x;
 		this->rotation.y += rotate.y;
 		this->rotation.z += rotate.z;
 	}
+	virtual void Rotate(float x ,float y, float z)
+	{
+		this->rotation.x += x;
+		this->rotation.y += y;
+		this->rotation.z += z;
+	}
 	virtual void Scale(glm::vec3 scale)
+	{
+		this->scale.x = scale.x;
+		this->scale.y = scale.y;
+		this->scale.z = scale.z;
+	}
+	virtual void Scale(float x, float y, float z)
+	{
+		this->scale.x = x;
+		this->scale.y = y;
+		this->scale.z = z;
+	}
+	virtual void AddScale(glm::vec3 scale)
 	{
 		this->scale.x *= scale.x;
 		this->scale.y *= scale.y;
 		this->scale.z *= scale.z;
 	}
+	virtual void AddScale(float x, float y, float z)
+	{
+		this->scale.x *= x;
+		this->scale.y *= y;
+		this->scale.z *= z;
+	}
+
+
+	virtual glm::vec3 GetPos() { return pos; }
+	virtual glm::vec3 GetRotate() { return rotation; }
+	virtual glm::vec3 GetScale() { return scale; }
 
 
 
-    
-public:
+protected:
+
+	glm::vec3 pos;
+	glm::vec3 scale;
+	glm::vec3 rotation;
+
+private:
+
     
     
 };

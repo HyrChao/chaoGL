@@ -9,17 +9,17 @@ void LV_Shadow::Initialize()
 	glm::vec3 scale = glm::vec3(1.0f);
 
 	if (m_groudModel == nullptr)
-		m_groudModel = make_unique<Model>("/Assets/Model/common/groundbox.fbx", false, pos, rotation, scale);
+		m_groudModel = make_unique<Model>("/Assets/Model/common/groundbox.fbx", pos, rotation, scale, false, false);
 
 	if (m_mat_ground == nullptr)
 		m_mat_ground = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/tex_wood");
 
 	if (m_colaModel == nullptr)
-		m_colaModel = make_unique<Model>("/Assets/Model/pbr/cola_can/cola_can.fbx", false, pos, rotation, scale);
+		m_colaModel = make_unique<Model>("/Assets/Model/pbr/cola_can/cola_can.fbx", pos, rotation, scale, false, false);
 	//colaModel = new Model("/Assets/Model/pbr/rock/sharprockfree.obj", false, pos, rotation, scale);
 
 	if (m_shaderballModel_spec == nullptr)
-		m_shaderballModel_spec = make_unique<Model>("/Assets/Model/pbr/shaderBall/shaderBall.fbx", false, pos, rotation, scale);
+		m_shaderballModel_spec = make_unique<Model>("/Assets/Model/pbr/shaderBall/shaderBall.fbx", pos, rotation, scale, false, false);
 
 	if (m_mat_shaderball_spec == nullptr)
 		m_mat_shaderball_spec = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/shaderBall");
@@ -27,6 +27,60 @@ void LV_Shadow::Initialize()
 	if (m_mat_cola == nullptr)
 		m_mat_cola = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
+
+	basicGeo_Cone = make_unique<Model>("/Assets/Model/common/BasicGeo/Cone.fbx", pos, rotation, scale, false, false);
+	basicGeo_Cube = make_unique<Model>("/Assets/Model/common/BasicGeo/Cube.fbx", pos, rotation, scale, false, false);
+	basicGeo_Cylinder = make_unique<Model>("/Assets/Model/common/BasicGeo/Cylinder.fbx", pos, rotation, scale, false, false);
+	basicGeo_Helix = make_unique<Model>("/Assets/Model/common/BasicGeo/Helix.fbx", pos, rotation, scale, false, false);
+	basicGeo_Pipe = make_unique<Model>("/Assets/Model/common/BasicGeo/Pipe.fbx", pos, rotation, scale, false, false);
+	basicGeo_Prism = make_unique<Model>("/Assets/Model/common/BasicGeo/Prism.fbx", pos, rotation, scale, false, false);
+	basicGeo_Pyramid = make_unique<Model>("/Assets/Model/common/BasicGeo/Pyramid.fbx", pos, rotation, scale, false, false);
+	basicGeo_Sphere = make_unique<Model>("/Assets/Model/common/BasicGeo/Sphere.fbx", pos, rotation, scale, false, false);
+	basicGeo_Torus = make_unique<Model>("/Assets/Model/common/BasicGeo/Torus.fbx", pos, rotation, scale, false, false);
+
+	cuberoomModel = make_unique<Model>("/Assets/Model/common/cuberoom.fbx", pos, rotation, scale, false, false);
+
+}
+
+void LV_Shadow::DirectionalShadow()
+{
+	// light params change with time
+	float sunDirChangeSpeed = 0.3;
+	float scale = -1.0f;
+	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), -0.1f + scale + scale * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
+	sunlight->dir = currentSunDir;
+
+	CommonAssets::instance->standardPBRShader->use();
+	CommonAssets::instance->standardPBRShader->setMat4f("lightspaceMatrix", Shadow::lightspaceMat);
+	CommonAssets::instance->standardPBRShader->setFloat("shadow.useShadow", 1.0f);
+	CommonAssets::instance->standardPBRShader->setInt("shadow.shadowmap", TextureSlot::Shadowmap);
+	glActiveTexture(GL_TEXTURE0 + TextureSlot::Shadowmap);
+	glBindTexture(GL_TEXTURE_2D, Shadow::shadowMap.id);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	float pi = glm::pi<float>();
+	//modelMat = glm::rotate(modelMat,pi/2, glm::vec3(1.0f, 0.0f, 0.0f));
+	m_groudModel->Translate(glm::vec3(0.0f));
+	m_groudModel->Bind(m_mat_ground.get());
+
+	glm::mat4 model_cola = glm::mat4(1.0f);
+	model_cola = glm::translate(model_cola, glm::vec3(-10.0, 0.0f, 0.0f));
+	//modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
+	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
+	m_colaModel->Bind(m_mat_cola.get());
+	m_colaModel->ChangeModelMat(model_cola);
+
+	glm::mat4 model_sb = glm::mat4(1.0f);
+	model_sb = glm::translate(model_sb, glm::vec3(10.0, 0.0f, 10.0f));
+	m_shaderballModel_spec->Bind(m_mat_shaderball_spec.get());
+	m_shaderballModel_spec->ChangeModelMat(model_sb);
+	//glm::mat4 model_cola2 = glm::mat4(1.0f);
+	//model_cola = glm::translate(model_cola2, glm::vec3(-10.0, 30.0f, 0.0f));
+	//colaModel->AddToDrawlist(mat_cola, model_cola2);
+}
+
+void LV_Shadow::PointShadow()
+{
 }
 
 void LV_Shadow::Loop()
@@ -45,37 +99,24 @@ void LV_Shadow::Loop()
 		Render::DisplayFramebufferTexture(Shadow::shadowMap);
 	//Render::DisplayFramebufferTexture(envCubemap);
 
-	// light params change with time
-	float sunDirChangeSpeed = 0.3;
-	float scale = -1.0f;
-	glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), -0.1f + scale + scale * sin((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed));
-	sunlight->dir = currentSunDir;
+	static unsigned int currentScene = 0;
+	if (Input::GetKeyOnce(GLFW_KEY_TAB))
+	{
+		currentScene++;
 
-	CommonAssets::instance->standardPBRShader->use();
-	CommonAssets::instance->standardPBRShader->setMat4f("lightspaceMatrix", Shadow::lightspaceMat);
-	CommonAssets::instance->standardPBRShader->setFloat("shadow.useShadow", 1.0f);
-	CommonAssets::instance->standardPBRShader->setInt("shadow.shadowmap", TextureSlot::Shadowmap);
-	glActiveTexture(GL_TEXTURE0 + TextureSlot::Shadowmap);
-	glBindTexture(GL_TEXTURE_2D, Shadow::shadowMap.id);
+		if (currentScene > 1)
+			currentScene = 0;
+	}
 
-	glm::mat4 model = glm::mat4(1.0f);
-	float pi = glm::pi<float>();
-	//modelMat = glm::rotate(modelMat,pi/2, glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::translate(model, glm::vec3(0.0, 0.0f, 0.0f));
-	m_groudModel->AddToDrawlist(m_mat_ground.get(), model);
+	if (currentScene == 0)
+	{
+		DirectionalShadow();
+	}
 
-	glm::mat4 model_cola = glm::mat4(1.0f);
-	model_cola = glm::translate(model_cola, glm::vec3(-10.0, 0.0f, 0.0f));
-	//modelMat = glm::rotate(modelMat, -pi/2, glm::vec3(1.0, 0.0, 0.0));
-	//modelMat = glm::scale(modelMat, glm::vec3(1.0f));
-	m_colaModel->AddToDrawlist(m_mat_cola.get(), model_cola);
-
-	glm::mat4 model_sb = glm::mat4(1.0f);
-	model_sb = glm::translate(model_sb, glm::vec3(10.0, 0.0f, 10.0f));
-	m_shaderballModel_spec->AddToDrawlist(m_mat_shaderball_spec.get(), model_sb);
-	//glm::mat4 model_cola2 = glm::mat4(1.0f);
-	//model_cola = glm::translate(model_cola2, glm::vec3(-10.0, 30.0f, 0.0f));
-	//colaModel->AddToDrawlist(mat_cola, model_cola2);
+	if (currentScene == 1)
+	{
+		PointShadow();
+	}
 }
 
 void LV_Shadow::OnGui()

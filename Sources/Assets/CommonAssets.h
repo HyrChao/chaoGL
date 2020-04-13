@@ -37,6 +37,8 @@ public:
 	Shader* defaltErrorShader;
 	Shader* standardPBRShader;
 
+	glm::mat4* defaltModelMat;
+
 public:
 
 	static void DrawPlane();
@@ -145,7 +147,7 @@ private:
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f
 	};
 
-
+	glm::mat4 defaultModelMat_Val;
 
 };
 

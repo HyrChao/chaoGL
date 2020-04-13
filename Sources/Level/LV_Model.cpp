@@ -37,24 +37,31 @@ void LV_Model::Loop()
 			currentModelScene = 0;
 	}
 
-	if (currentModelScene == ShaderBalls)
-	{	
+	float sunDirChangeSpeed;
+	glm::vec3 currentSunDir;
+
+	switch (currentModelScene)
+	{
+	case ShaderBalls:
 		// light params change with time
-		float sunDirChangeSpeed = 0.3;
-		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
+		sunDirChangeSpeed = 0.3;
+		currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
 		sunlight->dir = currentSunDir;
 
 		ShaderBallScene();
-	}
+		break;
 
-	if (currentModelScene == Rock)
-	{
+	case Rock:
 		// light params change with time
-		float sunDirChangeSpeed = 0.3;
-		glm::vec3 currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
+		sunDirChangeSpeed = 0.3;
+		currentSunDir = glm::vec3(cos((float)glfwGetTime() * sunDirChangeSpeed), sin((float)glfwGetTime() * sunDirChangeSpeed), 0.0f);
 		sunlight->dir = currentSunDir;
 
 		FireExtScene();
+		break;
+
+	default:
+		break;
 	}
 
 }
@@ -78,7 +85,7 @@ void LV_Model::ShaderBallScene()
 	{
 		if (m_model == nullptr)
 		{
-			m_model = make_unique<Model>("/Assets/Model/pbr/shaderBall.fbx", false, pos, rotation, scale);
+			m_model = make_unique<Model>("/Assets/Model/pbr/shaderBall.fbx", pos, rotation, scale, false, false);
 		}
 
 		if (m_modelMat_gold == nullptr)
@@ -100,25 +107,18 @@ void LV_Model::ShaderBallScene()
 	}
 
 
-
-
-	modelMat = glm::rotate(modelMat, rotation.x, glm::vec3(1.0, 0, 0));
-	modelMat = glm::rotate(modelMat, rotation.y, glm::vec3(0, 1.0, 0));
-	modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0, 0, 1.0));
-	modelMat = glm::scale(modelMat, scale);
-
-
-	pos = glm::vec3(-10.0f, 0.0f, 0.0f);
-	modelMat = glm::translate(modelMat, pos);
-	m_model->Draw(m_modelMat_grass.get(), modelMat);
+	m_model->Rotate(rotation);
+	m_model->Scale(scale);
+	m_model->Translate(pos);
+	m_model->Draw(m_modelMat_grass.get());
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
-	modelMat = glm::translate(modelMat, pos);
-	m_model->Draw(m_modelMat_gold.get(), modelMat);
+	m_model->Translate(pos);
+	m_model->Draw(m_modelMat_gold.get());
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
-	modelMat = glm::translate(modelMat, pos);
-	m_model->Draw(m_modelMat_wood.get(), modelMat); 
+	m_model->Translate(pos);
+	m_model->Draw(m_modelMat_wood.get()); 
 
 	//model->Rotate(glm::vec3(0, timeVal, 0));
 }
@@ -136,7 +136,7 @@ void LV_Model::FireExtScene()
 	if (!rockSceneInitialized)
 	{
 		if (m_rockModel == nullptr)
-			m_rockModel = make_unique<Model>("/Assets/Model/pbr/Temp/fireext/FireExt.fbx", false, pos, rotation, scale);
+			m_rockModel = make_unique<Model>("/Assets/Model/pbr/Temp/fireext/FireExt.fbx", pos, rotation, scale, false, false);
 
 		if(m_rockMat == nullptr)
 			m_rockMat = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/fireext");
@@ -144,9 +144,8 @@ void LV_Model::FireExtScene()
 		rockSceneInitialized = true;
 	}
 
-	modelMat = glm::scale(modelMat, scale);
-
-	m_rockModel->Draw(m_rockMat.get(), modelMat);
+	m_rockModel->Scale(scale);
+	m_rockModel->Draw(m_rockMat.get());
 
 }
 

@@ -11,32 +11,36 @@
 #include <Render/Mesh.h>
 #include <filesystem>
 #include <iostream>
+#include <Object/UniqueID.h>
 
-class Model : public Transform
+class Model : public Transform, public UniqueID<Model>
 {
 
 public:
     
-    bool gammaCorrection;
-    
-	Model(string const &path, bool gamma = false, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
+	Model() = delete;
+	Model(string const &path, glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale, bool isDynamic, bool gamma);
+	~Model();
+
 	void Draw(Material * material);
+	void Bind(Material * material);
 
-	void Draw(Material * material, glm::mat4& modelMat);
+	void ChangeModelMat(glm::mat4 &mat);
+	static void UpdateModelMatsInList();
 
-	void AddToDrawlist(Material * material, glm::mat4& modelMat);
+private:
 
-	glm::mat4 GetMat() { return modelMat; }
+	// update model mat
+	virtual void UpdateModelMat();
 
-	virtual void SetPos(glm::vec3 pos);
-	virtual void SetRotation(glm::vec3 rotation);
-	virtual void SetScale(glm::vec3 scale);
-	virtual void Translate(glm::vec3 translate);
+	void LoadModel(string path);
 
-	virtual void Rotate(glm::vec3 rotate);
-	virtual void Scale(glm::vec3 scale);
-    
+public:
+
+	bool isDynamic = false;
+
 protected:
+
 	glm::mat4 modelMat;
 
 private:
@@ -44,10 +48,10 @@ private:
     vector<Mesh> meshes;
     string directory;
 	string name;
-	// update model mat
-	void UpdateMat();
 
-	void LoadModel(string path);
+	bool gammaCorrection;
+
+	static std::map<unsigned int, Model*> modelList;
 
     // functions
 	void ProcessTextures(string path);
@@ -60,4 +64,4 @@ private:
 
 };
 
-#endif /* Model_hpp */
+#endif

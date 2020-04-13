@@ -7,20 +7,25 @@
 
 #include "Model.h"
 
+std::map<unsigned int, Model*> Model::modelList;
 
-// update model mat
+Model::Model(string const &path, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), bool isDynamic = true, bool gamma = false) 
+	:
+	Transform(pos, rotation, scale),
+	isDynamic(isDynamic),
+	gammaCorrection(gamma)
 
-inline void Model::UpdateMat()
 {
-	glm::mat4 newModelMat = glm::mat4(1.0f);
-	newModelMat = glm::translate(newModelMat, this->pos);
-	newModelMat = glm::rotate(newModelMat, this->rotation.x, glm::vec3(1.0, 0, 0));
-	newModelMat = glm::rotate(newModelMat, this->rotation.y, glm::vec3(0, 1.0, 0));
-	newModelMat = glm::rotate(newModelMat, this->rotation.z, glm::vec3(0, 0, 1.0));
-	newModelMat = glm::scale(newModelMat, this->scale);
-
-	modelMat = newModelMat;
+	string fullPath = FileSystem::getPath(path);
+	LoadModel(fullPath);
+	modelList[GetID()] = this;
 }
+
+Model::	~Model()
+{
+	modelList[GetID()] = nullptr;
+}
+
 
 void Model::LoadModel(string path)
 {
@@ -138,116 +143,55 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
             indices.push_back(face.mIndices[j]);
     }
 
-    return Mesh(vertices, indices, this->modelMat);
+    return Mesh(vertices, indices, &modelMat);
 }
 
-
-
-
-//vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
-//                                 TextureType typeName)
-//{
-//    vector<Texture> textures;
-//    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-//    {
-//        aiString str;
-//        mat->GetTexture(type, i, &str);
-//        bool skip = false;
-//        for(unsigned int j = 0; j < AssetsManager::textures_loaded.size(); j++)
-//        {
-//            if(std::strcmp(AssetsManager::textures_loaded[j].path.data(), str.C_Str()) == 0)
-//            {
-//                textures.push_back(AssetsManager::textures_loaded[j]);
-//                skip = true;
-//                break;
-//            }
-//        }
-//        if(!skip)
-//        {
-//            Texture texture;
-//            texture.id = AssetsManager::TextureFromFile(str.C_Str(), directory);
-//            texture.type = typeName;
-//            texture.path = str.C_Str();
-//            textures.push_back(texture);
-//            AssetsManager::textures_loaded.push_back(texture);
-//        }
-//        
-//    }
-//    return textures;
-//}
-
-Model::Model(string const & path, bool gamma, glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale) : Transform(pos, rotation, scale)
-
-{
-	string fullPath = FileSystem::getPath(path);
-	modelMat = glm::mat4(1.0f);
-	modelMat = glm::translate(modelMat, this->pos);
-	modelMat = glm::rotate(modelMat, this->rotation.x, glm::vec3(1.0, 0, 0));
-	modelMat = glm::rotate(modelMat, this->rotation.y, glm::vec3(0, 1.0, 0));
-	modelMat = glm::rotate(modelMat, this->rotation.z, glm::vec3(0, 0, 1.0));
-	modelMat = glm::scale(modelMat, this->scale);
-	gammaCorrection = gamma;
-	LoadModel(fullPath);
-}
 
 void Model::Draw(Material* material)
 {
-    
+	UpdateModelMat();
+
     for (unsigned int i = 0; i < meshes.size(); i++) 
 	{
         meshes[i].Draw(material);
     }
 }
-void Model::Draw(Material* material, glm::mat4& modelMat)
-{
 
+void Model::Bind(Material * material)
+{
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
-		meshes[i].Draw(material, modelMat);
+		Render::AddToCurrentDrawableList(&meshes[i], material, &modelMat);
 	}
 }
 
-void Model::AddToDrawlist(Material* material, glm::mat4& modelMat)
+void Model::ChangeModelMat(glm::mat4 & mat)
 {
+	modelMat = mat;
+}
 
-	for (unsigned int i = 0; i < meshes.size(); i++)
+void Model::UpdateModelMatsInList()
+{
+	for (auto i = modelList.begin(); i != modelList.end(); i++)
 	{
-		Render::AddToCurrentDrawableList(&meshes[i], material, modelMat);
+		auto map = *i;
+		Model* model = map.second;
+		if (model && model->isDynamic)
+			model->UpdateModelMat();
 	}
 }
 
-inline void Model::SetPos(glm::vec3 pos)
-{
-	Transform::SetPos(pos);
-	UpdateMat();
-}
 
-inline void Model::SetRotation(glm::vec3 rotation)
+// update model mat
+inline void Model::UpdateModelMat()
 {
-	Transform::SetRotation(rotation);
-	UpdateMat();
-}
-
-inline void Model::SetScale(glm::vec3 scale)
-{
-	Transform::SetScale(scale);
-	UpdateMat();
-}
-
-inline void Model::Translate(glm::vec3 translate)
-{
-	Transform::Translate(translate);
-	UpdateMat();
-}
-
-inline void Model::Rotate(glm::vec3 rotate)
-{
-	Transform::Rotate(rotate);
-	UpdateMat();
-}
-
-inline void Model::Scale(glm::vec3 scale)
-{
-	Transform::Scale(scale);
-	UpdateMat();
+	if (isDynamic)
+	{
+		modelMat = glm::mat4(1.0f);
+		modelMat = glm::translate(modelMat, pos);
+		modelMat = glm::rotate(modelMat, rotation.x, glm::vec3(1.0, 0.0, 0.0));
+		modelMat = glm::rotate(modelMat, rotation.y, glm::vec3(0.0, 1.0, 0.0));
+		modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0.0, 0.0, 1.0));
+		modelMat = glm::scale(modelMat, scale);
+	}
 }

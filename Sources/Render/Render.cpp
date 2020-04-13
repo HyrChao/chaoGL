@@ -1,4 +1,5 @@
 #include<Render/Render.h>
+#include <Render/Model.h>
 
 glm::vec4 Render::clearColor;
 glm::mat4 Render::projectMat;
@@ -48,6 +49,9 @@ void Render::ExcuteDrawOnFrameBegin()
     // Update light
     UpdateLight();
 
+	// update model mat
+	Model::UpdateModelMatsInList();
+
 	// Refresh shader params
 	UpdateShaderLightParams();
 	UpdateShaderCameraVP();
@@ -76,11 +80,10 @@ void Render::ExcuteDrawOnFrameEnd()
 //	currentDrawablelist->insert(std::make_pair(drawable, context));
 //}
 
-void Render::AddToCurrentDrawableList(IDrawable* drawable, Material* material, glm::mat4 modelMat)
+void Render::AddToCurrentDrawableList(IDrawable* drawable, Material* material, glm::mat4* model)
 {
-	DrawableContext context(material, modelMat);
-	currentDrawablelist->insert(std::make_pair(drawable, context));
-	(*currentDrawablelist)[drawable] = context;
+	DrawableContext context(drawable, material, model);
+	currentDrawablelist->AddContext(context);
 }
 
 void Render::BindCurrentDrawableList(DrawableList & list)
@@ -106,7 +109,7 @@ void Render::ExcuteMainDrawlist()
 	for (auto i = list.begin(); i != list.end(); i++)
 	{
 		DrawableContext context = (*i).second;
-		IDrawable* drawable = (*i).first;
+		IDrawable* drawable = (*i).second.drawable;
 
 		Material* mtl = context.material;
 		if (Shadow::debugShadowView)
@@ -117,7 +120,7 @@ void Render::ExcuteMainDrawlist()
 			mtl->SetParam("projection", lightProject);
 			mtl->SetParam("view", lightView);
 		}
-		drawable->Draw(context.material, context.modelMat);
+		drawable->Draw(context.material);
 	}
 }
 
@@ -134,8 +137,8 @@ void Render::ExcuteDrawlistWithMaterial(Material * material)
 	for (auto i = list.begin(); i != list.end(); i++)
 	{
 		DrawableContext context = (*i).second;
-		IDrawable* drawable = (*i).first;
-		drawable->Draw(material, context.modelMat);
+		IDrawable* drawable = (*i).second.drawable;
+		drawable->Draw(material);
 	}
 }
 

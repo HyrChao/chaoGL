@@ -60,6 +60,10 @@ void Level::Loop()
 
 	if(drawSkydome)
 		DrawSkydome();
+	
+	// Change current drawable list to this level's list on every loop begin
+	Render::BindCurrentDrawableList(drawlist);
+
 }
 
 void Level::OnGui()

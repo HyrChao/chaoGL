@@ -23,7 +23,7 @@ public:
 	Material(string vsPath, string fsPath);
 	
 
-	void SetModelMat(glm::mat4 mat);
+	void SetModelMat(glm::mat4 &mat);
 
 	// texture
 	void AddTexture(Texture &texture);

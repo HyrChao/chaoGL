@@ -7,18 +7,14 @@
 
 #include "Transform.h"
 
-Transform::Transform()
+Transform::Transform() : pos(glm::vec3(0.0f)), scale(glm::vec3(0.0f)), rotation(glm::vec3(0.0f))
 {
-    this->pos =  glm::vec3(0,0,0);
-    this->rotation =  glm::vec3(0,0,0);
-    this->scale =  glm::vec3(0,0,0);
+
 }
 
-Transform::Transform(glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale)
+Transform::Transform(glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale) : pos(pos), scale(scale), rotation(rotation)
 {
-    this->pos = pos;
-    this->rotation = rotation;
-    this->scale = scale;
+
 };
 
 Transform::~Transform()

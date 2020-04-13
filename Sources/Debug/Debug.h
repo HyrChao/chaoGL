@@ -2,6 +2,8 @@
 #ifndef Debug_H
 #define Debug_H
 
+//#define CHAOGL_DEBU
+
 #ifdef CHAOGL_DEBUG
 	#define glCheckError() glCheckError_(__FILE__, __LINE__)
 #else  

@@ -22,8 +22,7 @@ public:
 
 	//static void Draw(IDrawable* drawable, Material* material, glm::mat4 modelMat);
 
-	static void AddToCurrentDrawableList(IDrawable * drawable, Material * material, glm::mat4 modelMat);
-
+	static void AddToCurrentDrawableList(IDrawable * drawable, Material * material, glm::mat4* model);
 	static void BindCurrentDrawableList(DrawableList& list);
 	static void UnbindCurrentDrawableList();
 

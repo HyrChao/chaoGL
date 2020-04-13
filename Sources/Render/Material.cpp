@@ -98,7 +98,7 @@ Material::Material(string vsPath, string fsPath)
 	isShaderInstance = false;
 }
 
-void Material::SetModelMat(glm::mat4 mat)
+void Material::SetModelMat(glm::mat4 &mat)
 {
 	mat4Params["model"] = mat;
 }

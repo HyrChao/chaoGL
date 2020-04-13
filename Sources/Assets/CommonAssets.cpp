@@ -2,9 +2,11 @@
 
 CommonAssets* CommonAssets::instance;
 
-CommonAssets::CommonAssets()
+CommonAssets::CommonAssets() : defaultModelMat_Val(glm::mat4(1.0f))
 {
 	instance = this;
+
+	defaltModelMat = &defaultModelMat_Val;
 
 	LoadTriangle();
 	LoadRecangle();

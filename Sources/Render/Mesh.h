@@ -35,7 +35,7 @@ public:
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     // func
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, glm::mat4 modelMat)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, glm::mat4* modelMat)
     {
         this->vertices = vertices;
         this->indices = indices;
@@ -47,22 +47,12 @@ public:
     }
 
 	void Draw(Material* material) const override;
-	void Draw(Material * material, glm::mat4& modelMat) const override;
-	void Bind(DrawableList& drawablelist , DrawableContext drawablecontext) const override
-	{
-		drawablelist[(IDrawable*)(this)] = drawablecontext;
-	}
-	void Bind(DrawableList& drawablelist, Material* material, glm::mat4 modelMat) const override
-	{
-		DrawableContext context(material, modelMat);
-		drawablelist[(IDrawable*)(this)] = context;
-	}
-
+	void Bind(DrawableList& drawablelist, Material* material) const override;
 
 private:
     // render buffer
     unsigned int VAO, VBO, EBO;
-	glm::mat4 modelMat;
+	glm::mat4* modelMat;
 	// provent error during destroction
 	//unique_ptr<Material> material;
 	 
