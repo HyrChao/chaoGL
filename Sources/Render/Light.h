@@ -77,7 +77,7 @@ private:
 
 	glm::vec3 scale = glm::vec3(1, 1, 1);
 
-	glm::mat4 trans = glm::mat4();
+	glm::mat4 trans;
 	
 	unsigned int lightVAO;
 

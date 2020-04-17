@@ -22,72 +22,18 @@ public:
 
 public:
 
-	virtual void Move(glm::vec3 pos)
-	{
-		this->pos = pos;
-	}
-	virtual void Move(float x, float y, float z)
-	{
-		this->pos.x = x;
-		this->pos.y = y;
-		this->pos.z = z;
-	}
-	virtual void Translate(glm::vec3 translate)
-	{
-		this->pos += translate;
-	}
-	virtual void Translate(float x, float y, float z)
-	{
-		this->pos.x += x;
-		this->pos.y += y;
-		this->pos.z += z;
-	}
-	virtual void SetRotation(glm::vec3 rotation)
-	{
-		this->rotation = rotation;
-	}
-	virtual void SetRotation(float x, float y, float z)
-	{
-		this->rotation.x = x;
-		this->rotation.y = y;
-		this->rotation.z = z;
-	}
-	virtual void Rotate(glm::vec3 rotate)
-	{
-		this->rotation.x += rotate.x;
-		this->rotation.y += rotate.y;
-		this->rotation.z += rotate.z;
-	}
-	virtual void Rotate(float x ,float y, float z)
-	{
-		this->rotation.x += x;
-		this->rotation.y += y;
-		this->rotation.z += z;
-	}
-	virtual void Scale(glm::vec3 scale)
-	{
-		this->scale.x = scale.x;
-		this->scale.y = scale.y;
-		this->scale.z = scale.z;
-	}
-	virtual void Scale(float x, float y, float z)
-	{
-		this->scale.x = x;
-		this->scale.y = y;
-		this->scale.z = z;
-	}
-	virtual void AddScale(glm::vec3 scale)
-	{
-		this->scale.x *= scale.x;
-		this->scale.y *= scale.y;
-		this->scale.z *= scale.z;
-	}
-	virtual void AddScale(float x, float y, float z)
-	{
-		this->scale.x *= x;
-		this->scale.y *= y;
-		this->scale.z *= z;
-	}
+	virtual void MoveTo(glm::vec3 pos);
+	virtual void MoveTo(float x, float y, float z);
+	virtual void Translate(glm::vec3 translate);
+	virtual void Translate(float x, float y, float z);
+	virtual void SetRotation(glm::vec3 rotation);
+	virtual void SetRotation(float x, float y, float z);
+	virtual void Rotate(glm::vec3 rotate);
+	virtual void Rotate(float x, float y, float z);
+	virtual void SetScale(glm::vec3 scale);
+	virtual void SetScale(float x, float y, float z);
+	virtual void Scale(glm::vec3 scale);
+	virtual void Scale(float x, float y, float z);
 
 
 	virtual glm::vec3 GetPos() { return pos; }
@@ -98,12 +44,21 @@ public:
 
 protected:
 
+	glm::vec3 prev_pos;
 	glm::vec3 pos;
+	glm::vec3 prev_scale;
 	glm::vec3 scale;
+	glm::vec3 prev_rotation;
 	glm::vec3 rotation;
+	glm::mat4 modelMat;
 
 private:
 
+	void UpdateRotationToMat();
+
+	void UpdatePositionToMat();
+
+	void UpdateScaleToMat();
     
     
 };

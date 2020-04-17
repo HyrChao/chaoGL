@@ -149,8 +149,6 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 
 void Model::Draw(Material* material)
 {
-	UpdateModelMat();
-
     for (unsigned int i = 0; i < meshes.size(); i++) 
 	{
         meshes[i].Draw(material);
@@ -169,29 +167,14 @@ void Model::ChangeModelMat(glm::mat4 & mat)
 {
 	modelMat = mat;
 }
-
-void Model::UpdateModelMatsInList()
-{
-	for (auto i = modelList.begin(); i != modelList.end(); i++)
-	{
-		auto map = *i;
-		Model* model = map.second;
-		if (model && model->isDynamic)
-			model->UpdateModelMat();
-	}
-}
-
-
-// update model mat
-inline void Model::UpdateModelMat()
-{
-	if (isDynamic)
-	{
-		modelMat = glm::mat4(1.0f);
-		modelMat = glm::translate(modelMat, pos);
-		modelMat = glm::rotate(modelMat, rotation.x, glm::vec3(1.0, 0.0, 0.0));
-		modelMat = glm::rotate(modelMat, rotation.y, glm::vec3(0.0, 1.0, 0.0));
-		modelMat = glm::rotate(modelMat, rotation.z, glm::vec3(0.0, 0.0, 1.0));
-		modelMat = glm::scale(modelMat, scale);
-	}
-}
+//
+//void Model::UpdateModelMatsInList()
+//{
+//	for (auto i = modelList.begin(); i != modelList.end(); i++)
+//	{
+//		auto map = *i;
+//		Model* model = map.second;
+//		if (model && model->isDynamic)
+//			model->UpdateModelMat();
+//	}
+//}

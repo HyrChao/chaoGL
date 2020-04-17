@@ -67,15 +67,16 @@ void Light::SetOuterCutoffEulerAbgle(float eulerAngle)
 
 void Light::DrawAvatar()
 {
+	return;
 	if (!lightAvatarInitialized)
 	{
-		glGenVertexArrays(1, &lightVAO);
-		glBindVertexArray(lightVAO);
+		//glGenVertexArrays(1, &lightVAO);
+		//glBindVertexArray(lightVAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, CommonAssets::instance->cubeVBO);
+		//glBindBuffer(GL_ARRAY_BUFFER, CommonAssets::instance->cubeVBO);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		//glEnableVertexAttribArray(0);
 
 		// transform , for light avatar
 		scale = glm::vec3(0.1f);
@@ -92,16 +93,13 @@ void Light::DrawAvatar()
 	}
 
 	avatarShader->use();
-
 	avatarShader->setMat4f("model", trans);
 	avatarShader->setMat4f("view", Camera::main->viewMat);
 	avatarShader->setMat4f("projection", Camera::main->projMat);
 
 	avatarShader->setVec3f("lightColor", color);
 
-	glBindVertexArray(CommonAssets::instance->cubeVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
+	CommonAssets::DrawCube();
 }
 
 void Light::SetCutOff(float angle)

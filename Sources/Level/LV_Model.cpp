@@ -85,7 +85,7 @@ void LV_Model::ShaderBallScene()
 	{
 		if (m_model == nullptr)
 		{
-			m_model = make_unique<Model>("/Assets/Model/pbr/shaderBall.fbx", pos, rotation, scale, false, false);
+			m_model = make_unique<Model>("/Assets/Model/pbr/shaderBall.fbx", pos, rotation, scale, true, false);
 		}
 
 		if (m_modelMat_gold == nullptr)
@@ -106,18 +106,18 @@ void LV_Model::ShaderBallScene()
 		shaderballSceneInitialized = true;
 	}
 
+	m_model->SetRotation(glm::vec3(0.0f, 3.1415 * sin(Time::time * 0.2), 0.0f));
+	m_model->SetScale(glm::vec3(cos(Time::time * 0.2)) + 1.5F);
 
-	m_model->Rotate(rotation);
-	m_model->Scale(scale);
-	m_model->Translate(pos);
+	m_model->MoveTo(pos);
 	m_model->Draw(m_modelMat_grass.get());
 
-	pos = glm::vec3(10.0f, 0.0f, 0.0f);
-	m_model->Translate(pos);
+	pos = glm::vec3(-10.0f, 0.0f, 0.0f);
+	m_model->MoveTo(pos);
 	m_model->Draw(m_modelMat_gold.get());
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
-	m_model->Translate(pos);
+	m_model->MoveTo(pos);
 	m_model->Draw(m_modelMat_wood.get()); 
 
 	//model->Rotate(glm::vec3(0, timeVal, 0));
@@ -127,11 +127,10 @@ void LV_Model::FireExtScene()
 {
 	drawlist.clear();
 
-	float scaleVal = 1.0f;
+	float scaleVal = 0.01f;
 	glm::vec3 pos = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);
 	glm::vec3 scale = glm::vec3(scaleVal);
-	glm::mat4 modelMat = glm::mat4(1.0f);
 
 	if (!rockSceneInitialized)
 	{
@@ -144,7 +143,7 @@ void LV_Model::FireExtScene()
 		rockSceneInitialized = true;
 	}
 
-	m_rockModel->Scale(scale);
+	m_rockModel->SetScale(scale);
 	m_rockModel->Draw(m_rockMat.get());
 
 }

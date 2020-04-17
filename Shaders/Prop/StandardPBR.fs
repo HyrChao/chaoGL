@@ -326,7 +326,7 @@ void main()
     finalColor = mix(finalColor, vec4(lighting, 1), debug_light.y);
     finalColor = mix(finalColor, vec4(shadowMul, shadowMul, shadowMul, 1), debug_light.z);
     
-    // finalColor = vec4(diffuse, 1.0);
+    // finalColor = vec4(albedo, 1.0);
     // finalColor = vec4(Lo, 1.0);
     // finalColor = vec4(color,1.0);
     // Output final color

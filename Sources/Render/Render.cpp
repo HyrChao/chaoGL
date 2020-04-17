@@ -49,9 +49,6 @@ void Render::ExcuteDrawOnFrameBegin()
     // Update light
     UpdateLight();
 
-	// update model mat
-	Model::UpdateModelMatsInList();
-
 	// Refresh shader params
 	UpdateShaderLightParams();
 	UpdateShaderCameraVP();

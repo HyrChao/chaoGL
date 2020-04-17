@@ -26,12 +26,12 @@ public:
 	void Bind(Material * material);
 
 	void ChangeModelMat(glm::mat4 &mat);
-	static void UpdateModelMatsInList();
+	//static void UpdateModelMatsInList();
 
 private:
 
 	// update model mat
-	virtual void UpdateModelMat();
+	//virtual void UpdateModelMat();
 
 	void LoadModel(string path);
 
@@ -41,7 +41,6 @@ public:
 
 protected:
 
-	glm::mat4 modelMat;
 
 private:
     // model data

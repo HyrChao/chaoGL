@@ -179,7 +179,7 @@ void Application::OnFrameEnd()
 
 	Time::UpdateTime();
 
-	// Event
+	//// Event
 	glfwPollEvents();
 }
 

@@ -24,17 +24,17 @@ void Shader::use()
 
 void Shader::setBool(const std::string & name, bool value)
 {
-	glUniform1i(GetCachedUniformLocation(name), (int)value);
+	GLCall(glUniform1i(GetCachedUniformLocation(name), (int)value));
 }
 
 void Shader::setInt(const std::string & name, int value)
 {
-	glUniform1i(GetCachedUniformLocation(name), value);
+	GLCall(glUniform1i(GetCachedUniformLocation(name), value));
 }
 
 void Shader::setFloat(const std::string & name, float value)
 {
-	glUniform1f(GetCachedUniformLocation(name), value);
+	GLCall(glUniform1f(GetCachedUniformLocation(name), value));
 }
 
 void Shader::setVec2f(const std::string & name, glm::vec2& vec2)
@@ -44,27 +44,27 @@ void Shader::setVec2f(const std::string & name, glm::vec2& vec2)
 
 void Shader::setVec3f(const std::string & name, float x, float y, float z)
 {
-	glUniform3f(GetCachedUniformLocation(name), x, y, z);
+	GLCall(glUniform3f(GetCachedUniformLocation(name), x, y, z));
 }
 
 void Shader::setVec3f(const std::string & name, glm::vec3& vec3)
 {
-	glUniform3f(GetCachedUniformLocation(name), vec3.x, vec3.y, vec3.z);
+	GLCall(glUniform3f(GetCachedUniformLocation(name), vec3.x, vec3.y, vec3.z));
 }
 
 void Shader::setVec4f(const std::string & name, float x, float y, float z, float w)
 {
-	glUniform4f(GetCachedUniformLocation(name), x, y, z, w);
+	GLCall(glUniform4f(GetCachedUniformLocation(name), x, y, z, w));
 }
 
 void Shader::setVec4f(const std::string & name, glm::vec4& vec4)
 {
-	glUniform4f(GetCachedUniformLocation(name), vec4.x, vec4.y, vec4.z, vec4.w);
+	GLCall(glUniform4f(GetCachedUniformLocation(name), vec4.x, vec4.y, vec4.z, vec4.w));
 }
 
 void Shader::setMat4f(const std::string & name, glm::mat4& mat)
 {
-	glUniformMatrix4fv(GetCachedUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat));
+	GLCall(glUniformMatrix4fv(GetCachedUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat)));
 }
 
 void Shader::SetParam(const std::string & name, bool value)
@@ -215,6 +215,10 @@ int Shader::GetCachedUniformLocation(const string & name)
 	//}
 	int location = glGetUniformLocation(ID, name.c_str());
 	//cachedUniformLocation[name] = location;
+
+	// Log warning if can't find uniform name
+	//if(location == -1)
+	//	std::cout << "WARNING::SHADER::PROGRAM::UNIFORM ERROR\n" << "Can't find parameter "<< name.c_str() <<" in shader" << vsPath.c_str()  << " "<< fsPath.c_str() << std::endl;
 
 	return location;
 }

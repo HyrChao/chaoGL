@@ -75,8 +75,8 @@ void LevelManager::LoadMainLevel()
 	if (m_currentLevel != nullptr)
 		delete m_currentLevel;
 
-	m_currentLevel = new LV_Shadow();
-	m_currentLevel->name = "Shadow";
+	m_currentLevel = new LV_Model();
+	m_currentLevel->name = "LoadModel";
 }
 
 
