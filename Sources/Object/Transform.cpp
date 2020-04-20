@@ -24,9 +24,9 @@ Transform::Transform(glm::vec3 pos, glm::vec3 rotation, glm::vec3 scale) :
 	scale(scale), 
 	rotation(rotation), 
 	modelMat(glm::mat4(1.0f)),
-	prev_pos(pos),
-	prev_scale(scale),
-	prev_rotation(rotation)
+	prev_pos(glm::vec3(0.0f)),
+	prev_scale(glm::vec3(1.0f)),
+	prev_rotation(glm::vec3(0.0f))
 {
 	UpdatePositionToMat();
 	UpdateRotationToMat();
@@ -141,7 +141,14 @@ inline void Transform::UpdateRotationToMat()
 
 inline void Transform::UpdatePositionToMat()
 {
-	this->modelMat = glm::translate(modelMat, pos - prev_pos);
+	glm::vec3 translateAmout = (pos - prev_pos) / scale;
+	this->modelMat = glm::rotate(this->modelMat, -rotation.x, glm::vec3(1.0, 0.0, 0.0));
+	this->modelMat = glm::rotate(this->modelMat, -rotation.y, glm::vec3(0.0, 1.0, 0.0));
+	this->modelMat = glm::rotate(this->modelMat, -rotation.z, glm::vec3(0.0, 0.0, 1.0));
+	this->modelMat = glm::translate(modelMat, translateAmout);
+	this->modelMat = glm::rotate(this->modelMat, rotation.x, glm::vec3(1.0, 0.0, 0.0));
+	this->modelMat = glm::rotate(this->modelMat, rotation.y, glm::vec3(0.0, 1.0, 0.0));
+	this->modelMat = glm::rotate(this->modelMat, rotation.z, glm::vec3(0.0, 0.0, 1.0));
 	prev_pos = pos;
 }
 

@@ -48,7 +48,7 @@ private:
 	// Pointers that not hold resource
 
 	unique_ptr<Model> m_model = nullptr;
-	unique_ptr<Model> m_rockModel = nullptr;
+	unique_ptr<Model> m_fireextModel = nullptr;
 	enum Model_Scene
 	{
 		ShaderBalls,

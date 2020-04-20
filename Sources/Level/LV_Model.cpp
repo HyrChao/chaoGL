@@ -106,10 +106,11 @@ void LV_Model::ShaderBallScene()
 		shaderballSceneInitialized = true;
 	}
 
-	m_model->SetRotation(glm::vec3(0.0f, 3.1415 * sin(Time::time * 0.2), 0.0f));
-	m_model->SetScale(glm::vec3(cos(Time::time * 0.2)) + 1.5F);
+	float rotateVal = Time::time * 0.2f;
 
 	m_model->MoveTo(pos);
+	m_model->SetRotation(glm::vec3(0.0f, rotateVal, 0.0f));
+	m_model->SetScale(glm::vec3(0.5 * cos(Time::time * 0.2)) + 1.0f);
 	m_model->Draw(m_modelMat_grass.get());
 
 	pos = glm::vec3(-10.0f, 0.0f, 0.0f);
@@ -118,9 +119,8 @@ void LV_Model::ShaderBallScene()
 
 	pos = glm::vec3(10.0f, 0.0f, 0.0f);
 	m_model->MoveTo(pos);
-	m_model->Draw(m_modelMat_wood.get()); 
+	m_model->Draw(m_modelMat_wood.get());
 
-	//model->Rotate(glm::vec3(0, timeVal, 0));
 }
 
 void LV_Model::FireExtScene()
@@ -134,8 +134,8 @@ void LV_Model::FireExtScene()
 
 	if (!rockSceneInitialized)
 	{
-		if (m_rockModel == nullptr)
-			m_rockModel = make_unique<Model>("/Assets/Model/pbr/Temp/fireext/FireExt.fbx", pos, rotation, scale, false, false);
+		if (m_fireextModel == nullptr)
+			m_fireextModel = make_unique<Model>("/Assets/Model/pbr/Temp/fireext/FireExt.fbx", pos, rotation, scale, false, false);
 
 		if(m_rockMat == nullptr)
 			m_rockMat = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/Temp/fireext");
@@ -143,8 +143,8 @@ void LV_Model::FireExtScene()
 		rockSceneInitialized = true;
 	}
 
-	m_rockModel->SetScale(scale);
-	m_rockModel->Draw(m_rockMat.get());
+	m_fireextModel->SetScale(scale);
+	m_fireextModel->Draw(m_rockMat.get());
 
 }
 
