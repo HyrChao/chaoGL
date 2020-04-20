@@ -142,12 +142,11 @@ void Application::Update()
 
 	PrepareGUIOnFrameBegin();
 
-	Render::ExcuteDrawOnFrameBegin();
-
+	Render::DrawOnFrameBegin();
 
 	LevelManager::SceneLoop();
 
-	Render::ExcuteDraw();
+	Render::Draw();
 
 	// Fill mode
 	if (wireframeMode)
@@ -156,7 +155,7 @@ void Application::Update()
         Render::WireframeMode(false);
 
 
-    Render::ExcuteDrawOnFrameEnd();
+    Render::DrawOnFrameEnd();
 
 	DrawSystemGUI(showSystemGUI);
 	LevelManager::SceneGui();

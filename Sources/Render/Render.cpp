@@ -30,7 +30,7 @@ void Render::PrepareRender()
 
 }
 
-void Render::ExcuteDrawOnFrameBegin()
+void Render::DrawOnFrameBegin()
 {
 	//// Clear
 	//float timeValue = glfwGetTime();
@@ -47,27 +47,27 @@ void Render::ExcuteDrawOnFrameBegin()
     viewPos = Camera::main->pos;
     
     // Update light
-    UpdateLight();
+    DrawLightAvatars();
 
 	// Refresh shader params
 	UpdateShaderLightParams();
 	UpdateShaderCameraVP();
+}
 
+void Render::Draw()
+{
 	// Render shadow if has sunlight
 	if (sunlight != nullptr)
 	{
 		Shadow::SetActiveSunlight(sunlight);
-		Shadow::RenderShadowMap(Render::ExcuteDrawlistWithMaterial);
+		Shadow::RenderShadowMap(Render::ExcuteDrawlistWithReplacedMaterial);
 	}
-}
-
-void Render::ExcuteDraw()
-{
 	ExcuteMainDrawlist();
 }
 
-void Render::ExcuteDrawOnFrameEnd()
+void Render::DrawOnFrameEnd()
 {
+	ClearCurrentDrawableList();
 }
 
 
@@ -91,6 +91,11 @@ void Render::BindCurrentDrawableList(DrawableList & list)
 void Render::UnbindCurrentDrawableList()
 {
 	currentDrawablelist = nullptr;
+}
+
+void Render::ClearCurrentDrawableList()
+{
+	currentDrawablelist->clear();
 }
 
 void Render::ExcuteMainDrawlist()
@@ -121,7 +126,7 @@ void Render::ExcuteMainDrawlist()
 	}
 }
 
-void Render::ExcuteDrawlistWithMaterial(Material * material)
+void Render::ExcuteDrawlistWithReplacedMaterial(Material * material)
 {
 	if (!currentDrawablelist)
 		return;
@@ -152,6 +157,7 @@ void Render::UpdateShaderLightParams()
 		while (i != Light::lights.end())
 		{
 			Light *light = *i;
+
 			if (light->type == Light::LightType::Directional)
 			{
 				shader->setVec3f("dirLight.direction", light->dir);
@@ -245,32 +251,6 @@ void Render::WireframeMode(bool on)
 	}
 }
 
-void Render::DrawGeo(unsigned int geoVAO, Shader * shader, glm::mat4 & model)
-{
-	shader->use();
-	Render::SetVertexShaderParams(shader, model);
-	glBindVertexArray(geoVAO);
-	glDrawElements(GL_TRIANGLE_STRIP, geoVAO, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
-void Render::DrawCube(Shader * shader, glm::mat4 & model)
-{
-	shader->use();
-	glBindVertexArray(CommonAssets::instance->cubeVAO);
-	Render::SetVertexShaderParams(shader, model);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
-}
-
-void Render::DrawSphere(Shader * shader, glm::mat4 & model)
-{
-	shader->use();
-	Render::SetVertexShaderParams(shader, model);
-	glBindVertexArray(CommonAssets::instance->sphereVAO);
-	glDrawElements(GL_TRIANGLE_STRIP, CommonAssets::instance->sphereIndexCount, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
 
 // Debug frame buffer texture
 
@@ -299,9 +279,9 @@ void Render::DisplayFramebufferTexture(Texture texture)
 }
 
 
-void Render::UpdateLight() {
-
-    //lightCol = Color::GetHue(lightCol, 1, 1);
+void Render::DrawLightAvatars() 
+{
+	// Draw light avatar to scene
     list<Light*>::iterator i = Light::lights.begin();
     while (i != Light::lights.end())
     {

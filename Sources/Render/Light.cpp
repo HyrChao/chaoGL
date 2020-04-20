@@ -67,7 +67,6 @@ void Light::SetOuterCutoffEulerAbgle(float eulerAngle)
 
 void Light::DrawAvatar()
 {
-	return;
 	if (!lightAvatarInitialized)
 	{
 		//glGenVertexArrays(1, &lightVAO);

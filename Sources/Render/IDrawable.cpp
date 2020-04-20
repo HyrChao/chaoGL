@@ -19,7 +19,5 @@
 
 void DrawableList::AddContext(DrawableContext & context)
 {
-	//DrawableList drawlist = *this;
-	//this[context.GetID()] = context;
 	this->insert(std::make_pair(context.GetID(), context));
 }

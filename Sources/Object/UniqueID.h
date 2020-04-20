@@ -18,6 +18,7 @@ protected:
 private:
 
 	void GenerateID();
+	void DeleteID();
 
 private:
 
@@ -37,7 +38,7 @@ template<class T> UniqueID<T>::UniqueID()
 
 template<class T> UniqueID<T>::~UniqueID()
 {
-	chachedID.push_back(ID);
+	DeleteID();
 }
 
 template<class T> unsigned int& UniqueID<T>::GetID()
@@ -47,16 +48,28 @@ template<class T> unsigned int& UniqueID<T>::GetID()
 
 template<class T> void UniqueID<T>::GenerateID()
 {
+	// consider to replace id to UUID
+	++lastID;
+	ID = lastID;
+	chachedID.push_back(ID);
+}
+
+template<class T> void UniqueID<T>::DeleteID()
+{
 	if (!chachedID.empty())
 	{
-		auto i = chachedID.begin();
-		ID = *i;
-		chachedID.pop_front();
+		for (auto i = chachedID.begin(); i != chachedID.end(); i++)
+		{
+			unsigned int currentID = *i;
+			if (currentID == ID)
+			{
+				chachedID.erase(i);
+				break;
+			}
+		}
 	}
 	else
 	{
-		++lastID;
-		ID = lastID;
 	}
 }
 

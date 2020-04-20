@@ -256,7 +256,6 @@ void LV_Hello::HelloLight()
 
 	helloLightShader->setVec3f("material.ambient", 1.0f, 0.5f, 0.31f);
 	helloLightShader->setVec3f("material.diffuse", 1.0f, 0.5f, 0.31f);
-	helloLightShader->setVec3f("material.specular", 0.5f, 0.5f, 0.5f);
 	helloLightShader->setFloat("material.shininess", 32.0f);
 
 
