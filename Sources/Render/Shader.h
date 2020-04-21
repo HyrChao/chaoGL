@@ -21,12 +21,12 @@ using namespace std;
 class Shader
 {
 
-
 public:
 	// id for shader program
 	unsigned int ID;
 
 	static std::unordered_map<int, Shader*> loadedShaders;
+	static std::unordered_map<int, Shader*> activeShaders;
 
 	string vsPath;
 	string fsPath;

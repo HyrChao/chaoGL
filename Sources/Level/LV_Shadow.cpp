@@ -28,16 +28,6 @@ void LV_Shadow::Initialize()
 		m_mat_cola = make_unique<Material>(CommonAssets::instance->standardPBRShader, "/Assets/Model/pbr/cola_can");
 
 
-	basicGeo_Cone = make_unique<Model>("/Assets/Model/common/BasicGeo/Cone.fbx", pos, rotation, scale, false, false);
-	basicGeo_Cube = make_unique<Model>("/Assets/Model/common/BasicGeo/Cube.fbx", pos, rotation, scale, false, false);
-	basicGeo_Cylinder = make_unique<Model>("/Assets/Model/common/BasicGeo/Cylinder.fbx", pos, rotation, scale, false, false);
-	basicGeo_Helix = make_unique<Model>("/Assets/Model/common/BasicGeo/Helix.fbx", pos, rotation, scale, false, false);
-	basicGeo_Pipe = make_unique<Model>("/Assets/Model/common/BasicGeo/Pipe.fbx", pos, rotation, scale, false, false);
-	basicGeo_Prism = make_unique<Model>("/Assets/Model/common/BasicGeo/Prism.fbx", pos, rotation, scale, false, false);
-	basicGeo_Pyramid = make_unique<Model>("/Assets/Model/common/BasicGeo/Pyramid.fbx", pos, rotation, scale, false, false);
-	basicGeo_Sphere = make_unique<Model>("/Assets/Model/common/BasicGeo/Sphere.fbx", pos, rotation, scale, false, false);
-	basicGeo_Torus = make_unique<Model>("/Assets/Model/common/BasicGeo/Torus.fbx", pos, rotation, scale, false, false);
-
 	cuberoomModel = make_unique<Model>("/Assets/Model/common/cuberoom.fbx", pos, rotation, scale, false, false);
 
 }

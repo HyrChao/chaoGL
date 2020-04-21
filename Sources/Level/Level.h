@@ -48,6 +48,7 @@ private:
 
 public:
 
+	static Level* currentLevel;
 	string name;
 
 

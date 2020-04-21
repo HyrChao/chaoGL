@@ -1,4 +1,6 @@
 #include<Assets/CommonAssets.h>
+#include<Render/Model.h>
+#include<memory>
 
 CommonAssets* CommonAssets::instance;
 
@@ -20,6 +22,23 @@ void CommonAssets::LoadShaders()
 {
 	standardPBRShader = new Shader("/Shaders/Prop/StandardPBR.vs", "/Shaders/Prop/StandardPBR.fs", true);
 	defaltErrorShader = new Shader("/Shaders/Debug/Debug_ErrorShader.vs", "/Shaders/Debug/Debug_ErrorShader.fs", true);
+}
+
+void CommonAssets::LoadBasicGeos()
+{
+	glm::vec3 pos = glm::vec3(0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
+
+	basicGeo_Cone = make_unique<Model>("/Assets/Model/common/BasicGeo/Cone.fbx", pos, rotation, scale, false, false);
+	basicGeo_Cube = make_unique<Model>("/Assets/Model/common/BasicGeo/Cube.fbx", pos, rotation, scale, false, false);
+	basicGeo_Cylinder = make_unique<Model>("/Assets/Model/common/BasicGeo/Cylinder.fbx", pos, rotation, scale, false, false);
+	basicGeo_Helix = make_unique<Model>("/Assets/Model/common/BasicGeo/Helix.fbx", pos, rotation, scale, false, false);
+	basicGeo_Pipe = make_unique<Model>("/Assets/Model/common/BasicGeo/Pipe.fbx", pos, rotation, scale, false, false);
+	basicGeo_Prism = make_unique<Model>("/Assets/Model/common/BasicGeo/Prism.fbx", pos, rotation, scale, false, false);
+	basicGeo_Pyramid = make_unique<Model>("/Assets/Model/common/BasicGeo/Pyramid.fbx", pos, rotation, scale, false, false);
+	basicGeo_Sphere = make_unique<Model>("/Assets/Model/common/BasicGeo/Sphere.fbx", pos, rotation, scale, false, false);
+	basicGeo_Torus = make_unique<Model>("/Assets/Model/common/BasicGeo/Torus.fbx", pos, rotation, scale, false, false);
 }
 
 void CommonAssets::LoadCommonTextures()

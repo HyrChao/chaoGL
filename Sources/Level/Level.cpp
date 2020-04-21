@@ -5,6 +5,7 @@
 Shader* Level::skydomeShader;
 bool Level::globalInitialized;
 Texture Level::prefilterBRDFLUT;
+Level* Level::currentLevel = nullptr;
 
 Level::Level() 
 {
@@ -25,6 +26,8 @@ Level::~Level()
 
 void Level::Initialize()
 {
+	// Clear active shader while change level
+	Shader::activeShaders.clear();
 }
 
 void Level::Preload()
@@ -50,6 +53,10 @@ void Level::CaptureEnvironment()
 
 void Level::Loop()
 {
+	Level* currentLevel = LevelManager::GetCurrentLevel();
+	if (currentLevel != this)
+		initialized = false;
+
 	if (!initialized)
 	{
 		Preload();

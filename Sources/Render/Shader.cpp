@@ -1,7 +1,8 @@
 ﻿
 #include<Render/Shader.h>
 
-unordered_map<int, Shader*> Shader::loadedShaders;
+std::unordered_map<int, Shader*> Shader::loadedShaders;
+std::unordered_map<int, Shader*> Shader::activeShaders;
 Shader* Shader::errorShader;
 
 
@@ -10,6 +11,9 @@ Shader::~Shader()
 	if (this != nullptr)
 		if (!Shader::loadedShaders.empty())
 			Shader::loadedShaders.erase(this->ID);
+	if (this != nullptr)
+		if (!Shader::activeShaders.empty() )
+			Shader::activeShaders.erase(this->ID);
 	glDeleteProgram(this->ID);
 }
 
@@ -18,6 +22,7 @@ Shader::~Shader()
 void Shader::use()
 {
 	glUseProgram(ID);
+	Shader::activeShaders[ID] = this;
 }
 
 // set uniform values

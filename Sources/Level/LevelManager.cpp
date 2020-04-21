@@ -70,6 +70,11 @@ void LevelManager::SceneGui()
 	m_currentLevel->OnGui();
 }
 
+Level* LevelManager::GetCurrentLevel()
+{
+	return m_currentLevel;
+}
+
 void LevelManager::LoadMainLevel()
 {
 	if (m_currentLevel != nullptr)

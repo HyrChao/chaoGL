@@ -146,7 +146,7 @@ void Render::ExcuteDrawlistWithReplacedMaterial(Material * material)
 
 void Render::UpdateShaderLightParams()
 {
-	for (unordered_map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
+	for (unordered_map<int, Shader*>::iterator it = Shader::activeShaders.begin(); it != Shader::activeShaders.end(); it++)
 	{
 		Shader* shader = it->second;
 		if (!shader->isProp)
@@ -204,7 +204,7 @@ void Render::UpdateShaderLightParams()
 
 void Render::UpdateShaderCameraVP()
 {
-	for (unordered_map<int, Shader*>::iterator it = Shader::loadedShaders.begin(); it != Shader::loadedShaders.end(); it++)
+	for (unordered_map<int, Shader*>::iterator it = Shader::activeShaders.begin(); it != Shader::activeShaders.end(); it++)
 	{
 		Shader* shader = it->second;
 

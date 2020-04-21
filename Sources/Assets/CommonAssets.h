@@ -12,6 +12,8 @@
 #include <Render/Shader.h>
 #include <Assets/AssetsManager.h>
 
+class Model;
+
 class CommonAssets
 {
 public:
@@ -30,6 +32,16 @@ public:
 	unsigned int sphereVBO;
 	unsigned int sphereEBO;
 	unsigned int sphereIndexCount;
+
+	unique_ptr<Model> basicGeo_Cone = nullptr;
+	unique_ptr<Model> basicGeo_Cube = nullptr;
+	unique_ptr<Model> basicGeo_Cylinder = nullptr;
+	unique_ptr<Model> basicGeo_Helix = nullptr;
+	unique_ptr<Model> basicGeo_Pipe = nullptr;
+	unique_ptr<Model> basicGeo_Prism = nullptr;
+	unique_ptr<Model> basicGeo_Pyramid = nullptr;
+	unique_ptr<Model> basicGeo_Sphere = nullptr;
+	unique_ptr<Model> basicGeo_Torus = nullptr;
 
 	unsigned int blackTex, whiteTex, greyTex;
 	unsigned int flatNormal;
@@ -69,6 +81,7 @@ private:
 	void LoadTriangle();
 	void LoadRecangle();
 	void LoadShaders();
+	void LoadBasicGeos();
 
 private:
 

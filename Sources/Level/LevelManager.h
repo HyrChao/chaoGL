@@ -19,16 +19,18 @@ public:
 	static void SetSection(LevelName selectedSection);
 	static string& GetCurrentLevelName();
 	static void SetCurrentLevel(Level* level);
-
 	static void LoadLevel(LevelName levelName);
 	static void LoadMainLevel();
 	static void SceneLoop();
 	static void SceneGui();
-
+	static Level* GetCurrentLevel();
 private:
 
 	LevelManager();
 	~LevelManager();
+
+public:
+
 
 private:
 

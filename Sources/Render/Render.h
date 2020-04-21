@@ -8,6 +8,8 @@
 #include <Render/Shadow.h>
 #include <Render/IDrawable.h>
 
+typedef 
+
 class Render
 {
 public:
