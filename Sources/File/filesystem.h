@@ -15,7 +15,8 @@ public:
     static char const * app_root;
 private:
 	typedef std::string(*Builder) (const std::string& path);
-
+	// Change root path to excutable path
+	const static bool releaseMode = false;
 public:
 	static std::string getPath(const std::string& path)
 	{
@@ -33,7 +34,7 @@ private:
 	static std::string const & getRoot()
 	{
         static char const * envRoot = getenv("LOGL_ROOT_PATH");
-		static char const * givenRoot = (logl_root != nullptr ? logl_root : app_root);
+		static char const * givenRoot = ((logl_root != nullptr && !releaseMode) ? logl_root : app_root);
         static std::string root = (givenRoot != nullptr ? givenRoot : envRoot);
 		return root;
 	}
