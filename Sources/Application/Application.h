@@ -7,9 +7,11 @@
 #include <Level/LevelManager.h>
 #include <Input/Mouse.h>
 #include<Render/Camera.h>
-
 #include <GLFW/glfw3.h>
 #include <chaoGL.h>
+
+#include <Application/AppWindow.h>
+
 
 class Application
 {
@@ -22,25 +24,9 @@ public:
 	static void Update();
 	static void OnFrameBegin();
 	static void OnFrameEnd();
-	static void BindCurrentWindow(GLFWwindow* currentWin)
-	{
-		window = currentWin;
-	}
+	static void BindCurrentWindow(AppWindow* currentWin);
 
-	static GLFWwindow* GetWindow()
-	{
-		if (window == nullptr)
-		{
-			std::cout << "Failed to create GLFWwindow" << std::endl;
-			glfwTerminate();
-			return nullptr;
-		}
-		else
-		{
-			return window;
-		}
-	}
-	static GLFWwindow* window;
+	static AppWindow* currentWindow;
 
 
 public:
@@ -48,7 +34,7 @@ public:
 private:
 	static void ProcessInput();
     static void UpdateKeys();
-	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+	static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void InitGUI();
 	static void PrepareGUIOnFrameBegin();

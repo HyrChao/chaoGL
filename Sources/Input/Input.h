@@ -12,21 +12,11 @@ public:
 
 	static void Input::UpdateKeys();
 	
-	static bool GetKeyOnce(int key)
-	{
-		return keyOnce[key];
-	}
+	static bool GetKeyOnce(int key);
 
-	static bool GetKey(int key)
-	{
-		return (glfwGetKey(window, key) == GLFW_PRESS);
-	}
+	static bool GetKey(int key);
 
-
-	static void SetCurrentWindow(GLFWwindow* window)
-	{
-		Input::window = window;
-	}
+	static void SetInputTargetWindow(GLFWwindow* window);
 
 
 private:

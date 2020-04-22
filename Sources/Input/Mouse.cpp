@@ -43,14 +43,15 @@ void Mouse::SetMouseInitLocation(int screemWidth, int screemHeight)
 
 void Mouse::CursorOn(bool ison)
 {
+	GLFWwindow* window = Application::currentWindow->Get();
 	if (ison)
 	{
-		glfwSetInputMode(Application::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		cursorToggle = true;
 	}
 	else
 	{
-		glfwSetInputMode(Application::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		cursorToggle = false;
 	}
 
@@ -58,14 +59,15 @@ void Mouse::CursorOn(bool ison)
 
 void Mouse::CursorToggle()
 {
+	GLFWwindow* window = Application::currentWindow->Get();
 	if (cursorToggle)
 	{
-		glfwSetInputMode(Application::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		cursorToggle = false;
 	}
 	else 
 	{
-		glfwSetInputMode(Application::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		cursorToggle = true;
 	}
 }

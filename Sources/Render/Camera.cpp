@@ -2,15 +2,14 @@
 
 #include<Application/Application.h>
 
+Camera * Camera::main;
 
 int Camera::screenHeight;
 int Camera::screenWidth;
 
-Camera * Camera::main;
-
 Camera::Camera()
 {
-	SetScreenExtend(RenderDevice::screenWidth, RenderDevice::screenHeight);
+	UpdateScreenExtend(Application::currentWindow->GetWidth(), Application::currentWindow->GetHeight());
 
 	cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 
@@ -26,7 +25,7 @@ Camera::Camera()
 	nearPLane = 0.1f;
 	farPlane = 100.0f;
 
-	SetView(isPerspectiveMode,fov,nearPLane,farPlane);
+	SetViewParams(fov,nearPLane,farPlane, isPerspectiveMode);
 }
 
 Camera::~Camera()
@@ -108,20 +107,32 @@ void Camera::CameraAutoSpan()
 	viewMat = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 }
 
-void Camera::SetView(bool isPerspective,float in_fov, float in_nearPlane, float in_farPlane)
+void Camera::SetViewParams(float in_fov, float in_nearPlane, float in_farPlane, bool isPerspective)
 {
 	fov = in_fov;
 	nearPLane = in_nearPlane;
 	farPlane = in_farPlane;
-	viewProjPers = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeight, nearPLane, farPlane);
-	viewProjOrth = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.1f, 100.0f);
+	projMatPers = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeight, nearPLane, farPlane);
+	projMatOrth = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.1f, 100.0f);
 	PerspectiveMode(isPerspective);
 }
 
-void Camera::SetScreenExtend(int in_screenWidth, int in_screenHeight)
+void Camera::UpdateScreenExtend(int in_screenWidth, int in_screenHeight)
 {
 	screenHeight = in_screenHeight;
 	screenWidth = in_screenWidth;
+
+	if (isPerspectiveMode)
+	{
+		projMatPers = glm::perspective(glm::radians(fov), (float)screenWidth / (float)screenHeight, nearPLane, farPlane);
+		projMat = projMatPers;
+	}
+	else
+	{
+		projMatOrth = glm::ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, 0.1f, 100.0f);
+		projMat = projMatOrth;
+	}
+
 }
 
 void Camera::PerspectiveMode(bool isPerspective)
@@ -129,11 +140,11 @@ void Camera::PerspectiveMode(bool isPerspective)
 	isPerspectiveMode = isPerspective;
 	if (isPerspective)
 	{
-		projMat = viewProjPers;
+		projMat = projMatPers;
 	}
 	else
 	{
-		projMat = viewProjOrth;
+		projMat = projMatOrth;
 	}
 }
 

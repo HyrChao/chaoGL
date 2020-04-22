@@ -1,7 +1,5 @@
 #include <Render/RenderDevice.h>
-
-int RenderDevice::screenHeight;
-int RenderDevice::screenWidth;
+#include <Application/Application.h>
 
 RenderDevice::RenderDevice()
 {
@@ -11,11 +9,6 @@ RenderDevice::~RenderDevice()
 {
 }
 
-void RenderDevice::SetScreenSize(int screenWidth, int screenHeight)
-{
-	RenderDevice::screenHeight = screenHeight;
-	RenderDevice::screenWidth = screenWidth;
-}
 
 void RenderDevice::SetViewport(int screenWidth, int screenHeight)
 {
@@ -25,5 +18,5 @@ void RenderDevice::SetViewport(int screenWidth, int screenHeight)
 
 void RenderDevice::ResetViewport()
 {
-	glViewport(0, 0, screenWidth, screenHeight);
+	glViewport(0, 0, Application::currentWindow->GetWidth(), Application::currentWindow->GetHeight());
 }

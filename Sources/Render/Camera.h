@@ -17,12 +17,12 @@ public:
 
 	static glm::mat4 GetPerspectiveMat()
 	{
-		return main->viewProjPers;
+		return main->projMatPers;
 	}
 
 	static glm::mat4 GetOrthographicMat()
 	{
-		return main->viewProjOrth;
+		return main->projMatOrth;
 	}
 
 	static glm::mat4 GetViewProjectMat()
@@ -30,8 +30,8 @@ public:
 		return main->projMat;
 	}
 
-	void SetView(bool isPerspective, float in_fov, float in_nearPlane, float in_farPlane);
-	void SetScreenExtend(int in_screenWidth, int in_screenHeight);
+	void UpdateScreenExtend(int in_screenWidth, int in_screenHeight);
+	void SetViewParams(float in_fov, float in_nearPlane, float in_farPlane, bool isPerspective);
 	void PerspectiveMode(bool isPerspective = true);
 	void Move(glm::vec3 pos);
 	void MoveView(float yawoffset, float pitchoffset);
@@ -62,8 +62,8 @@ private:
 	glm::vec3 cameraUp;
 	glm::vec3 cameraLockonTarget;
 
-	glm::mat4 viewProjPers;
-	glm::mat4 viewProjOrth;
+	glm::mat4 projMatPers;
+	glm::mat4 projMatOrth;
 
 	float fov;
 	float nearPLane;

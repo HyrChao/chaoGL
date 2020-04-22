@@ -21,7 +21,7 @@
 Application* app;
 char const * FileSystem::app_root;
 
-GLFWwindow* Application::window;
+AppWindow* Application::currentWindow;
 Application* Application::app;
 
 bool Application::wireframeMode;
@@ -30,18 +30,7 @@ bool Application::showSystemGUI = true;
 Application::Application()
 {
 
-
 	app = this;
-
-	// init GLFW
-	glfwInit();
-
-	//Window
-	RenderDevice::screenWidth = 800;
-	RenderDevice::screenHeight = 800;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
 #ifdef WIN32
@@ -77,29 +66,7 @@ Application::Application()
 	// need campative if using version 3.3
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);   //This is for mac OS
 
-	// Create a new window object
-	window = glfwCreateWindow(RenderDevice::screenWidth, RenderDevice::screenHeight, "chaoGL", NULL, NULL);
-	glfwMakeContextCurrent(window);
-
-	// Init GLAD
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-	}
-
-	std::cout << "GL_Version: " << glGetString(GL_VERSION) << std::endl;
-
-	// Rigist window adjust call back function 
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	BindCurrentWindow(window);
-    
-	// Frame lock
-	glfwSwapInterval(1);
-
-	Render::PrepareRender();
 
 	Application::InitApplication();
 	Application::InitGUI();
@@ -113,22 +80,44 @@ Application::~Application()
 
 void Application::InitApplication()
 {
-    //render = new Render();
+	// init GLFW
+	glfwInit();
+
+	//Window
+	int screenWidth = 800;
+	int screenHeight = 800;
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// Create a new window object
+	currentWindow = new AppWindow(screenWidth, screenHeight, "ChaoGL");
+
+	// Init GLAD
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+	}
+
+	std::cout << "GL_Version: " << glGetString(GL_VERSION) << std::endl;
+
+
+	currentWindow->BindLoopFunction(Application::Update);
+
+	// Frame lock
+	glfwSwapInterval(1);
+
+	Mouse::SetMouseInitLocation(currentWindow->GetPosX(), currentWindow->GetPosY());
+	Mouse::CursorOn(false);
+
+	Render::PrepareRender();
 
 	if (Camera::main == nullptr)
 	{
 		Camera::main = new Camera();
 	}
-    
-    Mouse::SetMouseInitLocation(RenderDevice::screenWidth, RenderDevice::screenHeight);
-    
-	Mouse::CursorOn(false);
 
-	// set input callback
-	glfwSetCursorPosCallback(window, Application::mouse_callback);
-    glfwGetFramebufferSize(window, &RenderDevice::screenWidth, &RenderDevice::screenHeight);
-    
-	Input::SetCurrentWindow(window);
+	Input::SetInputTargetWindow(currentWindow->Get());
 
 	CommonAssets::instance = new CommonAssets();
 
@@ -138,6 +127,8 @@ void Application::InitApplication()
 
 void Application::Update()
 {
+	OnFrameBegin();
+
 	ProcessInput();
 
 	PrepareGUIOnFrameBegin();
@@ -163,29 +154,33 @@ void Application::Update()
 
 	DrawGUI();
 
+	OnFrameEnd();
 }
 
 
 void Application::OnFrameBegin()
 {
+
 }
 
 void Application::OnFrameEnd()
 {
-	glfwSwapBuffers(Application::GetWindow());
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Time::UpdateTime();
 
-	//// Event
-	glfwPollEvents();
+}
+
+inline void Application::BindCurrentWindow(AppWindow* wind)
+{
+	currentWindow = wind;
 }
 
 void Application::ProcessInput()
 {
+	Input::SetInputTargetWindow(currentWindow->Get());
     Input::UpdateKeys();
-    
+
+	GLFWwindow* window = currentWindow->Get();
 	static bool cantriggercursortoggle;
 	static float coldtime_cursortoggle;
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT == GLFW_PRESS) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT == GLFW_PRESS) && cantriggercursortoggle)
@@ -200,6 +195,7 @@ void Application::ProcessInput()
 	}
 	coldtime_cursortoggle += Time::deltaTime;
 	
+
 	if (Input::GetKeyOnce(GLFW_KEY_ESCAPE))
 	{
 		if(Input::GetKey(GLFW_KEY_LEFT_SHIFT))
@@ -211,8 +207,11 @@ void Application::ProcessInput()
 			showSystemGUI = true;
 	}
 
-	
-
+	if (Input::GetKeyOnce(GLFW_KEY_F11))
+		if (currentWindow->IsFullscreen())
+			currentWindow->SetFullScreen(false);
+		else
+			currentWindow->SetFullScreen(true);
 	// wireframe mode
 	//if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && Input::GetKeyOnce(GLFW_KEY_W))
 	if (((glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) == GLFW_PRESS) && Input::GetKeyOnce(GLFW_KEY_W))
@@ -233,29 +232,8 @@ void Application::ProcessInput()
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		Camera::main->MoveRight(cameraSpeed);
     
-
-
-
-
 }
 
-void Application::mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (Mouse::GetCursorState())
-		return;
-
-	Mouse::UpdateMouse(xpos, ypos);
-	Camera::main->MoveView(Mouse::xoffset, Mouse::yoffset);
-}
-
-// Function called while change window size
-void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	RenderDevice::screenHeight = height;
-	RenderDevice::screenWidth = width;
-	// Define viewport
-	glViewport(0, 0, width, height);
-}
 
 void Application::InitGUI()
 {
@@ -272,7 +250,7 @@ void Application::InitGUI()
 
 	// Setup Platform/Renderer bindings
 	const char* glsl_version = "#version 130";    // GL 3.0 + GLSL 130
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplGlfw_InitForOpenGL(currentWindow->Get(), true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 }
@@ -331,7 +309,7 @@ void Application::DrawSystemGUI(bool showsystemgui)
 			LevelManager::LoadLevel(LevelName::Shadow);
 
 		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			glfwSetWindowShouldClose(window, true);
+			glfwSetWindowShouldClose(currentWindow->Get(), true);
 
 		ImGui::End();
 
@@ -365,28 +343,12 @@ int Close();
 
 int main()
 {
-
-
 	// App & Sections
 	app = new Application();
 
-
-
 	//-------------------------------------------------------------
 	// Loop
-	while (!glfwWindowShouldClose(Application::GetWindow()))
-	{
-		// Input
-		// Check if hit esc key
-
-		// Render
-		Application::OnFrameBegin();
-
-		Application::Update();
-
-		// on ftame end
-		Application::OnFrameEnd();
-	}
+	app->currentWindow->MainLoop();
 
 	return Close();
 

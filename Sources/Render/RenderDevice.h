@@ -8,9 +8,6 @@ class RenderDevice
 public:
 	RenderDevice();
 	~RenderDevice();
-
-
-	static void SetScreenSize(int screenWidth, int screenHeight);
 	
 	static void SetViewport(int screenWidth, int screenHeight);
 	static void ResetViewport();
@@ -19,9 +16,6 @@ public:
 private:
 
 public:
-
-	static int screenWidth;
-	static int screenHeight;
 
 };
 

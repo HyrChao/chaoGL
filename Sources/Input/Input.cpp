@@ -31,6 +31,21 @@ void Input::UpdateKeys()
 	}
 }
 
+bool Input::GetKeyOnce(int key)
+{
+	return keyOnce[key];
+}
+
+bool Input::GetKey(int key)
+{
+	return (glfwGetKey(window, key) == GLFW_PRESS);
+}
+
+void Input::SetInputTargetWindow(GLFWwindow* window)
+{
+	Input::window = window;
+}
+
 
 
 

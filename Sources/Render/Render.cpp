@@ -31,13 +31,7 @@ void Render::PrepareRender()
 }
 
 void Render::DrawOnFrameBegin()
-{
-	//// Clear
-	//float timeValue = glfwGetTime();
-	//glClearColor(0.8f + 0.2*sin(timeValue), 0.8f + 0.2*sin(timeValue + 3.14 / 3), 0.8f + 0.2*sin(timeValue - 3.14 / 3), 1.0f);
-	glClearColor(clearColor.x,clearColor.y,clearColor.z, clearColor.w);
-	glClear(GL_COLOR_BUFFER_BIT);
-    
+{    
     // Update camera
     Camera::main->UpdateCamera();
     
@@ -46,12 +40,13 @@ void Render::DrawOnFrameBegin()
     projectMat = Camera::main->projMat;
     viewPos = Camera::main->pos;
     
-    // Update light
-    DrawLightAvatars();
-
 	// Refresh shader params
 	UpdateShaderLightParams();
 	UpdateShaderCameraVP();
+
+    // Update light
+    DrawLightAvatars();
+
 }
 
 void Render::Draw()
