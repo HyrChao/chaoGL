@@ -25,6 +25,7 @@ public:
 	virtual void Loop();
 	virtual void OnGui();
 
+
 protected:
 
 	virtual void Initialize();
@@ -44,6 +45,8 @@ private:
 
 
 	void DrawSkydome();
+
+	void InitSingleInstance();
 
 
 public:

@@ -2,6 +2,8 @@
 
 #include <array>
 #include <stdexcept>
+#include <glm.hpp>
+
 
 struct GLFWwindow;
 struct GLFWmonitor;
@@ -22,6 +24,7 @@ public:
 
 	int GetWidth();
 	int GetHeight();
+	glm::vec2 GetResolution();
 	int GetPosX();   // screen middle pos x
 	int GetPosY();   // screen middle pos y
 

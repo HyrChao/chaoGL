@@ -65,6 +65,7 @@ public:
 	void SetParam(const std::string &name, bool value);
 	void SetParam(const std::string &name, int value);
 	void SetParam(const std::string &name, float value);
+	void SetParam(const std::string& name, glm::vec2& vec2);
 	void SetParam(const std::string &name, float x, float y, float z);
 	void SetParam(const std::string &name, glm::vec3& vec3);
 	void SetParam(const std::string &name, float x, float y, float z, float w);

@@ -14,9 +14,12 @@ class FileSystem
 public:
     static char const * app_root;
 private:
-	typedef std::string(*Builder) (const std::string& path);
 	// Change root path to excutable path
+	// ****************************************
 	const static bool releaseMode = false;
+	// ****************************************
+
+	typedef std::string(*Builder) (const std::string& path);
 public:
 	static std::string getPath(const std::string& path)
 	{

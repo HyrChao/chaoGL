@@ -4,6 +4,7 @@
 #include <Level/LV_PBR.h>
 #include <Level/LV_Model.h>
 #include <Level/LV_Shadow.h>
+#include <Level/LV_PostFX.h>
 
 Level* LevelManager::m_currentLevel = nullptr;
 
@@ -57,6 +58,10 @@ void LevelManager::LoadLevel(LevelName levelName)
 			m_currentLevel = new LV_Shadow();
 			m_currentLevel->name = "Shadow";
 			break;
+		case LevelName::PostFX:
+			m_currentLevel = new LV_PostFX();
+			m_currentLevel->name = "PostFX";
+			break;
 	}
 }
 
@@ -80,8 +85,8 @@ void LevelManager::LoadMainLevel()
 	if (m_currentLevel != nullptr)
 		delete m_currentLevel;
 
-	m_currentLevel = new LV_Shadow();
-	m_currentLevel->name = "Shadow";
+	m_currentLevel = new LV_PostFX();
+	m_currentLevel->name = "PostFX";
 }
 
 

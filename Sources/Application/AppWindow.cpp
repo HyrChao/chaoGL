@@ -110,6 +110,11 @@ int AppWindow::GetHeight()
     return _vpSize[1];
 }
 
+glm::vec2 AppWindow::GetResolution()
+{
+    return glm::vec2(_vpSize[0], _vpSize[1]);
+}
+
 int AppWindow::GetPosX()
 {
     int x = _wndPos[0];

@@ -9,7 +9,8 @@ enum LevelName
 	BlinnPhong,
 	LoadModel,
 	PBR,
-	Shadow
+	Shadow,
+	PostFX
 };
 
 class LevelManager

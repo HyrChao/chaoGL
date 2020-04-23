@@ -307,6 +307,8 @@ void Application::DrawSystemGUI(bool showsystemgui)
 			LevelManager::LoadLevel(LevelName::PBR);
 		if (ImGui::Button("Shadow"))
 			LevelManager::LoadLevel(LevelName::Shadow);
+		if (ImGui::Button("PostFX"))
+			LevelManager::LoadLevel(LevelName::PostFX);
 
 		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 			glfwSetWindowShouldClose(currentWindow->Get(), true);
@@ -341,13 +343,13 @@ void Application::DrawSystemGUI(bool showsystemgui)
 
 int Close();
 
+// Main 
 int main()
 {
 	// App & Sections
 	app = new Application();
 
-	//-------------------------------------------------------------
-	// Loop
+	//-------------------------------------------------------------;
 	app->currentWindow->MainLoop();
 
 	return Close();

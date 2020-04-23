@@ -77,6 +77,7 @@ void Level::OnGui()
 {
 }
 
+
 void Level::GlobalInitialize()
 {
 	if (!globalInitialized)

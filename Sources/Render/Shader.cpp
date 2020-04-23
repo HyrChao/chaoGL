@@ -87,6 +87,11 @@ void Shader::SetParam(const std::string & name, float value)
 	setFloat(name, value);
 }
 
+void Shader::SetParam(const std::string& name, glm::vec2& vec2)
+{
+	setVec2f(name, vec2);
+}
+
 void Shader::SetParam(const std::string & name, float x, float y, float z)
 {
 	setVec3f(name, x, y, z);
