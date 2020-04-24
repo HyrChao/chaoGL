@@ -40,7 +40,7 @@ private:
 	static void PrepareGUIOnFrameBegin();
 	static void DrawGUI();
 	static void ReleaseGUI();
-	static void DrawSystemGUI(bool showsystemgui = true);
+	static void SystemGUI();
 
 private:
 

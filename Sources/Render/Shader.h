@@ -36,20 +36,20 @@ private:
 
 	static Shader* errorShader;
 	unordered_map<string, int> cachedUniformLocation;
+	bool error = false;
 
 public:
 
-	Shader(const string& vsPath, const string& fsPath, bool isProp = false) :
-		vsPath(vsPath), fsPath(fsPath), isProp(isProp)
-	{
-		CreateShaderProgram();
-		Shader::loadedShaders[ID] = this;
-	}
+	Shader(const string& vsPath, const string& fsPath, bool isProp = false);
 
 	~Shader();
 
 	// use shader program
 	virtual void use();
+
+	// reload shader
+	bool Reload();
+
 	// set uniform values
 	void setBool(const std::string &name, bool value);
 	void setInt(const std::string &name, int value);
@@ -76,7 +76,7 @@ public:
 
 protected:
 
-	void CreateShaderProgram();
+	bool CreateShaderProgram();
 
 	void ChangeErrorShader(Shader* errShader);
 

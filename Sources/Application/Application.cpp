@@ -148,8 +148,17 @@ void Application::Update()
 
     Render::DrawOnFrameEnd();
 
-	DrawSystemGUI(showSystemGUI);
-	LevelManager::SceneGui();
+	if (showSystemGUI)
+	{
+		ImGui::Begin("Menu");
+		ImGui::NewLine();
+		ImGui::SameLine();
+		SystemGUI();
+		ImGui::NewLine();
+		ImGui::SameLine();
+		LevelManager::SceneGui();
+		ImGui::End();
+	}
 
 
 	DrawGUI();
@@ -183,11 +192,18 @@ void Application::ProcessInput()
 	GLFWwindow* window = currentWindow->Get();
 	static bool cantriggercursortoggle;
 	static float coldtime_cursortoggle;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT == GLFW_PRESS) && glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT == GLFW_PRESS) && cantriggercursortoggle)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT == GLFW_PRESS))
 	{
-		Mouse::CursorToggle();
-		cantriggercursortoggle = false;
+		Mouse::SetDrag(true);
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT == GLFW_PRESS) && cantriggercursortoggle)
+		{
+			Mouse::CursorToggle();
+			cantriggercursortoggle = false;
+		}
+		else;
 	}
+	Mouse::SetDrag(false);
+
 	if (coldtime_cursortoggle > 0.5f)
 	{
 		cantriggercursortoggle = true;
@@ -278,23 +294,18 @@ void Application::ReleaseGUI()
 	ImGui::DestroyContext();
 }
 
-void Application::DrawSystemGUI(bool showsystemgui)
+void Application::SystemGUI()
 {
 
 	static bool show_demo_window = true;
 	static bool show_another_window = false;
 	static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-
-
-	if (showsystemgui)
 	{
 
 		static float f = 0.0f;
 		static int counter = 0;
 
-		ImGui::Begin("Sysyem Menu");
-		ImGui::SameLine();
 		ImGui::Text("%.3f ms/frame (%.1f FPS)", Time::deltaTime * 1000.0f, 1.0f/Time::deltaTime);
 
 		ImGui::Text("Select Scene");
@@ -313,7 +324,6 @@ void Application::DrawSystemGUI(bool showsystemgui)
 		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 			glfwSetWindowShouldClose(currentWindow->Get(), true);
 
-		ImGui::End();
 
 
 

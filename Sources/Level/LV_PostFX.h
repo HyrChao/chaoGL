@@ -20,7 +20,27 @@ protected:
 
 private:
 
+	void TestScene();
+
+	void StarTravellingScene();
+
+	void RayMatchingScene();
+
+
+private:
+
 	unique_ptr<Shader> s_starTravelling;
+	unique_ptr<Shader> s_rayMatching_Doughnut;
+	unique_ptr<Shader> s_test;;
+
+	enum PostFXScene 
+	{
+		Test,
+		StarTravelling,
+		RayMarching
+	};
+
+	PostFXScene currentScene = PostFXScene::Test;
 
 };
 

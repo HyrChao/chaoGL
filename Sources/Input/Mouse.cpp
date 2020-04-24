@@ -5,8 +5,7 @@
 float Mouse::sensitivity = 0.05f;
 float Mouse::xoffset;
 float Mouse::yoffset;
-float Mouse::lastX;
-float Mouse::lastY;
+glm::vec4 Mouse::mouseParams;
 bool Mouse::firstMouse = true;
 
 bool Mouse::cursorToggle = true;
@@ -15,15 +14,15 @@ void Mouse::UpdateMouse(float xpos, float ypos)
 {
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		mouseParams.x = xpos;
+		mouseParams.y = ypos;
 		firstMouse = false;
 	}
 
-	xoffset = xpos - lastX;
-	yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
+	xoffset = xpos - mouseParams.x;
+	yoffset = mouseParams.y - ypos;
+	mouseParams.x = xpos;
+	mouseParams.y = ypos;
 
 	sensitivity = 0.05f;
 	xoffset *= sensitivity;
@@ -37,8 +36,8 @@ void Mouse::SetSensitivity(float sensi)
 
 void Mouse::SetMouseInitLocation(int screemWidth, int screemHeight)
 {
-	lastX = screemWidth/2;
-	lastY = screemHeight/2;
+	mouseParams.x = screemWidth/2;
+	mouseParams.y = screemHeight/2;
 }
 
 void Mouse::CursorOn(bool ison)
@@ -55,6 +54,18 @@ void Mouse::CursorOn(bool ison)
 		cursorToggle = false;
 	}
 
+}
+
+void Mouse::SetDrag(bool on)
+{
+	if (on)
+	{
+		mouseParams.z = 1.0;
+	}
+	else
+	{
+		mouseParams.z = 0.0;
+	}
 }
 
 void Mouse::CursorToggle()
@@ -75,6 +86,11 @@ void Mouse::CursorToggle()
 bool Mouse::GetCursorState()
 {
 	return cursorToggle;
+}
+
+glm::vec4 Mouse::GetMouseParameter()
+{
+	return mouseParams;
 }
 
 
