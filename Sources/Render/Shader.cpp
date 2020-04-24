@@ -9,7 +9,7 @@ Shader* Shader::errorShader;
 Shader::Shader(const string& vsPath, const string& fsPath, bool isProp) :
 	vsPath(vsPath), fsPath(fsPath), isProp(isProp)
 {
-	error = CreateShaderProgram();
+	noError = CreateShaderProgram();
 	Shader::loadedShaders[ID] = this;
 }
 
@@ -131,11 +131,21 @@ void Shader::use()
 
 bool Shader::Reload()
 {
-	if(!error)
+	if (noError)
+	{
+		if (this != nullptr)
+			if (!Shader::loadedShaders.empty())
+				Shader::loadedShaders.erase(this->ID);
+		if (this != nullptr)
+			if (!Shader::activeShaders.empty())
+				Shader::activeShaders.erase(this->ID);
 		glDeleteProgram(this->ID);
+	}
 	// Recreate shader program
-	error = CreateShaderProgram();
-	return error;
+	noError = CreateShaderProgram();
+	if(noError)
+		Shader::activeShaders[ID] = this;
+	return noError;
 }
 
 // set uniform values

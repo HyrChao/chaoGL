@@ -36,7 +36,7 @@ private:
 
 	static Shader* errorShader;
 	unordered_map<string, int> cachedUniformLocation;
-	bool error = false;
+	bool noError = false;
 
 public:
 

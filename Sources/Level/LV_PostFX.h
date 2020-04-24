@@ -26,18 +26,22 @@ private:
 
 	void RayMatchingScene();
 
+	void MandelbrotScene();
+
 
 private:
 
 	unique_ptr<Shader> s_starTravelling;
 	unique_ptr<Shader> s_rayMatching_Doughnut;
 	unique_ptr<Shader> s_test;;
+	unique_ptr<Shader> s_mandelbrot;;
 
 	enum PostFXScene 
 	{
 		Test,
 		StarTravelling,
-		RayMarching
+		RayMarching,
+		Mandelbrot
 	};
 
 	PostFXScene currentScene = PostFXScene::Test;
