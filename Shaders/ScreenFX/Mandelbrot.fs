@@ -14,20 +14,33 @@ uniform float iPrecise;
 
 //==============================================================
 
+vec2 Rot(vec2 p, vec2 pivot, float a)
+{
+   float s = sin(a);
+   float c = cos(a);
+
+    p -= pivot;
+    p = vec2(p.x*c - p.y*s, p.x*s + p.y*c);
+    p += pivot;
+
+    return p;
+}
+
 void main()
 {
     vec4 col = vec4(0.0);
 
     vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y ;
 
-    vec2 c = uv - 0.5;
-    c  = c / iArea.z + iArea.xy;
+    vec2 c = uv;
+    c = c / iArea.z + iArea.xy;
+    c = Rot(c, iArea.xy, iArea.w);
+
     vec2 f;
 
     float count = 0;
-    float maxCount = iPrecise;
-    // float maxCount = 300;
-    // float maxCount = 100;
+    // float maxCount = iPrecise;
+    float maxCount = 300.0;
 
     for (float i = 0; i < 1; i += 1/maxCount)
     {
@@ -39,6 +52,7 @@ void main()
             break;
         
     }
+
     col = vec4(count/maxCount);
     fragColor = col;
 }

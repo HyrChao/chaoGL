@@ -12,6 +12,9 @@
 
 #include <Application/AppWindow.h>
 
+#include <iostream>
+#include <cmath>
+
 
 class Application
 {
