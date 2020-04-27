@@ -53,6 +53,7 @@ void main()
         
     }
 
-    col = vec4(count/maxCount);
+    float finalVal = sqrt(count/maxCount);
+    col = vec4(finalVal);
     fragColor = col;
 }

@@ -75,13 +75,13 @@ void LV_PostFX::MandelbrotScene()
 	glm::vec2 dirX = moveSpeed * glm::vec2(c , s);
 	glm::vec2 dirY = glm::vec2(-dirX.y, dirX.x);
 
-	if (Input::GetKey(GLFW_KEY_RIGHT))
+	if (Input::GetKey(GLFW_KEY_D))
 		area.xy += dirX;
-	if (Input::GetKey(GLFW_KEY_LEFT))
+	if (Input::GetKey(GLFW_KEY_A))
 		area.xy -= dirX;
-	if (Input::GetKey(GLFW_KEY_UP))
+	if (Input::GetKey(GLFW_KEY_W))
 		area.xy += dirY;
-	if (Input::GetKey(GLFW_KEY_DOWN))
+	if (Input::GetKey(GLFW_KEY_S))
 		area.xy -= dirY;
 	if (Input::GetKey(GLFW_KEY_MINUS))
 	{
@@ -91,9 +91,9 @@ void LV_PostFX::MandelbrotScene()
 	{
 		area.z *= (1.0 + scaleSpeed);
 	}
-	if (Input::GetKey(GLFW_KEY_RIGHT_BRACKET))
+	if (Input::GetKey(GLFW_KEY_RIGHT_BRACKET) || Input::GetKey(GLFW_KEY_Q))
 		area.w += rotSpeed;
-	if (Input::GetKey(GLFW_KEY_LEFT_BRACKET))
+	if (Input::GetKey(GLFW_KEY_LEFT_BRACKET) || Input::GetKey(GLFW_KEY_E))
 		area.w -= rotSpeed;
 
 	s_mandelbrot->SetParam("iPrecise", mandelbrotPrecise);
