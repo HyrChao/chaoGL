@@ -17,6 +17,8 @@
 #include <stb_image.h>
 #include <File/filesystem.h>
 
+class Shader;
+
 using namespace std;
 
 
@@ -136,16 +138,19 @@ public:
 
 	Texture();
 
-	Texture(string path, TextureType type, bool useMip);
+	Texture(string path, TextureType type = TextureType::Albedo, bool useMip = true);
 
 	virtual ~Texture();
 
+	static Texture LoadTexture(string path, Texture::TextureType type = TextureType::Albedo);
 
 	void Gen(TextureType type, unsigned int width, unsigned height, TextureFormat format = RGB, TextureRepeatMode repeat = Repeat, TextureFilterMode filter = Trilinear, bool isHDR = false, bool genMip = true);
 
 	void GenerateMips();
 
 	void Bind();
+
+	void Bind(Shader* shader, const char* paramname, unsigned int slot);
 
 	void Active(TextureSlot slot = TextureSlot::TextureSlot1);
 
@@ -155,7 +160,7 @@ public:
 
 	void Reset();
 
-	inline void TextureFromFile(const char *path, bool gamma = false);
+private:
 
 };
 

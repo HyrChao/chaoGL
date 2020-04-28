@@ -105,15 +105,15 @@ void Material::SetModelMat(glm::mat4 &mat)
 
 void Material::AddTexture(Texture & texture)
 {
-	int m_textureSlot = -1;
+	int textureSlot = -1;
 	for (int i = 0; i < maxTextureCount; i++)
 	{
 
 		if (textures[i].id == 0)
 		{
-			m_textureSlot = i;
-			textures[m_textureSlot] = texture;
-			SetParam(textures[m_textureSlot].keyword, m_textureSlot);
+			textureSlot = i;
+			textures[textureSlot] = texture;
+			SetParam(textures[textureSlot].keyword, textureSlot);
 			break;
 		}
 		if (textures[i].id == texture.id && textures[i].type == texture.type)
@@ -121,7 +121,7 @@ void Material::AddTexture(Texture & texture)
 			break;
 		}
 	}
-	if (m_textureSlot < 0)
+	if (textureSlot < 0)
 	{
 		cout << "Reached to the max texture count for material " << shader->fsPath.c_str() << endl;
 		return;

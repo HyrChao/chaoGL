@@ -205,6 +205,11 @@ void Shader::SetParam(const std::string & name, int value)
 	setInt(name, value);
 }
 
+void Shader::SetParam(const std::string& name, unsigned int value)
+{
+	setInt(name, (int)value);
+}
+
 void Shader::SetParam(const std::string & name, float value)
 {
 	setFloat(name, value);

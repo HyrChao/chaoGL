@@ -6,7 +6,8 @@
 //
 
 #include "Texture.h"
-
+#include "Render/Shader.h"
+#include "Assets/AssetsManager.h"
 Texture::Texture()
 {
 	id = 0;
@@ -144,6 +145,29 @@ void Texture::Gen(TextureType type, unsigned int width, unsigned height, Texture
 	}
 }
 
+Texture Texture::LoadTexture(string path, Texture::TextureType type)
+{
+	Texture texture;
+	bool skip = false;
+	for (unsigned int j = 0; j < AssetsManager::textures_loaded.size(); j++)
+	{
+		if (std::strcmp(AssetsManager::textures_loaded[j].path.data(), path.c_str()) == 0)
+		{
+			texture = AssetsManager::textures_loaded[j];
+			skip = true;
+			break;
+		}
+	}
+	if (!skip)
+	{
+		texture.id = AssetsManager::TextureFromFile(path.c_str());
+		texture.SetType(type);
+		texture.path = path.c_str();
+		AssetsManager::textures_loaded.push_back(texture);
+	}
+	return texture;
+}
+
 void Texture::GenerateMips()
 {
 	if (!hasMip)
@@ -158,6 +182,15 @@ void Texture::GenerateMips()
 void Texture::Bind()
 {
 	glBindTexture(gl_textureType, id);
+}
+
+void Texture::Bind(Shader* shader, const char * paramname,unsigned int slot)
+{
+	shader->use();
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(gl_textureType, id);
+	shader->SetParam(paramname, slot);
+
 }
 
 void Texture::Active(TextureSlot slot)
@@ -231,42 +264,4 @@ void Texture::Reset()
 	path = "/Assets/Texture/white.png";
 }
 
-void Texture::TextureFromFile(const char * path, bool gamma)
-{
-	string filename = string(FileSystem::getPath(path).c_str());
 
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-
-	int width, height, nrComponents;
-	unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		GLenum format;
-		if (nrComponents == 1)
-			format = GL_RED;
-		else if (nrComponents == 3)
-			format = GL_RGB;
-		else if (nrComponents == 4)
-			format = GL_RGBA;
-		else
-			format = GL_RGBA;
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Texture failed to load at path: " << path << std::endl;
-		stbi_image_free(data);
-	}
-
-	this->id = textureID;
-}

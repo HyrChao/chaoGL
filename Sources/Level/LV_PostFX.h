@@ -2,6 +2,8 @@
 #include "Level.h"
 #include <memory>
 
+
+
 class LV_PostFX : public Level
 {
 public:
@@ -34,7 +36,12 @@ private:
 	unique_ptr<Shader> s_starTravelling;
 	unique_ptr<Shader> s_rayMatching_Doughnut;
 	unique_ptr<Shader> s_test;;
-	unique_ptr<Shader> s_mandelbrot;;
+	unique_ptr<Shader> s_mandelbrot;
+
+
+	Texture t_mandelbrot_lut;
+	
+	float f_mandelbrot_lutColor = 0.0;
 
 	enum PostFXScene 
 	{
@@ -44,7 +51,7 @@ private:
 		Mandelbrot
 	};
 
-	PostFXScene currentScene = PostFXScene::Test;
+	PostFXScene currentScene = PostFXScene::Mandelbrot;
 
 };
 

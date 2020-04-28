@@ -5,13 +5,14 @@ in vec2 fragCoord;
 uniform float iTime;
 uniform vec2 iResolution;
 uniform vec4 iMouse;
-
 //===============================================================
 
 
 uniform vec4 iArea;
 uniform float iPrecise;
+uniform float iColor;
 
+uniform sampler2D LUTMap;
 //==============================================================
 
 vec2 Rot(vec2 p, vec2 pivot, float a)
@@ -38,22 +39,24 @@ void main()
 
     vec2 f;
 
-    float count = 0;
+    float count;
     // float maxCount = iPrecise;
     float maxCount = 300.0;
 
-    for (float i = 0; i < 1; i += 1/maxCount)
+
+    for (count = 0; count < maxCount; count++)
     {
         f = vec2(f.x*f.x - f.y*f.y, 2*f.x*f.y) + c;
-        float l =  length(f);
-        count += 1.0;
-        
+        float l =  length(f);        
         if(l > 2.0)
             break;
-        
     }
-
-    float finalVal = sqrt(count/maxCount);
-    col = vec4(finalVal);
+    // count = count > maxCount ? 0.0 : count;
+    float mandelBrot = sqrt(count/maxCount);
+    vec3 lut = texture(LUTMap, vec2(mandelBrot, iColor)).rgb;
+    col = vec4(lut, 0.0f);
+    if(count + 0.0001 > maxCount)
+        col.rgb = vec3(0.0);
+    // col = vec4(mandelBrot);
     fragColor = col;
 }

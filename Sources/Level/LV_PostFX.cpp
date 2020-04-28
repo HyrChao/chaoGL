@@ -17,6 +17,8 @@ void LV_PostFX::Initialize()
 	s_rayMatching_Doughnut = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/RayMatching_Doughnut.fs");
 	s_mandelbrot = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/Mandelbrot.fs");
 
+	t_mandelbrot_lut = Texture::LoadTexture("/Assets/Texture/LUT/Mandelbrot_LUT.png");
+
 }
 
 void LV_PostFX::UpdatePostFXParameters()
@@ -98,6 +100,9 @@ void LV_PostFX::MandelbrotScene()
 
 	s_mandelbrot->SetParam("iPrecise", mandelbrotPrecise);
 	s_mandelbrot->SetParam("iArea", smoothArea);
+	s_mandelbrot->SetParam("iColor", f_mandelbrot_lutColor);
+
+	t_mandelbrot_lut.Bind(s_mandelbrot.get(), "LUTMap", 0);
 
 }
 
@@ -133,7 +138,6 @@ void LV_PostFX::OnGui()
 {
 	Level::OnGui();
 
-
 	ImGui::Text("PostFX");
 
 	if (ImGui::Button("Test"))
@@ -144,5 +148,11 @@ void LV_PostFX::OnGui()
 		currentScene = RayMarching;
 	if (ImGui::Button("Mandelbrot"))
 		currentScene = Mandelbrot;
+
+	if (currentScene == Mandelbrot)
+	{
+		// Draw GUI on mandelbrot scene
+		ImGui::SliderFloat("Mandelbrot LUT Color", &f_mandelbrot_lutColor, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	}
 }
 
