@@ -101,6 +101,7 @@ void LV_PostFX::MandelbrotScene()
 	s_mandelbrot->SetParam("iPrecise", mandelbrotPrecise);
 	s_mandelbrot->SetParam("iArea", smoothArea);
 	s_mandelbrot->SetParam("iColor", f_mandelbrot_lutColor);
+	s_mandelbrot->SetParam("iRepeat", f_mandelbrot_repeat);
 
 	t_mandelbrot_lut.Bind(s_mandelbrot.get(), "LUTMap", 0);
 
@@ -152,7 +153,8 @@ void LV_PostFX::OnGui()
 	if (currentScene == Mandelbrot)
 	{
 		// Draw GUI on mandelbrot scene
-		ImGui::SliderFloat("Mandelbrot LUT Color", &f_mandelbrot_lutColor, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("LUT Color", &f_mandelbrot_lutColor, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("LUT_Repeat", &f_mandelbrot_repeat, 0.0f, 20.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 	}
 }
 

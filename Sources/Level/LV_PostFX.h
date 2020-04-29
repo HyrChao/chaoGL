@@ -42,6 +42,7 @@ private:
 	Texture t_mandelbrot_lut;
 	
 	float f_mandelbrot_lutColor = 0.0;
+	float f_mandelbrot_repeat = 1.0;
 
 	enum PostFXScene 
 	{
