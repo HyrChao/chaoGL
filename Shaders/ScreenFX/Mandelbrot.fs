@@ -57,14 +57,15 @@ void main()
     // count = count > maxCount ? 0.0 : count;
     float dist = length(f);
     // float countFract = (dist - r) / (r2 - r);  // linear interpolation
-    float countFract = log(dist) / log(r) - 1.0;
+    float countFract = log2(log(dist) / log(r)); // double exponential interpolation
 
-    count -= countFract;
-    float mandelBrot = sqrt(count/maxCount);
-    vec3 lut = texture(LUTMap, vec2(mandelBrot * iRepeat, iColor)).rgb;
+    // count += 0.01;
+    float totalCount = count - countFract;
+    float mandelBrot = sqrt(totalCount/maxCount);
+    vec3 lut = texture(LUTMap, vec2(mandelBrot * iRepeat, iColor + iTime * 0.05)).rgb;
     col = vec4(lut, 0.0f);
-    if(count > maxCount)
-        col.rgb = vec3(0.0);
     // col = vec4(mandelBrot);
+    if(count + 0.001> maxCount)
+        col.rgb = vec3(0.0);
     fragColor = col;
 }
