@@ -26,17 +26,23 @@ private:
 
 	void StarTravellingScene();
 
+	void StarLinkScene();
+
 	void RayMatchingScene();
 
 	void MandelbrotScene();
+
+	void VoronoiScene();
 
 
 private:
 
 	unique_ptr<Shader> s_starTravelling;
+	unique_ptr<Shader> s_starLink;
 	unique_ptr<Shader> s_rayMatching_Doughnut;
 	unique_ptr<Shader> s_test;;
 	unique_ptr<Shader> s_mandelbrot;
+	unique_ptr<Shader> s_voronoi;
 
 
 	Texture t_mandelbrot_lut;
@@ -48,8 +54,10 @@ private:
 	{
 		Test,
 		StarTravelling,
+		StarLink,
 		RayMarching,
-		Mandelbrot
+		Mandelbrot,
+		Voronoi
 	};
 
 	PostFXScene currentScene = PostFXScene::Mandelbrot;

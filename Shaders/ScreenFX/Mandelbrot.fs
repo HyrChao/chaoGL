@@ -42,7 +42,7 @@ void main()
 
     float count;
     // float maxCount = iPrecise;
-    float maxCount = 10000.0;
+    float maxCount = 1000.0;
 
     float r = 100.0; // escape radius
     float r2 = r * r;
