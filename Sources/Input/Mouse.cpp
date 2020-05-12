@@ -22,7 +22,7 @@ void Mouse::UpdateMouse(float xpos, float ypos)
 	xoffset = xpos - mouseParams.x;
 	yoffset = mouseParams.y - ypos;
 	mouseParams.x = xpos;
-	mouseParams.y = Application::currentWindow->GetResolution().y - ypos;
+	mouseParams.y = ypos;
 
 	sensitivity = 0.05f;
 	xoffset *= sensitivity;
@@ -90,7 +90,9 @@ bool Mouse::GetCursorState()
 
 glm::vec4 Mouse::GetMouseParameter()
 {
-	return mouseParams;
+	glm::vec4 param = mouseParams;
+	param.y = Application::currentWindow->GetResolution().y - mouseParams.y;
+	return param;
 }
 
 
