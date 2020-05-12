@@ -3,16 +3,16 @@ out vec4 fragColor;
 in vec2 fragCoord;
 
 uniform float iTime;
+uniform vec4 iMouse;
 uniform vec2 iResolution;
 
-#define EPSILON 0.002
-#define STAR_COUNT 1.0
-#define STAR_LAYER 8.0
-#define STAR_SPEED 0.1
+//==============================
 
-const float pi = 3.1415926;
+const float PI = 3.1415926;
+const float forwardSpeed = 0.1;
+const float rotateSpeed = 0.1;
+
 float t = iTime;
-
 
 // 2 dimension rotate 
 vec2 Rotate(vec2 coord, float a)
@@ -42,8 +42,15 @@ float DrawLine(vec2 p, vec2 a, vec2 b)
     float d = clamp(dot(pa, ba)/dot(ba,ba), 0.0f, 1.0f);
     float line = length(pa - ba * d);
 
-    float distanceFade = smoothstep(1.4, 0.2, length(a-b));
-    return smoothstep(0.03, 0.01, line) * distanceFade;
+    float dist = length(a - b);
+
+    // fade line while two point is faraway
+    float distanceFade = smoothstep(1.4, 0.2, dist);
+    // highlight line while two point's distance near a certain value
+    float distanceHighlight = smoothstep(0.03, 0.005, abs(dist - 0.75));
+
+    line = smoothstep(0.03, 0.01, line) * (distanceFade + distanceHighlight);
+    return line;
 }
 
 vec2 GetStarPos(vec2 id)
@@ -57,17 +64,18 @@ float DrawStar(vec2 p , vec2 id)
     vec2 starPos = GetStarPos(id);
     float d = length(starPos - p) * 20.0;
     float star = 1.0 / dot(d,d);
-    return star;
+
+    float twinkle = sin(Rand21(id) * PI + t * 5.0) * 0.5 + 0.5;
+
+    return star * twinkle;
 }
 
-void main()
+float Layer(vec2 uv)
 {
-    //vec2 uv = (fragCoord/iResolution.xy - 0.5)* iResolution.y / iResolution.xy;
-    
-    vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y ;
-
-    float count = 5.0;
+    float layer = 0.0;
+    float count = 1.0;
     vec2 scaledUV = uv * count;
+
     vec2 id = floor(scaledUV);
     vec2 gv = fract(scaledUV) - 0.5;
 
@@ -78,6 +86,7 @@ void main()
     vec2 pos[9];
     int i = 0;
 
+    // Get star position in current grid and it's surrounding grid
     for(float x = -1.0; x <= 1.0; x++)
     {
         for(float y = -1.0; y <= 1.0; y++)
@@ -102,14 +111,35 @@ void main()
             line += DrawLine(scaledUV, pos[i], pos[j]);
         }
     }
-    // float line = DrawLine(uv, vec2(0.0), 0.4 * vec2(cos(t), sin(t)));
-	// line = smoothstep(0.01, 0.005, line);
 
-    vec3 col = vec3(star + line);
+    layer = star + line;
+    return layer;
+}
 
+void main()
+{
+
+    vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y ;
+    float gradient = 1.0  - uv.y;
+    uv = Rotate(uv, t * rotateSpeed);
+    vec2 mouse = iMouse.xy / iResolution.xy - 0.5;
+    mouse = Rotate(mouse, t * rotateSpeed);
+
+    float pattern = 0.0;
+    for (float i = 0.0; i < 1.0; i += 1.0/4.0)
+    {
+        float frame = fract(t * forwardSpeed + i);
+        float size = mix(15.0, 1.0, frame);
+        float fade = smoothstep(0.0, 0.5, frame) * smoothstep(1.0, 0.8, frame);
+        vec2 offset = Rand22(vec2(i)) - mouse;
+        pattern += Layer(uv * size + offset) * fade;
+    }
+
+    pattern += gradient * 0.2;
+    vec3 col = sin(t * 0.001 * vec3(123.4, 223.5, 456.6)) * 0.4 + 0.6;
     // grid debug
     // float grid = (abs(gv.x) > 0.49 || abs(gv.y) > 0.49) ? 1.0 : 0.0;
     // col.r += grid;
 
-    fragColor = vec4(col, 0.0);
+    fragColor = vec4(pattern * col, 0.0);
 }

@@ -22,7 +22,7 @@ void Mouse::UpdateMouse(float xpos, float ypos)
 	xoffset = xpos - mouseParams.x;
 	yoffset = mouseParams.y - ypos;
 	mouseParams.x = xpos;
-	mouseParams.y = ypos;
+	mouseParams.y = Application::currentWindow->GetResolution().y - ypos;
 
 	sensitivity = 0.05f;
 	xoffset *= sensitivity;

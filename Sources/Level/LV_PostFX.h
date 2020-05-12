@@ -60,7 +60,7 @@ private:
 		Voronoi
 	};
 
-	PostFXScene currentScene = PostFXScene::Mandelbrot;
+	PostFXScene currentScene = PostFXScene::StarLink;
 
 };
 
