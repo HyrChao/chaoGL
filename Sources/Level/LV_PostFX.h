@@ -34,6 +34,7 @@ private:
 
 	void VoronoiScene();
 
+	void KIFSScene();
 
 private:
 
@@ -43,6 +44,7 @@ private:
 	unique_ptr<Shader> s_test;;
 	unique_ptr<Shader> s_mandelbrot;
 	unique_ptr<Shader> s_voronoi;
+	unique_ptr<Shader> s_KIFS;
 
 
 	Texture t_mandelbrot_lut;
@@ -57,7 +59,8 @@ private:
 		StarLink,
 		RayMarching,
 		Mandelbrot,
-		Voronoi
+		Voronoi,
+		KIFS
 	};
 
 	PostFXScene currentScene = PostFXScene::StarLink;

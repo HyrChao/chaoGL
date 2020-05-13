@@ -19,6 +19,7 @@ void LV_PostFX::Initialize()
 	s_rayMatching_Doughnut = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/RayMatching_Doughnut.fs");
 	s_mandelbrot = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/Mandelbrot.fs");
 	s_voronoi = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/Voronoi.fs");
+	s_KIFS = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/KIFS.fs");
 
 	// Texture assets
 	t_mandelbrot_lut = Texture::LoadTexture("/Assets/Texture/LUT/Mandelbrot_LUT.png");
@@ -119,6 +120,11 @@ void LV_PostFX::VoronoiScene()
 	s_voronoi->use();
 }
 
+void LV_PostFX::KIFSScene()
+{
+	s_KIFS->use();
+}
+
 void LV_PostFX::Loop()
 {
 	Level::Loop();
@@ -158,6 +164,9 @@ void LV_PostFX::Loop()
 	case LV_PostFX::Mandelbrot:
 		MandelbrotScene();
 		break;
+	case LV_PostFX::KIFS:
+		KIFSScene();
+		break;
 	case LV_PostFX::Voronoi:
 		VoronoiScene();
 		break;
@@ -184,6 +193,8 @@ void LV_PostFX::OnGui()
 		currentScene = RayMarching;
 	if (ImGui::Button("Mandelbrot"))
 		currentScene = Mandelbrot;
+	if (ImGui::Button("KIFS Fractals"))
+		currentScene = KIFS;
 	if (ImGui::Button("Voronoi"))
 		currentScene = Voronoi;
 	// Draw GUI on mandelbrot scene
