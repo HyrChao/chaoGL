@@ -245,6 +245,35 @@ void Shader::SetParam(const std::string & name, glm::mat4& mat)
 	setMat4f(name, mat);;
 }
 
+void Shader::BindTexture(const char* paramname, unsigned int id, unsigned int type)
+{
+	use();
+
+	for (auto i = slot.begin(); i != slot.end(); i++)
+	{
+		auto s = *i;
+		if (paramname == s.first)
+		{
+			glActiveTexture(GL_TEXTURE0 + s.second);
+			glBindTexture(type, id);
+			SetParam(s.first, s.second);
+			return;
+		}
+	}
+
+	slot[paramname] = occupiedSlot;
+	if (++occupiedSlot > TextureSlot16)
+	{
+		slot.clear();
+		occupiedSlot = TextureSlot1;
+		slot[paramname] = TextureSlot1;
+	}
+	glActiveTexture(GL_TEXTURE0 + slot[paramname]);
+	glBindTexture(type, id);
+	SetParam(paramname, slot[paramname]);
+
+}
+
 
 void Shader::ChangeErrorShader(Shader * errShader)
 {

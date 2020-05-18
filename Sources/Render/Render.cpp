@@ -1,5 +1,7 @@
 #include<Render/Render.h>
 #include <Render/Model.h>
+#include <Application/Application.h>	
+#include <Render/RenderDevice.h>
 
 glm::vec4 Render::clearColor;
 glm::mat4 Render::projectMat;
@@ -18,7 +20,6 @@ void Render::PrepareRender()
 {
 	// enable Z test
 	glEnable(GL_DEPTH_TEST);
-
 	glDepthFunc(GL_LEQUAL);;
 
 	// filter across cubemap faces
@@ -26,8 +27,7 @@ void Render::PrepareRender()
 
 	Shadow::InitShadow();
 	Capture::InitCapture();
-
-
+	RenderDevice::InitMainFrameBuffer();
 }
 
 void Render::DrawOnFrameBegin()
@@ -44,8 +44,7 @@ void Render::DrawOnFrameBegin()
 	UpdateShaderLightParams();
 	UpdateShaderCameraVP();
 
-    // Update light
-    DrawLightAvatars();
+	RenderDevice::UpdateMainFrameBuffer();
 
 }
 
@@ -57,11 +56,28 @@ void Render::Draw()
 		Shadow::SetActiveSunlight(sunlight);
 		Shadow::RenderShadowMap(Render::ExcuteDrawlistWithReplacedMaterial);
 	}
+
 	ExcuteMainDrawlist();
 }
 
 void Render::DrawOnFrameEnd()
 {
+	// Draw light avatars
+	DrawLightAvatars();
+
+	// back to default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+
+	// post process
+	CommonAssets::instance->drawGBufferShader->BindTexture("bufferTex",CommonAssets::instance->backBuffer);
+	CommonAssets::DrawQuad();
+
+	// clear
 	ClearCurrentDrawableList();
 }
 
@@ -138,6 +154,7 @@ void Render::ExcuteDrawlistWithReplacedMaterial(Material * material)
 		drawable->Draw(material);
 	}
 }
+
 
 void Render::UpdateShaderLightParams()
 {
@@ -272,7 +289,6 @@ void Render::DisplayFramebufferTexture(Texture texture)
 	CommonAssets::DrawQuad();
 	glUseProgram(0);
 }
-
 
 void Render::DrawLightAvatars() 
 {

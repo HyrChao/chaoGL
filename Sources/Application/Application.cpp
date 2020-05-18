@@ -110,6 +110,9 @@ void Application::InitApplication()
 	Mouse::SetMouseInitLocation(currentWindow->GetPosX(), currentWindow->GetPosY());
 	Mouse::CursorOn(false);
 
+	// Load common assets
+	CommonAssets::instance = new CommonAssets();
+
 	Render::PrepareRender();
 
 	if (Camera::main == nullptr)
@@ -119,7 +122,6 @@ void Application::InitApplication()
 
 	Input::SetInputTargetWindow(currentWindow->Get());
 
-	CommonAssets::instance = new CommonAssets();
 
 	LevelManager::LoadMainLevel();
 

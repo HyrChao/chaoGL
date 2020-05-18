@@ -71,5 +71,6 @@ private:
 	static Shader* framebufferDebugShader;
 	static bool framebufferDebugInitialized;
 
+
 };
 #endif

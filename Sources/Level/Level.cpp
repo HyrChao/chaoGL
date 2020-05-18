@@ -100,11 +100,14 @@ void Level::LoadEquirectangularSkydomeTexture()
 
 void Level::DrawSkydome()
 {
+	// sky dome depth is very far away from camera, disable depth test in case comfict 
+	glDisable(GL_DEPTH_TEST);
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	skydomMaterial->SetModelMat(modelMat);
 	Render::SetMaterialCameraVP(skydomMaterial);
 	skydomMaterial->use();
 	CommonAssets::DrawCube();
+	glEnable(GL_DEPTH_TEST);
 }
 
 void Level::SetSunLight(Light * sunlight)

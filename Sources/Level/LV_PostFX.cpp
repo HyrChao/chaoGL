@@ -111,7 +111,7 @@ void LV_PostFX::MandelbrotScene()
 	s_mandelbrot->SetParam("iColor", f_mandelbrot_lutColor);
 	s_mandelbrot->SetParam("iRepeat", f_mandelbrot_repeat);
 
-	t_mandelbrot_lut.Bind(s_mandelbrot.get(), "LUTMap", 0);
+	s_mandelbrot->BindTexture("LUTMap", t_mandelbrot_lut.id);
 
 }
 
@@ -123,6 +123,7 @@ void LV_PostFX::VoronoiScene()
 void LV_PostFX::KIFSScene()
 {
 	s_KIFS->use();
+	s_KIFS->SetParam("Iterate", f_KIFS_iterate);
 }
 
 void LV_PostFX::Loop()
@@ -202,6 +203,11 @@ void LV_PostFX::OnGui()
 	{
 		ImGui::SliderFloat("LUT Color", &f_mandelbrot_lutColor, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 		ImGui::SliderFloat("LUT_Repeat", &f_mandelbrot_repeat, 0.0f, 20.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	}
+	// Draw GUI on KIFS scene
+	if (currentScene == KIFS)
+	{
+		ImGui::SliderFloat("Iterate Count", &f_KIFS_iterate, 0.0f, 8.0f);
 	}
 }
 

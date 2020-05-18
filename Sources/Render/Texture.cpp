@@ -184,14 +184,6 @@ void Texture::Bind()
 	glBindTexture(gl_textureType, id);
 }
 
-void Texture::Bind(Shader* shader, const char * paramname,unsigned int slot)
-{
-	shader->use();
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(gl_textureType, id);
-	shader->SetParam(paramname, slot);
-
-}
 
 void Texture::Active(TextureSlot slot)
 {

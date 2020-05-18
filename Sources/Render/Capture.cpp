@@ -1,6 +1,6 @@
 
 #include <Render/Capture.h>
-
+#include <Render/Render.h>
 
 unsigned int Capture::captureFBO;
 unsigned int Capture::captureRBO;
@@ -80,6 +80,8 @@ void Capture::CaptureIrradianceCubemap(Texture & envCubemap, Texture & irradianc
 
 	RenderDevice::ResetViewport();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 
 }
 

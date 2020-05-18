@@ -40,8 +40,8 @@ void Shadow::RenderShadowMap(void (*drawfunc)(Material*))
 	glCullFace(GL_FRONT);
 	drawfunc(shadowMapingMaterial);
 	glCullFace(GL_BACK);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	RenderDevice::ResetViewport();
+	RenderDevice::BindMainFrameBuffer();
 }
 
 
@@ -75,7 +75,6 @@ void Shadow::InitShadow()
 		glReadBuffer(GL_NONE);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		glActiveTexture(0);
 
 		shadowInitialized = true;

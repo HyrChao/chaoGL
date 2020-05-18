@@ -13,7 +13,7 @@
 #include <gtc/type_ptr.hpp>
 #include <File/filesystem.h>
 #include <unordered_map>
-
+#include <Data/Enums.h>
 #include <Debug/Debug.h>
 
 using namespace std;
@@ -73,6 +73,8 @@ public:
 	void SetParam(const std::string &name, glm::vec4& vec4);
 	void SetParam(const std::string &name, glm::mat4& mat);
 
+	void BindTexture(const char* paramname, unsigned int id, unsigned int type = GL_TEXTURE_2D);
+
 	bool isProp = false;
 
 protected:
@@ -83,7 +85,8 @@ protected:
 
 private:
 	
-
+	std::unordered_map<const char*,unsigned int> slot ;
+	unsigned int occupiedSlot = 0;
 	int GetCachedUniformLocation(const string& name);
 
 };

@@ -20,6 +20,7 @@ public:
 	CommonAssets();
 	~CommonAssets();
 
+	// vertex buffer
 	static CommonAssets* instance;
 	unsigned int triVAO;
 	unsigned int triVBO;
@@ -33,6 +34,7 @@ public:
 	unsigned int sphereEBO;
 	unsigned int sphereIndexCount;
 
+	// model assets
 	unique_ptr<Model> basicGeo_Cone = nullptr;
 	unique_ptr<Model> basicGeo_Cube = nullptr;
 	unique_ptr<Model> basicGeo_Cylinder = nullptr;
@@ -43,11 +45,18 @@ public:
 	unique_ptr<Model> basicGeo_Sphere = nullptr;
 	unique_ptr<Model> basicGeo_Torus = nullptr;
 
+	// texture
 	unsigned int blackTex, whiteTex, greyTex;
 	unsigned int flatNormal;
 
+	// buffer
+	unsigned int backBuffer;
+	unsigned int depthBuffer;
+
+	// shader
 	Shader* defaltErrorShader;
 	Shader* standardPBRShader;
+	Shader* drawGBufferShader;
 
 	glm::mat4* defaltModelMat;
 

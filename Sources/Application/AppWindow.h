@@ -22,8 +22,8 @@ public:
 	bool IsFullscreen();
 	void SetFullScreen(bool fullscreen);
 
-	int GetWidth();
-	int GetHeight();
+	unsigned int GetWidth();
+	unsigned int GetHeight();
 	glm::vec2 GetResolution();
 	int GetPosX();   // screen middle pos x
 	int GetPosY();   // screen middle pos y

@@ -100,12 +100,12 @@ void AppWindow::SetFullScreen(bool fullscreen)
     _updateViewport = true;
 }
 
-int AppWindow::GetWidth()
+unsigned int AppWindow::GetWidth()
 {
     return _vpSize[0];
 }
 
-int AppWindow::GetHeight()
+unsigned int AppWindow::GetHeight()
 {
     return _vpSize[1];
 }

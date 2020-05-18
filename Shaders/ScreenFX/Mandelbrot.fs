@@ -35,7 +35,7 @@ void main()
     vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y ;
 
     vec2 c = uv;
-    c = c / iArea.z + iArea.xy;
+    c = c / iArea.z + iArea.xy + iMouse.xy/iResolution.xy;
     c = Rot(c, iArea.xy, iArea.w);
 
     vec2 f;

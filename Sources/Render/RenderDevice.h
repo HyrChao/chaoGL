@@ -12,8 +12,14 @@ public:
 	static void SetViewport(int screenWidth, int screenHeight);
 	static void ResetViewport();
 
+	static void BindFrameBuffer(unsigned int FBO);
+	static void BindMainFrameBuffer();
+
+	static void UpdateMainFrameBuffer();
+	static void InitMainFrameBuffer();
 
 private:
+	static unsigned int mainFrameBufferFBO;
 
 public:
 

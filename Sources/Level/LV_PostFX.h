@@ -52,6 +52,8 @@ private:
 	float f_mandelbrot_lutColor = 0.0;
 	float f_mandelbrot_repeat = 1.0;
 
+	float f_KIFS_iterate = 1.0;
+
 	enum PostFXScene 
 	{
 		Test,
