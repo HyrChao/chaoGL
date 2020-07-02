@@ -4,7 +4,6 @@
 #include <Level/LV_PBR.h>
 #include <Level/LV_Model.h>
 #include <Level/LV_Shadow.h>
-#include <Level/LV_PostFX.h>
 
 Level* LevelManager::m_currentLevel = nullptr;
 
@@ -35,8 +34,11 @@ void LevelManager::SetCurrentLevel(Level * level)
 
 void LevelManager::LoadLevel(LevelName levelName)
 {
-	if(m_currentLevel != nullptr)
+	if (m_currentLevel != nullptr)
+	{
 		delete m_currentLevel;
+		m_currentLevel = nullptr;
+	}
 
 	switch (levelName) {
 		case LevelName::Main:
@@ -58,10 +60,6 @@ void LevelManager::LoadLevel(LevelName levelName)
 			m_currentLevel = new LV_Shadow();
 			m_currentLevel->name = "Shadow";
 			break;
-		case LevelName::PostFX:
-			m_currentLevel = new LV_PostFX();
-			m_currentLevel->name = "PostFX";
-			break;
 	}
 }
 
@@ -70,7 +68,22 @@ void LevelManager::SceneLoop()
 	m_currentLevel->Loop();
 }
 
-void LevelManager::SceneGui()
+void LevelManager::OnSceneManagerGui()
+{
+	ImGui::Text("Select Scene");
+
+	if (ImGui::Button("BlinnPhong"))
+		LoadLevel(LevelName::BlinnPhong);
+	if (ImGui::Button("LoadModel"))
+		LoadLevel(LevelName::LoadModel);
+	if (ImGui::Button("PBR"))
+		LoadLevel(LevelName::PBR);
+	if (ImGui::Button("Shadow"))
+		LoadLevel(LevelName::Shadow);
+
+}
+
+void LevelManager::OnSceneGui()
 {
 	m_currentLevel->OnGui();
 }
@@ -80,13 +93,14 @@ Level* LevelManager::GetCurrentLevel()
 	return m_currentLevel;
 }
 
+
 void LevelManager::LoadMainLevel()
 {
 	if (m_currentLevel != nullptr)
 		delete m_currentLevel;
 
-	m_currentLevel = new LV_PostFX();
-	m_currentLevel->name = "PostFX";
+	m_currentLevel = new LV_PBR();
+	m_currentLevel->name = "pbr";
 }
 
 

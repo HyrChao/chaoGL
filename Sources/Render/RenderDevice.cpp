@@ -11,6 +11,17 @@ RenderDevice::~RenderDevice()
 {
 }
 
+void RenderDevice::BindDefaultFrameBuffer()
+{
+	// back to default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+}
+
 void RenderDevice::BindMainFrameBuffer()
 {
 	// Use generated buffer as framebuffer's texture buffer

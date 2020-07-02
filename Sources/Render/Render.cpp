@@ -2,7 +2,7 @@
 #include <Render/Model.h>
 #include <Application/Application.h>	
 #include <Render/RenderDevice.h>
-
+#include "Render/PostFX.h"
 glm::vec4 Render::clearColor;
 glm::mat4 Render::projectMat;
 glm::mat4 Render::viewMat;
@@ -65,18 +65,9 @@ void Render::DrawOnFrameEnd()
 	// Draw light avatars
 	DrawLightAvatars();
 
-	// back to default framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(1.0, 1.0, 1.0, 0.0);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-
-	// post process
-	CommonAssets::instance->drawGBufferShader->BindTexture("bufferTex",CommonAssets::instance->backBuffer);
-	CommonAssets::DrawQuad();
-
+	// draw quad & post process
+	PostFXManager::DrawPostFX();
+	
 	// clear
 	ClearCurrentDrawableList();
 }

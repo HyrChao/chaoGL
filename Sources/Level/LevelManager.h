@@ -10,7 +10,6 @@ enum LevelName
 	LoadModel,
 	PBR,
 	Shadow,
-	PostFX
 };
 
 class LevelManager
@@ -23,7 +22,8 @@ public:
 	static void LoadLevel(LevelName levelName);
 	static void LoadMainLevel();
 	static void SceneLoop();
-	static void SceneGui();
+	static void OnSceneManagerGui();
+	static void OnSceneGui();
 	static Level* GetCurrentLevel();
 private:
 

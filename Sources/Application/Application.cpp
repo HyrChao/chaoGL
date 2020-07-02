@@ -18,6 +18,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "Render/PostFX.h"
+
 Application* app;
 char const * FileSystem::app_root;
 
@@ -158,7 +160,7 @@ void Application::Update()
 		SystemGUI();
 		ImGui::NewLine();
 		ImGui::SameLine();
-		LevelManager::SceneGui();
+		LevelManager::OnSceneGui();
 		ImGui::End();
 	}
 
@@ -310,18 +312,8 @@ void Application::SystemGUI()
 
 		ImGui::Text("%.3f ms/frame (%.1f FPS)", Time::deltaTime * 1000.0f, 1.0f/Time::deltaTime);
 
-		ImGui::Text("Select Scene");
-
-		if (ImGui::Button("BlinnPhong"))
-			LevelManager::LoadLevel(LevelName::BlinnPhong);
-		if (ImGui::Button("LoadModel"))
-			LevelManager::LoadLevel(LevelName::LoadModel);
-		if (ImGui::Button("PBR"))
-			LevelManager::LoadLevel(LevelName::PBR);
-		if (ImGui::Button("Shadow"))
-			LevelManager::LoadLevel(LevelName::Shadow);
-		if (ImGui::Button("PostFX"))
-			LevelManager::LoadLevel(LevelName::PostFX);
+		LevelManager::OnSceneManagerGui();
+		PostFXManager::PostFXGui();
 
 		if (ImGui::Button("Quit"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
 			glfwSetWindowShouldClose(currentWindow->Get(), true);
