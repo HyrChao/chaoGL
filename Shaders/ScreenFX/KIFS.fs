@@ -85,7 +85,8 @@ void main()
     // polyCoord.xy /= polyEdgeLength;
 
     polyCoord.x = dot(p, uv) + polyEdgeLength / 2.0;
-    polyCoord.y= dot(n, uv) - polyRadius;
+    // polyCoord.y= dot(n, uv) - polyRadius;
+    polyCoord.y= dot(n, uv);
 
     // polyCoord.x = dot(p, uv) + polyEdgeLength / 2.0;
     // polyCoord.x = dot(p, uv);
@@ -119,6 +120,7 @@ void main()
     line = smoothstep(pixel, 0.0, line / scale);
     line += smoothstep(0.0, pixel, symline / scale);
     uv = min(vec2(1.0), abs(uv) / scale);
+    // uv = min(vec2(1.0), uv / scale);
     // uv = abs(uv) / scale;
     // if segment less than 1, use original uv
     uv = mix(screenUV + 0.5, uv, min(1.0, segCount));
