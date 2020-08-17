@@ -11,52 +11,6 @@ PostFX::PostFX()
 
 }
 
-void PostFX::Setup(PostFXType postFX)
-{
-	// Reload Shaders
-	if (Input::GetKeyOnce(GLFW_KEY_ENTER))
-	{
-		list<Shader*> shadersToReload;
-		for (auto i = Shader::activeShaders.begin(); i != Shader::activeShaders.end(); i++)
-		{
-			Shader* shader = (*i).second;
-			shadersToReload.push_back(shader);
-		}
-		for (auto i = shadersToReload.begin(); i != shadersToReload.end(); i++)
-		{
-			Shader* shader = (*i);
-			shader->Reload();
-		}
-	}
-
-	switch (postFX)
-	{
-	case Test:
-		Post_Test();
-		break;
-	case StarTravelling:
-		Post_StarTravelling();
-		break;
-	case StarLink:
-		Post_StarLink();
-		break;
-	case RayMarching:
-		Post_RayMatching();
-		break;
-	case Mandelbrot:
-		Post_Mandelbrot();
-		break;
-	case KIFS:
-		Post_KIFS();
-		break;
-	case Voronoi:
-		Post_Voronoi();
-		break;
-	default:
-		break;
-	}
-}
-
 void PostFX::OnGui(PostFXType postType)
 {
 	// Draw GUI on mandelbrot scene
@@ -221,10 +175,19 @@ void PostFX::Post_KIFS()
 	s_KIFS->SetParam("Segments", f_KIFS_segments);
 }
 
+void PostFX::Post_Feather()
+{
+	if (s_feather == nullptr)
+		s_feather = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/FeatherFX.fs");
+
+	UpdatePostFXCommonParameters(s_feather.get());
+	s_feather->use();
+}
+
 
 bool PostFXManager::enablePostFX = true;
 PostFX* PostFXManager::postFX = nullptr;
-PostFX::PostFXType PostFXManager::postType = PostFX::PostFXType::KIFS;
+PostFX::PostFXType PostFXManager::postType = PostFX::PostFXType::Feather;
 
 
 void PostFXManager::DrawPostFX()
@@ -267,12 +230,61 @@ void PostFXManager::PostFXGui()
 			postType = PostFX::PostFXType::KIFS;
 		if (ImGui::Button("Voronoi"))
 			postType = PostFX::PostFXType::Voronoi;
+		if (ImGui::Button("FeatherFX"))
+			postType = PostFX::PostFXType::Feather;
 
 		if (postFX == nullptr)
 			postFX = new PostFX();
 
 		postFX->OnGui(postType);
 	}
+}
 
+void PostFX::Setup(PostFXType postFX)
+{
+	// Reload Shaders
+	if (Input::GetKeyOnce(GLFW_KEY_ENTER))
+	{
+		list<Shader*> shadersToReload;
+		for (auto i = Shader::activeShaders.begin(); i != Shader::activeShaders.end(); i++)
+		{
+			Shader* shader = (*i).second;
+			shadersToReload.push_back(shader);
+		}
+		for (auto i = shadersToReload.begin(); i != shadersToReload.end(); i++)
+		{
+			Shader* shader = (*i);
+			shader->Reload();
+		}
+	}
 
+	switch (postFX)
+	{
+	case Test:
+		Post_Test();
+		break;
+	case StarTravelling:
+		Post_StarTravelling();
+		break;
+	case StarLink:
+		Post_StarLink();
+		break;
+	case RayMarching:
+		Post_RayMatching();
+		break;
+	case Mandelbrot:
+		Post_Mandelbrot();
+		break;
+	case KIFS:
+		Post_KIFS();
+		break;
+	case Voronoi:
+		Post_Voronoi();
+		break;
+	case Feather:
+		Post_Feather();
+		break;
+	default:
+		break;
+	}
 }

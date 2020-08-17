@@ -16,7 +16,8 @@ public:
 		RayMarching,
 		Mandelbrot,
 		Voronoi,
-		KIFS
+		KIFS,
+		Feather
 	};
 
 public:
@@ -47,6 +48,7 @@ private:
 
 	void Post_KIFS();
 
+	void Post_Feather();
 
 private:
 
@@ -57,6 +59,7 @@ private:
 	unique_ptr<Shader> s_mandelbrot = nullptr;
 	unique_ptr<Shader> s_voronoi = nullptr;
 	unique_ptr<Shader> s_KIFS = nullptr;
+	unique_ptr<Shader> s_feather = nullptr;
 
 
 	Texture t_mandelbrot_lut;
