@@ -20,7 +20,7 @@ uniform float iPrecise;
 const float minpCounts = 150.;
 const float maxpCounts = 300.;
 const float minpBrightness = 0.0002;
-const float maxpBrightness = 0.0005;
+const float maxpBrightness = 0.0008;
 const float minpShoots = 2.;
 const float maxpShoots = 10.;
 const float timeScale = 0.5;
@@ -99,7 +99,7 @@ float Firework(vec2 uv, float t, float pc, float pb)
         float twinkle = cos(22.5 * (t + i)) * 0.5 + 0.5;
         fireworkPattern += particle * twinkle;
     }
-    return fireworkPattern;
+    return fireworkPattern * BrightnessCurve(t);
 }
 
 void main()
