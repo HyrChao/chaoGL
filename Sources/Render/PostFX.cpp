@@ -184,10 +184,19 @@ void PostFX::Post_Feather()
 	s_feather->use();
 }
 
+void PostFX::Post_Firework()
+{
+	if (s_firework == nullptr)
+		s_firework = make_unique<Shader>("/Shaders/ScreenFX/ScreenFX.vs", "/Shaders/ScreenFX/Firework.fs");
+
+	UpdatePostFXCommonParameters(s_firework.get());
+	s_firework->use();
+}
+
 
 bool PostFXManager::enablePostFX = true;
 PostFX* PostFXManager::postFX = nullptr;
-PostFX::PostFXType PostFXManager::postType = PostFX::PostFXType::Feather;
+PostFX::PostFXType PostFXManager::postType = PostFX::PostFXType::Test;
 
 
 void PostFXManager::DrawPostFX()
@@ -232,6 +241,8 @@ void PostFXManager::PostFXGui()
 			postType = PostFX::PostFXType::Voronoi;
 		if (ImGui::Button("FeatherFX"))
 			postType = PostFX::PostFXType::Feather;
+		if (ImGui::Button("Firework"))
+			postType = PostFX::PostFXType::Firework;
 
 		if (postFX == nullptr)
 			postFX = new PostFX();
@@ -283,6 +294,9 @@ void PostFX::Setup(PostFXType postFX)
 		break;
 	case Feather:
 		Post_Feather();
+		break;
+	case Firework:
+		Post_Firework();
 		break;
 	default:
 		break;

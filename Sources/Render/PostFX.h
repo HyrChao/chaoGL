@@ -17,7 +17,8 @@ public:
 		Mandelbrot,
 		Voronoi,
 		KIFS,
-		Feather
+		Feather,
+		Firework
 	};
 
 public:
@@ -50,6 +51,8 @@ private:
 
 	void Post_Feather();
 
+	void Post_Firework();
+
 private:
 
 	unique_ptr<Shader> s_starTravelling = nullptr;
@@ -60,6 +63,7 @@ private:
 	unique_ptr<Shader> s_voronoi = nullptr;
 	unique_ptr<Shader> s_KIFS = nullptr;
 	unique_ptr<Shader> s_feather = nullptr;
+	unique_ptr<Shader> s_firework = nullptr;
 
 
 	Texture t_mandelbrot_lut;
